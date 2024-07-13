@@ -71,9 +71,10 @@ module.exports = {
         useTabs: false,
         arrowParens: 'avoid',
         bracketSameLine: false,
+        semi: false,
         singleQuote: true,
         trailingComma: 'all',
       },
     ],
   },
-};
+}
