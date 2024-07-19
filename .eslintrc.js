@@ -60,7 +60,10 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
     'react/display-name': 'off',
-    'no-console': ['error', { allow: ['error'] }],
+    // 'no-console': ['error', { allow: ['error'] }],
+    'no-console': 'off',
+    '@typescript-eslint/no-unsafe-assignment': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
     'prettier/prettier': [
       'error',
       {

@@ -5,8 +5,8 @@
   "prettier.useTabs": false,
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll": true,
-    "source.fixAll.eslint": true
+    "source.fixAll": "explicit",
+    "source.fixAll.eslint": "explicit"
   },
   "eslint.validate": [
     "javascript",
@@ -14,5 +14,6 @@
     "typescript",
     "typescriptreact"
   ],
-  "prettier.requireConfig": true
+  "prettier.requireConfig": true,
+  "java.compile.nullAnalysis.mode": "automatic"
 }

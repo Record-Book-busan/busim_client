@@ -1,10 +1,14 @@
-import type { StackScreenProps } from '@react-navigation/stack';
+import type { StackScreenProps } from "@react-navigation/stack";
 
 export type RootStackParamList = {
-	Startup: undefined;
-	Example: undefined;
+  Startup: undefined;
+  Example: undefined;
+  BottomBar: undefined;
+  Recommand: undefined;
+  Camera: undefined;
+  Mypage: undefined;
 };
 
 export type RootScreenProps<
-	S extends keyof RootStackParamList = keyof RootStackParamList,
+  S extends keyof RootStackParamList = keyof RootStackParamList
 > = StackScreenProps<RootStackParamList, S>;
