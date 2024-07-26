@@ -51,5 +51,23 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+  <array>
+      <!-- 카카오톡으로 로그인 -->
+      <string>kakaokompassauth</string>
+      <!-- 카카오톡 공유 -->
+      <string>kakaolink</string>
+      <!-- 카카오톡 채널 -->
+      <string>kakaoplus</string>
+  </array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>kakao572d2540a7893d0c189b2b872193effb</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

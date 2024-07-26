@@ -53,7 +53,7 @@ const map = `
   <head>
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${
-        process.env.ApiKey
+        process.env.KakaoJsApiKey
       }&libraries=services,clusterer,drawing"></script> 
   </head>
   <body >

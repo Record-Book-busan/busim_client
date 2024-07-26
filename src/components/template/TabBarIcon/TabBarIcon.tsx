@@ -1,11 +1,8 @@
-import { Text, View } from "react-native";
-import { styled } from "nativewind";
-
-import { ImageVariant } from "@/components/atoms";
-
-const StyledText = styled(Text);
-const StyledView = styled(View);
-const StyledImageVariant = styled(ImageVariant);
+import {
+  StyledText,
+  StyledView,
+  StyledImageVariant,
+} from "@/theme/ThemeProvider/CustomNativeWind";
 
 function TabBarIcon({
   focused,
