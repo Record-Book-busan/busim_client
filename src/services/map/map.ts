@@ -12,7 +12,7 @@ function createMap() {
     
     const map = new kakao.maps.Map(container, options);
     const geocoder = new kakao.maps.services.Geocoder();
-  `;
+  `
 }
 
 /**
@@ -23,29 +23,29 @@ function createMap() {
  */
 const RegistFn = [
   {
-    key: "createMap",
+    key: 'createMap',
     val: createMap(),
     isInit: true,
   },
-];
+]
 
 function js() {
-  let registFn = "";
-  let initFn = "";
+  let registFn = ''
+  let initFn = ''
 
-  RegistFn.forEach((fn) => {
-    registFn += `function ${fn.key}() { ${fn.val} }`;
+  RegistFn.forEach(fn => {
+    registFn += `function ${fn.key}() { ${fn.val} }`
 
     if (fn.isInit) {
-      initFn += `${fn.key}()`;
+      initFn += `${fn.key}()`
     }
-  });
+  })
 
-  if (initFn !== "") {
-    initFn = `(function(){ ${initFn} })()`;
+  if (initFn !== '') {
+    initFn = `(function(){ ${initFn} })()`
   }
 
-  return { registFn, initFn };
+  return { registFn, initFn }
 }
 
 const map = `
@@ -64,6 +64,6 @@ const map = `
       </script>
   </body>
   </html>
-`;
+`
 
-export default map;
+export default map
