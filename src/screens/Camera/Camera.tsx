@@ -1,13 +1,13 @@
-import { Text } from "react-native";
+import { Text } from 'react-native'
 
-import { SafeScreen } from "@/components/template";
+import { SafeScreen } from '@/shared'
 
 function Camera() {
   return (
     <SafeScreen>
       <Text>카메라</Text>
     </SafeScreen>
-  );
+  )
 }
 
-export default Camera;
+export default Camera
