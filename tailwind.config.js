@@ -7,7 +7,8 @@ module.exports = {
     g: ({ theme }) => theme('spacing'),
     extend: {
       colors: {
-        customBlu: '#0E4194',
+        'BUSIM-blue': '#0E4194',
+        'BUSIM-black': '#2C2C2C',
       },
     },
   },
