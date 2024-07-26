@@ -1,0 +1,7 @@
+export { default as setting } from './setting.svg'
+export { default as chevronRight } from './chevron-right.svg'
+export { default as recommend } from './recommend.svg'
+export { default as my } from './my.svg'
+export { default as camera } from './camera.svg'
+export { default as hamburger } from './hamburger.svg'
+export { default as search } from './search.svg'
