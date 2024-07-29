@@ -1,15 +1,13 @@
-// import { createStackNavigator, type StackNavigationProp } from '@react-navigation/stack'
 import { createStackNavigator } from '@react-navigation/stack'
 // import { Text, TouchableOpacity } from 'react-native'
 
 import { CameraScreen, PostScreen } from '@/screens'
 
-// import type { RecordStackParamList } from '@/types/navigation'
+import type { RecordStackParamList } from '@/types/navigation'
 
 // type RecordNavigationProp = StackNavigationProp<RecordStackParamList>
 
-// const Stack = createStackNavigator<RecordStackParamList>()
-const Stack = createStackNavigator()
+const Stack = createStackNavigator<RecordStackParamList>()
 
 function RecordStackNavigator() {
   return (
