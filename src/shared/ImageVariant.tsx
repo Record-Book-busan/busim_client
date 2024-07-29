@@ -1,4 +1,4 @@
-import { styled, useColorScheme } from 'nativewind'
+import { useColorScheme } from 'nativewind'
 import { useMemo } from 'react'
 import { Image, type ImageProps, type ImageSourcePropType } from 'react-native'
 
@@ -8,8 +8,6 @@ type ImageVariantProps = Omit<ImageProps, 'source'> & {
   sourceLight?: ImageSourcePropType
   className?: string
 }
-
-const StyledImage = styled(Image)
 
 function ImageVariant({
   source: defaultSource,
@@ -30,7 +28,7 @@ function ImageVariant({
     return defaultSource
   }, [colorScheme, defaultSource, sourceDark, sourceLight])
 
-  return <StyledImage testID="variant-image" source={source} className={className} {...props} />
+  return <Image testID="variant-image" source={source} className={className} {...props} />
 }
 
 export default ImageVariant

@@ -1,18 +1,8 @@
-import { styled } from 'nativewind'
-import React from 'react'
 import { type SvgProps } from 'react-native-svg'
 
-import * as IconsAssets from '@/assets'
+import * as Icons from '@/assets'
 
-export type IconName = keyof typeof IconsAssets
-
-const Icons = (Object.entries(IconsAssets) as [IconName, React.ComponentType<SvgProps>][]).reduce(
-  (acc, [key, Comp]) => {
-    acc[key] = styled(Comp)
-    return acc
-  },
-  {} as Record<IconName, React.ComponentType<SvgProps & { className?: string }>>,
-)
+export type IconName = keyof typeof Icons
 
 type IconProps = SvgProps & {
   name: IconName
@@ -20,15 +10,7 @@ type IconProps = SvgProps & {
   className?: string
 }
 
-function Icon({
-  name,
-  className,
-  fill = 'currentColor',
-  width: _width,
-  height: _height,
-  size,
-  ...props
-}: IconProps) {
+function Icon({ name, className, width: _width, height: _height, size, ...props }: IconProps) {
   const Comp = Icons[name]
   const width = _width ?? size
   const height = _height ?? size
@@ -37,7 +19,7 @@ function Icon({
     ...(height !== undefined ? { height } : {}),
   }
 
-  return <Comp className={className} fill={fill} {...sizeProps} {...props} />
+  return <Comp {...props} className={className} {...sizeProps} />
 }
 
 export default Icon
