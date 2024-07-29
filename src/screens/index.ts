@@ -1,3 +1,7 @@
-export { default as Recommend } from './Recommend/Recommend'
-export { default as Camera } from './Camera/Camera'
-export { default as Mypage } from './Mypage/Mypage'
+export { default as CameraScreen } from './Camera/Camera'
+export { default as PostScreen } from './Post/Post'
+
+export { default as MyPageScreen } from './MyPage/MyPage'
+export { default as ProfileScreen } from './MyPage/Profile'
+
+export { default as MapScreen } from './Map/Map'
