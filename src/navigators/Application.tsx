@@ -1,27 +1,21 @@
-import { StatusBar } from "react-native";
-import { createStackNavigator } from "@react-navigation/stack";
-import { NavigationContainer } from "@react-navigation/native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { createStackNavigator } from '@react-navigation/stack'
 
-import { useTheme } from "@/theme";
-import type { RootStackParamList } from "@/types/navigation";
-import BottomBarNavigator from "./BottomBar";
+import MainTabNavigator from './MainTab'
+import MyPageStackNavigator from './MyPageStack'
+import RecordStackNavigator from './RecordStack'
 
-const Stack = createStackNavigator<RootStackParamList>();
+import type { RootStackParamList } from '@/types/navigation'
+
+const Stack = createStackNavigator<RootStackParamList>()
 
 function ApplicationNavigator() {
-  const { variant, navigationTheme } = useTheme();
-
   return (
-    <SafeAreaProvider>
-      <StatusBar hidden />
-      <NavigationContainer theme={navigationTheme}>
-        <Stack.Navigator key={variant} screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="BottomBar" component={BottomBarNavigator} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </SafeAreaProvider>
-  );
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="MainTab" component={MainTabNavigator} />
+      <Stack.Screen name="Record" component={RecordStackNavigator} />
+      <Stack.Screen name="MyPage" component={MyPageStackNavigator} />
+    </Stack.Navigator>
+  )
 }
 
-export default ApplicationNavigator;
+export default ApplicationNavigator
