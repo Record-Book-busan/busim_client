@@ -2,10 +2,9 @@ import { createStackNavigator } from '@react-navigation/stack'
 
 import { ProfileScreen } from '@/screens'
 
-// import type { MyPageStackParamList } from '@/types/navigation'
+import type { MyPageStackParamList } from '@/types/navigation'
 
-// const Stack = createStackNavigator<MyPageStackParamList>()
-const Stack = createStackNavigator()
+const Stack = createStackNavigator<MyPageStackParamList>()
 
 function MyPageStackNavigator() {
   return (
