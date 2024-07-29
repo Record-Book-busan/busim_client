@@ -1,15 +1,14 @@
 import { createStackNavigator } from '@react-navigation/stack'
 
-import { LoginScreen } from '@/screens'
-
 import MainTabNavigator from './MainTab'
 import MyPageStackNavigator from './MyPageStack'
 import RecordStackNavigator from './RecordStack'
 
-// import type { RootStackParamList } from '@/types/navigation'
+import { LoginScreen } from '@/screens'
 
-// const Stack = createStackNavigator<RootStackParamList>()
-const Stack = createStackNavigator()
+import type { RootStackParamList } from '@/types/navigation'
+
+const Stack = createStackNavigator<RootStackParamList>()
 
 function ApplicationNavigator() {
   return (
