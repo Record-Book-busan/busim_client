@@ -9,22 +9,20 @@ import { SvgIcon } from '@/shared'
 import MapStackNavigator from './MapStack'
 
 import type { IconName } from '@/shared/SvgIcon'
-// import type { MainTabParamList, RootStackParamList } from '@/types/navigation'
-// import type { StackNavigationProp } from '@react-navigation/stack'
+import type { MainTabParamList, RootStackParamList } from '@/types/navigation'
+import type { StackNavigationProp } from '@react-navigation/stack'
 
 const TabBarIcon = ({ name, color, size }: { name: IconName; color: string; size: number }) => (
   <View className="flex-1 items-center justify-center">
-    <SvgIcon name={name} size={size} className={`text-[${color}`} />
+    <SvgIcon name={name} size={size} className={`text-[${color}]`} />
   </View>
 )
 
-// const Tab = createBottomTabNavigator<MainTabParamList>()
-const Tab = createBottomTabNavigator()
+const Tab = createBottomTabNavigator<MainTabParamList>()
 
 function MainTabNavigator() {
   const insets = useSafeAreaInsets()
-  // const navigation = useNavigation<StackNavigationProp<RootStackParamList>>()
-  const navigation = useNavigation()
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>()
 
   return (
     <Tab.Navigator
