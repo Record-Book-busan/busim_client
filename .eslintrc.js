@@ -50,6 +50,7 @@ module.exports = {
     'react/function-component-definition': 'off',
     'react/jsx-props-no-spreading': 'off',
     'react/react-in-jsx-scope': 'off',
+    'react/no-unstable-nested-components': 'off',
     'react/jsx-handler-names': [
       'warn',
       {
@@ -66,7 +67,6 @@ module.exports = {
     'array-bracket-spacing': ['error', 'never'],
     'no-void': 'off',
     'no-console': 'off',
-    'no-use-before-define': ['error', { functions: false, classes: true, variables: true }],
     'no-shadow': 'error',
     'import/no-unresolved': 'error',
     'import/named': 'error',
