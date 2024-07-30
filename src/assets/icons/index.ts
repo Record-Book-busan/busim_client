@@ -4,6 +4,8 @@ export { default as camera } from './camera.svg'
 export { default as hamburger } from './hamburger.svg'
 export { default as search } from './search.svg'
 
+export { default as user } from './user.svg'
+export { default as notice } from './notice.svg'
 export { default as apple } from './apple.svg'
 export { default as kakao } from './kakao.svg'
 export { default as google } from './google.svg'
