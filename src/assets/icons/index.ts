@@ -3,6 +3,8 @@ export { default as my } from './my.svg'
 export { default as camera } from './camera.svg'
 export { default as hamburger } from './hamburger.svg'
 export { default as search } from './search.svg'
+export { default as chevronRight } from './chevron-right.svg'
+export { default as setting } from './setting.svg'
 
 export { default as user } from './user.svg'
 export { default as notice } from './notice.svg'
