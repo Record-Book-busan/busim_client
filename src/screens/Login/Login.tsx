@@ -4,9 +4,8 @@ import { Text, TouchableOpacity, View } from 'react-native'
 
 import icoLogo from '@/assets/images/logo_white.png'
 import { ImageVariant, SafeScreen, SvgIcon } from '@/shared'
-import icoNotice from '@/theme/assets/images/ico-notice.png'
-import icoUser from '@/theme/assets/images/ico-user.png'
-import { RootScreenProps } from '@/types/navigation'
+
+import type { RootScreenProps } from '@/types/navigation'
 
 function Login({ navigation }: RootScreenProps<'Login'>) {
   const [notice, setNotice] = useState('')
@@ -46,42 +45,48 @@ function Login({ navigation }: RootScreenProps<'Login'>) {
 
   return (
     <SafeScreen>
-      <View className="flex flex-1 items-center bg-white">
+      <View className="flex w-full flex-1 items-center justify-between bg-white px-10 py-20">
         {!!notice && (
-          <View className="absolute top-12 w-3/4 flex-row items-center border border-[#FF0000] bg-[#FFF0F0] px-3 py-4">
-            <ImageVariant source={icoNotice} />
-            <Text className="ml-2 font-semibold">{notice}</Text>
+          <View className="absolute top-12 w-full flex-row items-center rounded-xl border border-[#FF0000] bg-[#FFF0F0] px-3 py-4">
+            <SvgIcon name="notice" />
+            <Text className="ml-2 text-sm font-semibold text-black">{notice}</Text>
           </View>
         )}
-        <ImageVariant className="mt-52 h-32 w-3/4 bg-red-200" source={icoLogo} />
-        <Text>안녕하세요!</Text>
-        <Text className="mb">끼록부에 오신 것을 환영합니다.</Text>
-        <Text className="my-12 text-xl font-bold">로그인하기</Text>
-        <View className="w-3/4 gap-2">
+
+        <View className="w-full items-center">
+          <ImageVariant className="mb-8 mt-10 h-32 w-3/4" source={icoLogo} />
+          <Text className="text-lg">안녕하세요!</Text>
+          <Text>끼록부에 오신 것을 환영합니다.</Text>
+          <Text className="mt-8 text-xl font-bold">로그인하기</Text>
+        </View>
+
+        <View className="w-full gap-2">
           <TouchableOpacity
-            className="flex-row items-center justify-center rounded-lg bg-[#FEE500] py-4"
+            className="relative flex-row items-center rounded-lg bg-[#FEE500] px-4 py-4"
             onPress={wrapKakaoLogin}
           >
-            <SvgIcon name="kakao" className="mr-2" size={20} />
-            <Text className="text-[#191919]">카카오 로그인</Text>
+            <SvgIcon name="kakao" size={20} />
+            <Text className="flex-1 text-center text-[#191919]">카카오로 계속하기</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity className="flex-row items-center justify-center rounded-lg bg-black py-4">
-            <SvgIcon name="apple" className="mr-2" size={20} />
-            <Text className="text-white">Apple로 로그인</Text>
+          <TouchableOpacity className="relative flex-row items-center rounded-lg bg-black px-4 py-4">
+            <SvgIcon name="apple" size={20} color="white" />
+            <Text className="flex-1 text-center text-white">Apple로 계속하기</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity className="flex-row items-center justify-center rounded-lg border border-gray-300 bg-white py-4">
-            <SvgIcon name="google" className="mr-2" size={20} />
-            <Text className="font-[Roboto-Medium] text-[#757575]">Google로 로그인</Text>
+          <TouchableOpacity className="relative flex-row items-center rounded-lg border border-gray-300 bg-white px-4 py-4">
+            <SvgIcon name="google" size={20} />
+            <Text className="flex-1 text-center font-[Roboto-Medium] text-[#757575]">
+              Google로 계속하기
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="flex-row items-center justify-center rounded-lg bg-gray-300 py-4"
+            className="relative flex-row items-center rounded-lg bg-gray-300 px-4 py-4"
             onPress={unAuthorizedLogin}
           >
-            <ImageVariant className="mr-2" source={icoUser} />
-            <Text className="text-[#191919]">비회원으로 계속하기</Text>
+            <SvgIcon name="user" size={20} />
+            <Text className="flex-1 text-center text-[#191919]">비회원으로 계속하기</Text>
           </TouchableOpacity>
         </View>
       </View>
