@@ -1,27 +1,25 @@
-import { createStackNavigator } from "@react-navigation/stack";
-import { NavigationContainer } from "@react-navigation/native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { createStackNavigator } from '@react-navigation/stack'
 
-import { useTheme } from "@/theme";
-import type { RootStackParamList } from "@/types/navigation";
-import { Login } from "@/screens";
-import BottomBarNavigator from "./BottomBar";
+import { LoginScreen } from '@/screens'
 
-const Stack = createStackNavigator<RootStackParamList>();
+import MainTabNavigator from './MainTab'
+import MyPageStackNavigator from './MyPageStack'
+import RecordStackNavigator from './RecordStack'
+
+// import type { RootStackParamList } from '@/types/navigation'
+
+// const Stack = createStackNavigator<RootStackParamList>()
+const Stack = createStackNavigator()
 
 function ApplicationNavigator() {
-  const { variant, navigationTheme } = useTheme();
-
   return (
-    <SafeAreaProvider>
-      <NavigationContainer theme={navigationTheme}>
-        <Stack.Navigator key={variant} screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="BottomBar" component={BottomBarNavigator} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </SafeAreaProvider>
-  );
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="MainTab" component={MainTabNavigator} />
+      <Stack.Screen name="Record" component={RecordStackNavigator} />
+      <Stack.Screen name="MyPage" component={MyPageStackNavigator} />
+    </Stack.Navigator>
+  )
 }
 
-export default ApplicationNavigator;
+export default ApplicationNavigator

@@ -2,12 +2,12 @@ import { Text } from 'react-native'
 
 import { SafeScreen } from '@/shared'
 
-function CameraScreen() {
+function PostScreen() {
   return (
     <SafeScreen>
-      <Text>카메라</Text>
+      <Text>여행기록 작성화면</Text>
     </SafeScreen>
   )
 }
 
-export default CameraScreen
+export default PostScreen

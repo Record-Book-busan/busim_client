@@ -18,7 +18,7 @@ function createMap() {
 /**
  * 지도에 등록할 함수를 적어주세요.
  * key: 함수명
- * val: Strign 타입의 함수 로직
+ * val: String 타입의 함수 로직
  * isInit: 시작 함수 등록 여부
  */
 const RegistFn = [
