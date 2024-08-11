@@ -4,8 +4,8 @@ import type { StackScreenProps } from '@react-navigation/stack'
 export type RootStackParamList = {
   Login: undefined
   MainTab: undefined
-  Record: NavigatorScreenParams<RecordStackParamList>
-  MyPage: undefined
+  RecordStack: NavigatorScreenParams<RecordStackParamList>
+  MyPageStack: NavigatorScreenParams<MyPageStackParamList>
 }
 
 export type MainTabParamList = {

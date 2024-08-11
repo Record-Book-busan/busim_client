@@ -9,7 +9,13 @@ const Stack = createStackNavigator<MyPageStackParamList>()
 function MyPageStackNavigator() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="MyPageProfile" component={ProfileScreen} />
+      <Stack.Screen
+        name="MyPageProfile"
+        component={ProfileScreen}
+        options={{
+          headerTitle: '프로필 설정',
+        }}
+      />
       {/* <Stack.Screen name="MyPageSettings" component={SettingsScreen} /> */}
     </Stack.Navigator>
   )
