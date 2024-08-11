@@ -12,11 +12,13 @@ import type { IconName } from '@/shared/SvgIcon'
 import type { MainTabParamList, RootStackParamList } from '@/types/navigation'
 import type { StackNavigationProp } from '@react-navigation/stack'
 
-const TabBarIcon = ({ name, color, size }: { name: IconName; color: string; size: number }) => (
-  <View className="flex-1 items-center justify-center">
-    <SvgIcon name={name} size={size} className={`text-[${color}]`} />
-  </View>
-)
+const TabBarIcon = ({ name, color, size }: { name: IconName; color: string; size: number }) => {
+  return (
+    <View className="flex-1 items-center justify-center">
+      <SvgIcon name={name} size={size} fill={color} />
+    </View>
+  )
+}
 
 const Tab = createBottomTabNavigator<MainTabParamList>()
 
@@ -74,7 +76,7 @@ function MainTabNavigator() {
           tabBarButton: props => (
             <TouchableOpacity
               {...props}
-              onPress={() => navigation.navigate('Record', { screen: 'CameraCapture' })}
+              onPress={() => navigation.navigate('RecordStack', { screen: 'CameraCapture' })}
             />
           ),
         }}
