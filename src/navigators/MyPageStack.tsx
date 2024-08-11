@@ -1,6 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack'
 
-import { ProfileScreen } from '@/screens'
+import { ProfileEditScreen } from '@/screens'
 
 import type { MyPageStackParamList } from '@/types/navigation'
 
@@ -11,7 +11,7 @@ function MyPageStackNavigator() {
     <Stack.Navigator>
       <Stack.Screen
         name="MyPageProfile"
-        component={ProfileScreen}
+        component={ProfileEditScreen}
         options={{
           headerTitle: '프로필 설정',
         }}
