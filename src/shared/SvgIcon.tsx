@@ -7,10 +7,9 @@ export type IconName = keyof typeof Icons
 type IconProps = SvgProps & {
   name: IconName
   size?: number
-  className?: string
 }
 
-function Icon({ name, className, width: _width, height: _height, size, ...props }: IconProps) {
+function Icon({ name, width: _width, height: _height, size, ...props }: IconProps) {
   const Comp = Icons[name]
   const width = _width ?? size
   const height = _height ?? size
@@ -19,7 +18,7 @@ function Icon({ name, className, width: _width, height: _height, size, ...props 
     ...(height !== undefined ? { height } : {}),
   }
 
-  return <Comp {...props} className={className} {...sizeProps} />
+  return <Comp {...props} {...sizeProps} />
 }
 
 export default Icon
