@@ -1,7 +1,10 @@
+import { useNavigation } from '@react-navigation/native'
+import { type StackNavigationProp } from '@react-navigation/stack'
 import { type ReactNode } from 'react'
 import { Text, TouchableOpacity, View, ScrollView } from 'react-native'
 
 import { ImageVariant, SafeScreen, SvgIcon } from '@/shared'
+import { type RootStackParamList } from '@/types/navigation'
 
 type MenuItemProps = {
   title: string
@@ -29,7 +32,7 @@ const FooterButton = ({ title, onPress }: MenuItemProps) => (
   </TouchableOpacity>
 )
 
-const ProfileHeader = () => (
+const ProfileHeader = ({ onPress }: Pick<MenuItemProps, 'onPress'>) => (
   <View className="mb-2 mt-4 flex-row items-center justify-between">
     <View className="flex-row items-center">
       <ImageVariant
@@ -41,13 +44,22 @@ const ProfileHeader = () => (
       />
       <Text className="text-xl font-medium text-gray-700">ssunn113</Text>
     </View>
-    <TouchableOpacity>
+    <TouchableOpacity onPress={onPress}>
       <SvgIcon name="setting" className="text-gray-400" />
     </TouchableOpacity>
   </View>
 )
 
 function MyPageScreen() {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'MainTab'>>()
+
+  const profileItem = {
+    title: '프로필 설정',
+    onPress: () => {
+      console.log('Navigating to MyPageProfile')
+      navigation.navigate('MyPageStack', { screen: 'MyPageProfile' })
+    },
+  }
   const menuItems = [
     { title: '기록한 여행 사진', onPress: () => {} },
     { title: '북마크', onPress: () => {} },
@@ -71,7 +83,7 @@ function MyPageScreen() {
     <SafeScreen excludeEdges={['top']}>
       <ScrollView className="flex-1 bg-gray-100">
         <Section>
-          <ProfileHeader />
+          <ProfileHeader {...profileItem} />
           {menuItems.map((item, index) => (
             <MenuItem key={index} {...item} />
           ))}

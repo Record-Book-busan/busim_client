@@ -14,7 +14,7 @@ function SearchHeader() {
 
   return (
     <View
-      className="absolute left-0 right-0 top-0 z-50 bg-white/50"
+      className="absolute left-0 right-0 top-0 z-50"
       style={{
         paddingTop: insets.top,
         height: HEADER_HEIGHT + insets.top,
