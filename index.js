@@ -2,12 +2,11 @@
  * @format
  */
 
-import { AppRegistry } from 'react-native';
-import App from './src/App';
-import { name as appName } from './app.json';
+import { AppRegistry } from 'react-native'
+import App from './src/App'
+import { name as appName } from './app.json'
 
-if (__DEV__) {
-	import('@/reactotron.config');
-}
+// if (__DEV__) {
+// }
 
-AppRegistry.registerComponent(appName, () => App);
+AppRegistry.registerComponent(appName, () => App)

@@ -3,9 +3,7 @@ module.exports = {
   plugins: ['import', 'react'],
   extends: [
     '@react-native',
-    'airbnb',
     'eslint:recommended',
-    'airbnb/hooks',
     'airbnb-typescript',
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
