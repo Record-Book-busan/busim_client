@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@invertase/react-native-apple-authentication": "^2.3.0",
+    "@gorhom/bottom-sheet": "^4.6.4",
     "@react-native-camera-roll/camera-roll": "^7.8.3",
     "@react-native-kakao/core": "^2.2.5",
     "@react-native-kakao/user": "^2.2.5",
@@ -34,6 +35,7 @@
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/stack": "^6.4.1",
     "@tanstack/react-query": "^5.53.1",
+    "class-variance-authority": "^0.7.0",
     "i18next": "^23.14.0",
     "ky": "^1.7.1",
     "nativewind": "^2.0.11",
@@ -51,6 +53,7 @@
     "react-native-screens": "3.35.0-rc.1",
     "react-native-svg": "^15.6.0",
     "react-native-webview": "^13.12.1",
+    "tailwind-merge": "^2.5.2",
     "zod": "^3.23.8"
   },
   "devDependencies": {
