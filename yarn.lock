@@ -2345,6 +2345,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-camera-roll/camera-roll@npm:^7.8.3":
+  version: 7.8.3
+  resolution: "@react-native-camera-roll/camera-roll@npm:7.8.3"
+  peerDependencies:
+    react-native: ">=0.59"
+  checksum: 10c0/50db79283c6d4a27ef1339ec504949e1e4ec366f131d58c518ef82bf02bc8038ade81073b22a04f8eada4366ffa1efc8e374fff427242aba8e82296b74a10db4
+  languageName: node
+  linkType: hard
+
 "@react-native-community/cli-clean@npm:14.0.0":
   version: 14.0.0
   resolution: "@react-native-community/cli-clean@npm:14.0.0"
@@ -4404,6 +4413,7 @@ __metadata:
     "@commitlint/cli": "npm:^19.4.1"
     "@commitlint/config-conventional": "npm:^19.4.1"
     "@commitlint/cz-commitlint": "npm:^19.4.0"
+    "@react-native-camera-roll/camera-roll": "npm:^7.8.3"
     "@react-native-kakao/core": "npm:^2.2.5"
     "@react-native-kakao/user": "npm:^2.2.5"
     "@react-native-masked-view/masked-view": "npm:^0.3.1"
