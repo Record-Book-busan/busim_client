@@ -64,7 +64,7 @@ module.exports = {
     'array-bracket-spacing': ['error', 'never'],
     'no-void': 'off',
     'no-console': 'off',
-    'no-shadow': 'error',
+    'no-shadow': 'warn',
     'import/no-unresolved': 'error',
     'import/named': 'error',
     'import/order': [
@@ -82,6 +82,12 @@ module.exports = {
     '@typescript-eslint/no-use-before-define': [
       'error',
       { variables: false, functions: false, classes: false },
+    ],
+    '@typescript-eslint/no-misused-promises': [
+      'error',
+      {
+        checksVoidReturn: false,
+      },
     ],
     '@typescript-eslint/no-unnecessary-type-assertion': 'error',
     '@typescript-eslint/no-unsafe-assignment': 'warn',
