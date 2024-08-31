@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native'
 import { Platform, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { MyPageScreen } from '@/screens'
+import { FeedScreen, MyPageScreen } from '@/screens'
 import { SvgIcon } from '@/shared'
 
 import MapStackNavigator from './MapStack'
@@ -68,15 +68,15 @@ function MainTabNavigator() {
         }}
       />
       <Tab.Screen
-        name="Camera"
-        component={EmptyComponent}
+        name="Feed"
+        component={FeedScreen}
         options={{
-          tabBarLabel: '카메라',
+          tabBarLabel: '기록',
           tabBarIcon: props => <TabBarIcon name="camera" {...props} />,
           tabBarButton: props => (
             <TouchableOpacity
               {...props}
-              onPress={() => navigation.navigate('RecordStack', { screen: 'CameraCapture' })}
+              onPress={() => navigation.navigate('RecordStack', { screen: 'RecordFeed' })}
             />
           ),
         }}
@@ -95,5 +95,3 @@ function MainTabNavigator() {
 }
 
 export default MainTabNavigator
-
-const EmptyComponent = () => null

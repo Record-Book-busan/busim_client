@@ -10,7 +10,7 @@ export type RootStackParamList = {
 
 export type MainTabParamList = {
   Map: undefined
-  Camera: undefined
+  Feed: undefined
   MyPage: undefined
 }
 
@@ -20,8 +20,8 @@ export type MapStackParamList = {
 }
 
 export type RecordStackParamList = {
-  CameraCapture: undefined
-  CreatePost: undefined
+  RecordFeed: undefined
+  CreateRecord: undefined
 }
 
 export type MyPageStackParamList = {
