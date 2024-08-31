@@ -1,18 +1,32 @@
 import { useState } from 'react'
-import { View, Text, TouchableOpacity, Alert } from 'react-native'
+import { View, Text, TouchableOpacity, Alert, Image } from 'react-native'
 
+import { useImagePicker } from '@/hooks/useImagePicker'
 import { SafeScreen, SvgIcon, TextField } from '@/shared'
 
 function ProfileEditScreen() {
   const [nickname, setNickname] = useState('')
+  const [profileImage, setProfileImage] = useState<string | undefined>()
+  const { pickImage } = useImagePicker()
+
+  const handlePickImage = async () => {
+    const image = await pickImage()
+    if (image && image.uri) {
+      setProfileImage(image.uri)
+    }
+  }
 
   return (
     <SafeScreen excludeEdges={['top']}>
       <View className="mt-12 items-center">
         <Text className="mb-2 text-base text-gray-900">프로필 사진</Text>
-        <TouchableOpacity className="relative">
-          <View className="flex h-24 w-24 items-center justify-center rounded-full border border-gray-300 bg-neutral-100">
-            <SvgIcon name="person" fill="#D0D0D0" />
+        <TouchableOpacity className="relative" onPress={handlePickImage}>
+          <View className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border border-gray-300 bg-neutral-100">
+            {profileImage ? (
+              <Image source={{ uri: profileImage }} style={{ width: '100%', height: '100%' }} />
+            ) : (
+              <SvgIcon name="person" fill="#D0D0D0" />
+            )}
           </View>
           <View className="absolute bottom-0 right-0 rounded-full border border-gray-300 bg-white p-1">
             <SvgIcon name="pencil" fill="#FF9278" />
@@ -42,17 +56,17 @@ function ProfileEditScreen() {
         </Text>
       </View>
 
-      <View className="mb-4 mt-14 flex-row justify-center">
+      {/* <View className="mb-4 mt-14 flex-row justify-center">
         <TouchableOpacity className="w-2/6 rounded-full border-2 border-gray-300 bg-white py-2 shadow">
           <Text className="text-center text-base font-semibold text-gray-400">저장</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
 
-      {/* <View className="mb-4 flex-1 justify-end px-4">
+      <View className="mb-4 flex-1 justify-end px-4">
         <TouchableOpacity className="rounded-xl bg-blue-500 py-3">
           <Text className="text-center text-base font-bold text-white">저장</Text>
         </TouchableOpacity>
-      </View> */}
+      </View>
     </SafeScreen>
   )
 }
