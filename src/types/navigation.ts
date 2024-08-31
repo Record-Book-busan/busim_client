@@ -21,7 +21,7 @@ export type MapStackParamList = {
 
 export type RecordStackParamList = {
   CameraCapture: undefined
-  CreatePost: undefined
+  CreateRecord: { photoPath: string }
 }
 
 export type MyPageStackParamList = {

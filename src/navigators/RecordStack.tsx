@@ -1,7 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack'
 // import { Text, TouchableOpacity } from 'react-native'
 
-import { CameraScreen, PostScreen } from '@/screens'
+import { CameraScreen, RecordScreen } from '@/screens'
 
 import type { RecordStackParamList } from '@/types/navigation'
 
@@ -26,8 +26,8 @@ function RecordStackNavigator() {
         // })}
       />
       <Stack.Screen
-        name="CreatePost"
-        component={PostScreen}
+        name="CreateRecord"
+        component={RecordScreen}
         options={{
           headerTitle: '여행 기록 작성',
         }}
