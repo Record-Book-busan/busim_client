@@ -10,7 +10,7 @@
     "format": "prettier src/**/*.{js,jsx,ts,tsx} --write",
     "start": "react-native start",
     "commit": "git-cz",
-    "pod-install": "cd ios && pod install && cd ..",
+    "pod-install": "cd ios && RCT_NEW_ARCH_ENABLED=1 bundle exec pod install && cd ..",
     "postinstall": "npx patch-package && husky"
   },
   "lint-staged": {
