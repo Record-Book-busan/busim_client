@@ -1,12 +1,10 @@
-import { type RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from 'react'
 import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native'
 
-import { useImagePicker } from '@/hooks/useImagePicker'
-import { SafeScreen, TextField } from '@/shared'
-import { RecordStackParamList } from '@/types/navigation'
-
-import type { StackNavigationProp } from '@react-navigation/stack'
+import { useCamera } from '@/hooks/useCamera'
+import { useGallery } from '@/hooks/useGallery'
+import { KeyboardDismissPressable, SafeScreen, TextField } from '@/shared'
 
 const ToggleButton = ({
   title,
@@ -25,30 +23,14 @@ const ToggleButton = ({
   </TouchableOpacity>
 )
 
-type RecordScreenNavigationProp = StackNavigationProp<RecordStackParamList, 'CreateRecord'>
-type RecordScreenRouteProp = RouteProp<RecordStackParamList, 'CreateRecord'>
-
 const RecordScreen = () => {
-  const route = useRoute<RecordScreenRouteProp>()
-  const navigation = useNavigation<RecordScreenNavigationProp>()
-  const { photoPath } = route.params
-  const [currentPhotoPath, setCurrentPhotoPath] = useState(photoPath)
+  const { takePhoto } = useCamera()
+  const { getPhoto } = useGallery()
   const [content, setContent] = useState('')
-  const { pickImage } = useImagePicker()
-
-  const handleTakePhoto = () => {
-    navigation.navigate('CameraCapture')
-  }
-
-  const handlePickImage = async () => {
-    const image = await pickImage()
-    if (image && image.uri) {
-      setCurrentPhotoPath(image.uri)
-    }
-  }
-
   const [activeMapType, setActiveMapType] = useState('tourist')
   const [activeCategory, setActiveCategory] = useState('tourist')
+
+  const [currentPhotoUri, setCurrentPhotoUri] = useState<string | null>(null)
 
   const mapTypes = [
     { id: 'tourist', title: '관광지도' },
@@ -63,67 +45,80 @@ const RecordScreen = () => {
     { id: 'hotplace', title: '핫플' },
   ]
 
+  const handleTakePhoto = async () => {
+    const photo = await takePhoto()
+
+    if (photo && photo.uri) {
+      setCurrentPhotoUri(photo.uri)
+    }
+  }
+
+  const handleGetPhoto = async () => {
+    const photo = await getPhoto()
+    if (photo && photo.uri) {
+      setCurrentPhotoUri(photo.uri)
+    }
+  }
+
   return (
-    <SafeScreen excludeEdges={['bottom']}>
-      <ScrollView className="flex-1 p-4">
-        <Text className="mb-4 text-xl font-bold">여행 기록 제목</Text>
-        <View>
-          <View className="mb-4 flex-row justify-center">
-            {mapTypes.map(type => (
-              <ToggleButton
-                key={type.id}
-                title={type.title}
-                isActive={activeMapType === type.id}
-                onPress={() => setActiveMapType(type.id)}
-              />
-            ))}
-          </View>
+    <SafeScreen excludeEdges={['top', 'bottom']}>
+      <KeyboardDismissPressable>
+        <View className="flex-1 bg-white">
+          <ScrollView className="flex-1 p-4">
+            <Text className="mb-4 text-xl font-bold">여행 기록 제목</Text>
+            <View>
+              <View className="mb-4 flex-row justify-center">
+                {mapTypes.map(type => (
+                  <ToggleButton
+                    key={type.id}
+                    title={type.title}
+                    isActive={activeMapType === type.id}
+                    onPress={() => setActiveMapType(type.id)}
+                  />
+                ))}
+              </View>
 
-          <View className="mb-4 flex-row flex-wrap justify-center">
-            {categories.map(category => (
-              <ToggleButton
-                key={category.id}
-                title={category.title}
-                isActive={activeCategory === category.id}
-                onPress={() => setActiveCategory(category.id)}
-              />
-            ))}
-          </View>
-        </View>
+              <View className="mb-4 flex-row flex-wrap justify-center">
+                {categories.map(category => (
+                  <ToggleButton
+                    key={category.id}
+                    title={category.title}
+                    isActive={activeCategory === category.id}
+                    onPress={() => setActiveCategory(category.id)}
+                  />
+                ))}
+              </View>
+            </View>
 
-        <View className="mb-4 h-64 items-center justify-center bg-gray-200">
-          <Text>지도 영역</Text>
-        </View>
+            {/* 지도 영역 */}
+            <View className="mb-4 h-64 items-center justify-center bg-gray-200">
+              <Text>지도 영역</Text>
+            </View>
 
-        <View className="mb-4">
-          <Text className="mb-2">부산광역시 해운대 좌동</Text>
-          {currentPhotoPath && (
-            <Image
-              source={{ uri: `file://${currentPhotoPath}` }}
-              className="mb-2 h-64 w-full rounded-lg"
-              resizeMode="cover"
+            {/* 사진 영역 */}
+            <View className="mb-4">
+              {currentPhotoUri && (
+                <Image
+                  source={{ uri: currentPhotoUri }}
+                  className="mb-2 h-64 w-full rounded-lg"
+                  resizeMode="cover"
+                />
+              )}
+            </View>
+
+            {/* 기록 영역 */}
+            <TextField
+              value={content}
+              onChangeText={setContent}
+              placeholder="여행 기록을 작성해주세요."
+              multiline
+              className="h-32 rounded border border-gray-300 p-2"
             />
-          )}
-          <View className="flex-row justify-between">
-            <TouchableOpacity className="rounded bg-blue-500 px-4 py-2" onPress={handleTakePhoto}>
-              <Text className="text-white">다시 촬영</Text>
-            </TouchableOpacity>
-            <TouchableOpacity className="rounded bg-blue-500 px-4 py-2" onPress={handlePickImage}>
-              <Text className="text-white">갤러리에서 선택</Text>
-            </TouchableOpacity>
-          </View>
+
+            <Text className="text-right text-gray-500">{content.length}/500</Text>
+          </ScrollView>
         </View>
-
-        <TextField
-          value={content}
-          onChangeText={setContent}
-          placeholder="여행 기록을 작성해주세요."
-          multiline
-          className="h-32 rounded border border-gray-300 p-2"
-        />
-
-        <Text className="text-right text-gray-500">{content.length}/500</Text>
-      </ScrollView>
+      </KeyboardDismissPressable>
     </SafeScreen>
   )
 }
