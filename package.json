@@ -25,6 +25,7 @@
     }
   },
   "dependencies": {
+    "@invertase/react-native-apple-authentication": "^2.3.0",
     "@react-native-camera-roll/camera-roll": "^7.8.3",
     "@react-native-kakao/core": "^2.2.5",
     "@react-native-kakao/user": "^2.2.5",

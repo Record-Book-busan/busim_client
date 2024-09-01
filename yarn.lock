@@ -1914,6 +1914,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@invertase/react-native-apple-authentication@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "@invertase/react-native-apple-authentication@npm:2.3.0"
+  checksum: 10c0/fefbfb828b1e46694f5d35aadd7f562f4ed018e75798e59be85703205068163b109954a1e2710293426d656be4da7904faf830f13fea1f79771c7c9371cdee40
+  languageName: node
+  linkType: hard
+
 "@isaacs/cliui@npm:^8.0.2":
   version: 8.0.2
   resolution: "@isaacs/cliui@npm:8.0.2"
@@ -4413,6 +4420,7 @@ __metadata:
     "@commitlint/cli": "npm:^19.4.1"
     "@commitlint/config-conventional": "npm:^19.4.1"
     "@commitlint/cz-commitlint": "npm:^19.4.0"
+    "@invertase/react-native-apple-authentication": "npm:^2.3.0"
     "@react-native-camera-roll/camera-roll": "npm:^7.8.3"
     "@react-native-kakao/core": "npm:^2.2.5"
     "@react-native-kakao/user": "npm:^2.2.5"
