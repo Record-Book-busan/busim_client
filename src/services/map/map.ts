@@ -10,8 +10,108 @@ function createMap() {
         level: 3
     };
     
-    const map = new kakao.maps.Map(container, options);
+    map = new kakao.maps.Map(container, options)
     const geocoder = new kakao.maps.services.Geocoder();
+  `
+}
+
+/**
+ * 지도 중심 좌표 확인 함수
+ */
+function getMapCenter() {
+  return `
+    var level = map.getLevel();
+    var latlng = map.getCenter();
+
+    alert(\`level은 \${level}, latlng은 \${latlng}입니다.\`);
+  `
+}
+
+/**
+ * 마커 초기화 함수
+ */
+function initMarkers() {
+  return `
+    showingMarkers.forEach(m => m.setMap(null))
+    showingMarkers = []
+  `
+}
+
+/**
+ * 마커 보이게 하는 함수
+ */
+function showMarkers() {
+  return `
+    showingMarkers.forEach(m => {
+        m.setMap(map)
+    })
+  `
+}
+
+/**
+ * 마케 이미지 선택 함수
+ * @param type string
+ * @returns
+ */
+function getMarkerImage(type: string = 'food') {
+  return `
+    switch(${type}) {
+        case 'food':
+            return './marker_yellow.svg'
+        case 'cafe':
+            return './marker_purple.svg'
+        default :
+            return './marker_yellow.svg'
+    }
+  `
+}
+
+/**
+ * 마커 생성 함수
+ * @param type string
+ */
+function settingMarkers(type: string = 'food') {
+  return `
+    initMarkers()
+
+    const data = [
+        {
+            title: '카카오', 
+            type: 'food',
+            latlng: new kakao.maps.LatLng(33.450705, 126.570677)
+        },
+        {
+            title: '생태연못', 
+            type: 'food',
+            latlng: new kakao.maps.LatLng(33.450936, 126.569477)
+        },
+        {
+            title: '텃밭', 
+            type: 'cafe',
+            latlng: new kakao.maps.LatLng(33.450879, 126.569940)
+        },
+        {
+            title: '근린공원',
+            type: 'food',
+            latlng: new kakao.maps.LatLng(33.451393, 126.570738)
+        }
+    ]
+
+    data.forEach((d) => {
+        if(d.type === ${type}) {
+            const markerImage = new kakao.maps.MarkerImage(getMarkerImage(d.type), new kakao.maps.Size(80, 80))
+
+            const marker = new kakao.maps.Marker({
+                position: d.latlng,
+                title : d.title,
+                image : markerImage 
+            })
+
+            showingMarkers.push(marker)
+        }
+    })
+
+    showMarkers()
   `
 }
 
@@ -23,9 +123,34 @@ function createMap() {
  */
 const RegistFn = [
   {
-    key: 'createMap',
+    key: 'createMap()',
     val: createMap(),
     isInit: true,
+  },
+  {
+    key: 'getMapCenter()',
+    val: getMapCenter(),
+    isInit: true,
+  },
+  {
+    key: 'initMarkers()',
+    val: initMarkers(),
+    isInit: false,
+  },
+  {
+    key: 'showMarkers()',
+    val: showMarkers(),
+    isInit: false,
+  },
+  {
+    key: 'getMarkerImage(type)',
+    val: getMarkerImage(),
+    isInit: false,
+  },
+  {
+    key: 'settingMarkers(type)',
+    val: settingMarkers(),
+    isInit: false,
   },
 ]
 
@@ -34,15 +159,15 @@ function js() {
   let initFn = ''
 
   RegistFn.forEach(fn => {
-    registFn += `function ${fn.key}() { ${fn.val} }`
+    registFn += `function ${fn.key} { ${fn.val} }`
 
     if (fn.isInit) {
-      initFn += `${fn.key}()`
+      initFn += `${fn.key};`
     }
   })
 
   if (initFn !== '') {
-    initFn = `(function(){ ${initFn} })()`
+    initFn = `kakao.maps.load(function(){ ${initFn} })`
   }
 
   return { registFn, initFn }
@@ -59,6 +184,9 @@ const map = `
   <body >
       <div id="map" style="width: 100%; height: 100%;"></div>
       <script>
+        let map;
+        let showingMarkers = [];
+
         ${js().initFn}
         ${js().registFn}
       </script>
