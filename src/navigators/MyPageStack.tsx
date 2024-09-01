@@ -14,6 +14,7 @@ function MyPageStackNavigator() {
         component={ProfileEditScreen}
         options={{
           headerTitle: '프로필 설정',
+          headerTitleAlign: 'center',
         }}
       />
       {/* <Stack.Screen name="MyPageSettings" component={SettingsScreen} /> */}

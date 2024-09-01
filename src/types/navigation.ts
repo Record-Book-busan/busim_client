@@ -3,9 +3,21 @@ import type { StackScreenProps } from '@react-navigation/stack'
 
 export type RootStackParamList = {
   Login: undefined
-  MainTab: undefined
+  PrivacyPolicy: undefined
+  InterestStack: NavigatorScreenParams<InterestStackParamList>
+  MainTab: NavigatorScreenParams<MainTabParamList>
   RecordStack: NavigatorScreenParams<RecordStackParamList>
   MyPageStack: NavigatorScreenParams<MyPageStackParamList>
+}
+
+type InterestFoodProps = {
+  title: string
+  isSelected: boolean
+}
+
+export type InterestStackParamList = {
+  InterestTour: undefined
+  InterestFood: InterestFoodProps[]
 }
 
 export type MainTabParamList = {
