@@ -5,7 +5,7 @@ export { default as InterestTourScreen } from './Interest/InterestTour'
 export { default as InterestFoodScreen } from './Interest/InterestFood'
 
 export { default as RecordScreen } from './Record/Record'
-export { default as FeedScreen } from './Record/Feed'
+export { default as RecordMainScreen } from './Record/Main'
 
 export { default as MyPageScreen } from './MyPage/MyPage'
 export { default as ProfileEditScreen } from './MyPage/ProfileEdit'

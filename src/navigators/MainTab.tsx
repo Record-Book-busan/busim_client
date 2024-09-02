@@ -1,16 +1,14 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { useNavigation } from '@react-navigation/native'
-import { Platform, TouchableOpacity, View } from 'react-native'
+import { Platform, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { FeedScreen, MyPageScreen } from '@/screens'
+import { RecordMainScreen, MyPageScreen } from '@/screens'
 import { SvgIcon } from '@/shared'
 
 import MapStackNavigator from './MapStack'
 
 import type { IconName } from '@/shared/SvgIcon'
-import type { MainTabParamList, RootStackParamList } from '@/types/navigation'
-import type { StackNavigationProp } from '@react-navigation/stack'
+import type { MainTabParamList } from '@/types/navigation'
 
 const TabBarIcon = ({ name, color, size }: { name: IconName; color: string; size: number }) => {
   return (
@@ -24,7 +22,6 @@ const Tab = createBottomTabNavigator<MainTabParamList>()
 
 function MainTabNavigator() {
   const insets = useSafeAreaInsets()
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>()
 
   return (
     <Tab.Navigator
@@ -68,17 +65,12 @@ function MainTabNavigator() {
         }}
       />
       <Tab.Screen
-        name="Feed"
-        component={FeedScreen}
+        name="Record"
+        component={RecordMainScreen}
         options={{
+          headerShown: false,
           tabBarLabel: '기록',
           tabBarIcon: props => <TabBarIcon name="camera" {...props} />,
-          tabBarButton: props => (
-            <TouchableOpacity
-              {...props}
-              onPress={() => navigation.navigate('RecordStack', { screen: 'RecordFeed' })}
-            />
-          ),
         }}
       />
       <Tab.Screen
