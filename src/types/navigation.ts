@@ -40,6 +40,7 @@ export type RecordStackParamList = {
 export type MyPageStackParamList = {
   MyPageProfile: undefined
   MyPageSettings: undefined
+  Test: undefined
 }
 
 export type RootScreenProps<S extends keyof RootStackParamList = keyof RootStackParamList> =
