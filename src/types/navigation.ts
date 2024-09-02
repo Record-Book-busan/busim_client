@@ -22,7 +22,7 @@ export type InterestStackParamList = {
 
 export type MainTabParamList = {
   Map: undefined
-  Feed: undefined
+  Record: undefined
   MyPage: undefined
 }
 
@@ -32,7 +32,8 @@ export type MapStackParamList = {
 }
 
 export type RecordStackParamList = {
-  RecordFeed: undefined
+  RecordMain: undefined
+  RecordDetail: undefined
   CreateRecord: undefined
 }
 

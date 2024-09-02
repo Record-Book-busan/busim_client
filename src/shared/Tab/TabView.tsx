@@ -115,7 +115,7 @@ export const TabViewRoot: React.FC<TabViewProps> = ({
       }}
     >
       <Animated.View
-        className={cn('absolute inset-0 flex-row items-stretch')}
+        className="absolute bottom-0 left-0 right-0 top-0 flex-row"
         style={[
           {
             width: containerWidth * childCount,
@@ -153,8 +153,12 @@ export const TabViewRoot: React.FC<TabViewProps> = ({
 
 type TabViewItemProps = ViewProps
 
-export const TabViewItem: React.FC<TabViewItemProps> = ({ children, ...rest }) => {
-  return <View {...rest}>{React.isValidElement(children) && children}</View>
+export const TabViewItem: React.FC<TabViewItemProps> = ({ children, className, ...rest }) => {
+  return (
+    <View className={cn('flex-1', className)} {...rest}>
+      {React.isValidElement(children) && children}
+    </View>
+  )
 }
 
 export const TabView = Object.assign(TabViewRoot, {
