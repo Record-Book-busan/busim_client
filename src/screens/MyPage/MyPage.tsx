@@ -17,7 +17,7 @@ type SectionProps = {
 
 const MenuItem = ({ title, onPress }: MenuItemProps) => (
   <TouchableOpacity onPress={onPress} className="flex-row items-center justify-between py-4">
-    <Text className="text-base text-gray-700">{title}</Text>
+    <Text className="text-base text-gray-600">{title}</Text>
     <SvgIcon name="chevronRight" className="text-gray-400" size={14} />
   </TouchableOpacity>
 )
