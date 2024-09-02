@@ -13,7 +13,7 @@ import type { MainTabParamList } from '@/types/navigation'
 const TabBarIcon = ({ name, color, size }: { name: IconName; color: string; size: number }) => {
   return (
     <View className="flex-1 items-center justify-center">
-      <SvgIcon name={name} size={size} fill={color} />
+      <SvgIcon name={name} size={size} style={{ color: color }} />
     </View>
   )
 }

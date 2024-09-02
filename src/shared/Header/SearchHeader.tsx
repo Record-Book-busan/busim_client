@@ -53,7 +53,7 @@ export function SearchHeader({ type, placeholder, containerStyle, ...props }: Se
             textAlignVertical="center"
           />
           <TouchableOpacity className="ml-2" onPress={props.onPress} {...props}>
-            <SvgIcon name="search" />
+            <SvgIcon name="search" className="text-BUSIM-blue" />
           </TouchableOpacity>
         </View>
       </View>
