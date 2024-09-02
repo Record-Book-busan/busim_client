@@ -3,7 +3,7 @@ import { Platform, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { MapView } from '@/components/map'
-import { SearchHeader } from '@/shared'
+import { SafeScreen, SearchHeader } from '@/shared'
 
 const HEADER_CONTENT_HEIGHT = 50
 const HEADER_HEIGHT =
@@ -77,8 +77,8 @@ function MapScreen() {
   ]
 
   return (
-    <View className="flex-1">
-      <SearchHeader />
+    <SafeScreen excludeEdges={['top']}>
+      <SearchHeader type="map" placeholder="장소 검색" />
       <MapView />
       <View
         className="absolute left-0 right-0 z-50"
@@ -103,7 +103,7 @@ function MapScreen() {
           })}
         </View>
       </View>
-    </View>
+    </SafeScreen>
   )
 }
 
