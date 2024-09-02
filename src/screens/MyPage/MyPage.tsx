@@ -4,6 +4,7 @@ import { type ReactNode } from 'react'
 import { Text, TouchableOpacity, View, ScrollView } from 'react-native'
 
 import { ImageVariant, SafeScreen, SvgIcon } from '@/shared'
+import { Button } from '@/shared/Button/Button'
 import { type RootStackParamList } from '@/types/navigation'
 
 type MenuItemProps = {
@@ -11,19 +12,11 @@ type MenuItemProps = {
   onPress: () => void
 }
 
-type SectionProps = {
-  children: ReactNode
-}
-
 const MenuItem = ({ title, onPress }: MenuItemProps) => (
-  <TouchableOpacity onPress={onPress} className="flex-row items-center justify-between py-4">
+  <Button onPress={onPress} type="inner" variant="ghost">
     <Text className="text-base text-gray-600">{title}</Text>
-    <SvgIcon name="chevronRight" className="text-gray-400" size={14} />
-  </TouchableOpacity>
-)
-
-const Section = ({ children }: SectionProps) => (
-  <View className="mb-2 bg-white px-5 py-1">{children}</View>
+    <SvgIcon name="chevronRight" size={14} className="text-gray-400" />
+  </Button>
 )
 
 const FooterButton = ({ title, onPress }: MenuItemProps) => (
@@ -63,6 +56,12 @@ function MyPageScreen() {
   const menuItems = [
     { title: '기록한 여행 사진', onPress: () => {} },
     { title: '북마크', onPress: () => {} },
+    {
+      title: '테스트',
+      onPress: () => {
+        navigation.navigate('MyPageStack', { screen: 'Test' })
+      },
+    },
   ]
 
   const settingsItems = [
@@ -82,17 +81,17 @@ function MyPageScreen() {
   return (
     <SafeScreen excludeEdges={['top']}>
       <ScrollView className="flex-1 bg-gray-100">
-        <Section>
+        <View className="mb-2 bg-white px-3 py-1">
           <ProfileHeader {...profileItem} />
           {menuItems.map((item, index) => (
             <MenuItem key={index} {...item} />
           ))}
-        </Section>
-        <Section>
+        </View>
+        <View className="mb-2 flex-col bg-white px-3 py-1" style={{ gap: 5 }}>
           {settingsItems.map((item, index) => (
             <MenuItem key={index} {...item} />
           ))}
-        </Section>
+        </View>
         <View className="flex-row px-5 g-3">
           {footerItems.map((item, index) => (
             <FooterButton key={index} {...item} />

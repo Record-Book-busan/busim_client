@@ -1,6 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack'
 
 import { ProfileEditScreen } from '@/screens'
+import Test from '@/screens/MyPage/Test'
 
 import type { MyPageStackParamList } from '@/types/navigation'
 
@@ -18,6 +19,7 @@ function MyPageStackNavigator() {
         }}
       />
       {/* <Stack.Screen name="MyPageSettings" component={SettingsScreen} /> */}
+      <Stack.Screen name="Test" component={Test} />
     </Stack.Navigator>
   )
 }
