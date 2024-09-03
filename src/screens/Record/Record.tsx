@@ -48,7 +48,7 @@ const RecordScreen = () => {
           enableOnAndroid
           enableAutomaticScroll={false}
           keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{ flexGrow: 1, backgroundColor: 'white' }}
         >
           <View className="px-3 pt-4">
             <View className="mb-4 items-center justify-center">
