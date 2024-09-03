@@ -8,7 +8,8 @@ import {
   Pressable,
 } from 'react-native'
 
-import SafeScreen from '../../components/common/SafeScreen'
+import { SafeScreen } from '@/components/common'
+
 import { SvgIcon } from '../SvgIcon'
 
 interface ImagePickerModalProps {
@@ -19,7 +20,7 @@ interface ImagePickerModalProps {
 }
 
 // TODO: 모달 디자인 변경 필요
-function ImagePickerModal({
+export function ImagePickerModal({
   isVisible,
   onClose,
   onGalleryPress,
@@ -81,5 +82,3 @@ function ImagePickerModal({
     </Modal>
   )
 }
-
-export default ImagePickerModal
