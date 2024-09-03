@@ -15,7 +15,7 @@ function SafeScreen({ children, excludeEdges = [] }: SafeScreenProps) {
       edges={['top', 'right', 'bottom', 'left'].filter(
         (edge): edge is Edge => !excludeEdges.includes(edge as Edge),
       )}
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: 'white' }}
     >
       <StatusBar
         barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}

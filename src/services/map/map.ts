@@ -11,7 +11,6 @@ function createMap() {
     };
     
     map = new kakao.maps.Map(container, options)
-    const geocoder = new kakao.maps.services.Geocoder();
   `
 }
 
@@ -22,8 +21,6 @@ function getMapCenter() {
   return `
     var level = map.getLevel();
     var latlng = map.getCenter();
-
-    alert(\`level은 \${level}, latlng은 \${latlng}입니다.\`);
   `
 }
 
@@ -194,4 +191,43 @@ const map = `
   </html>
 `
 
-export default map
+type detailProps = {
+  lon: number
+  lat: number
+}
+
+const detail = ({ lon, lat }: detailProps) => {
+  return `
+    <html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${
+          process.env.KakaoJsApiKey
+        }&libraries=services,clusterer,drawing"></script> 
+    </head>
+    <body >
+        <div id="map" style="width: 100%; height: 100%;"></div>
+        <script>
+          let map;
+
+          const container = document.getElementById('map');
+          const options = {
+              center: new kakao.maps.LatLng(${lon}, ${lat}),
+              level: 3
+          };
+          
+          map = new kakao.maps.Map(container, options)
+
+          const marker = new kakao.maps.Marker({
+              position: new kakao.maps.LatLng(${lon}, ${lat})
+          });
+
+          marker.setMap(map);
+          map.setDraggable(false);
+        </script>
+    </body>
+    </html>
+  `
+}
+
+export { map, detail }
