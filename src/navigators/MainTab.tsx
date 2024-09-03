@@ -10,10 +10,10 @@ import MapStackNavigator from './MapStack'
 import type { IconName } from '@/shared/SvgIcon'
 import type { MainTabParamList } from '@/types/navigation'
 
-const TabBarIcon = ({ name, size }: { name: IconName; size: number }) => {
+const TabBarIcon = ({ name, size, color }: { name: IconName; size: number; color: string }) => {
   return (
     <View className="flex-1 items-center justify-center">
-      <SvgIcon name={name} size={size} />
+      <SvgIcon name={name} size={size} style={{ color: color }} />
     </View>
   )
 }

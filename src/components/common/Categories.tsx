@@ -3,6 +3,8 @@ import { View } from 'react-native'
 
 import { Chip } from '@/shared'
 
+import { CATEGORY } from './constant'
+
 export const MAP_TYPE = {
   TOUR_LIST: 'tourist',
   FOOD: 'food',
@@ -17,16 +19,16 @@ const MAP_TYPES = [
 
 const CATEGORIES = {
   [MAP_TYPE.TOUR_LIST]: [
-    { id: 1, title: '관광지' },
-    { id: 8, title: '자연' },
-    { id: 2, title: '테마' },
-    { id: 16, title: '레포츠' },
-    { id: 4, title: '핫플' },
+    { id: CATEGORY.관광지, title: '관광지' },
+    { id: CATEGORY.자연, title: '자연' },
+    { id: CATEGORY.테마, title: '테마' },
+    { id: CATEGORY.레포츠, title: '레포츠' },
+    { id: CATEGORY.핫플, title: '핫플' },
   ],
   [MAP_TYPE.FOOD]: [
-    { id: 32, title: '맛집' },
-    { id: 64, title: '카페' },
-    { id: 128, title: '술집' },
+    { id: CATEGORY.맛집, title: '맛집' },
+    { id: CATEGORY.카페, title: '카페' },
+    { id: CATEGORY.술집, title: '술집' },
   ],
 } as const
 

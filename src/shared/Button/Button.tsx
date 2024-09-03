@@ -4,11 +4,10 @@ import { Pressable, Animated, View, Easing, type PressableProps } from 'react-na
 
 import { cn } from '@/utils/cn'
 
+import { defaultAnimConfig } from './ButtonPrimitive'
 import { buttonContainerVariants, buttonTextVariants } from './styles'
 
 export interface ButtonProps extends PressableProps {
-  /** 버튼 유형 */
-  type?: 'container' | 'inner'
   /** 버튼 눌렀을 때 색상 */
   pressedColor?: string
   /** 버튼 호버 시 색상 */
@@ -19,13 +18,15 @@ export interface ButtonProps extends PressableProps {
   buttonStyle?: string
   /** 버튼 텍스트 스타일 */
   textStyle?: string
+  /** 버튼 애니메이션 설정 */
+  animationConfig?: Partial<Animated.TimingAnimationConfig>
   children: React.ReactNode
 }
 
 export const Button: React.FC<ButtonProps & VariantProps<typeof buttonContainerVariants>> = ({
   children,
-  type = 'container',
-  variant = 'default',
+  type = 'touch',
+  variant = 'ghost',
   size = 'md',
   disabled,
   onPress,
@@ -43,10 +44,8 @@ export const Button: React.FC<ButtonProps & VariantProps<typeof buttonContainerV
     setIsPressed(true)
     if (!disableAnimation) {
       Animated.timing(scaleAnim, {
-        toValue: 0.97,
-        duration: 80,
-        easing: Easing.inOut(Easing.ease),
-        useNativeDriver: true,
+        ...defaultAnimConfig,
+        ...props.animationConfig,
       }).start()
     }
   }
@@ -57,7 +56,7 @@ export const Button: React.FC<ButtonProps & VariantProps<typeof buttonContainerV
       Animated.timing(scaleAnim, {
         toValue: 1,
         duration: 75,
-        easing: Easing.out(Easing.quad),
+        easing: Easing.out(Easing.ease),
         useNativeDriver: true,
       }).start()
     }
@@ -72,7 +71,7 @@ export const Button: React.FC<ButtonProps & VariantProps<typeof buttonContainerV
       case 'primary':
         return 'bg-blue-800'
       case 'default':
-        return 'bg-gray-50'
+        return 'bg-gray-100'
       case 'ghost':
         return 'bg-gray-50'
       default:
@@ -87,7 +86,7 @@ export const Button: React.FC<ButtonProps & VariantProps<typeof buttonContainerV
       <Animated.Text
         className={cn(textStyle ? textStyle : textVariantStyle)}
         style={
-          type === 'inner' && !disableAnimation ? { transform: [{ scale: scaleAnim }] } : undefined
+          type === 'text' && !disableAnimation ? { transform: [{ scale: scaleAnim }] } : undefined
         }
       >
         {children}
@@ -96,7 +95,7 @@ export const Button: React.FC<ButtonProps & VariantProps<typeof buttonContainerV
       <Animated.View
         className={cn(textStyle ? textStyle : textVariantStyle)}
         style={
-          type === 'inner' && !disableAnimation ? { transform: [{ scale: scaleAnim }] } : undefined
+          type === 'text' && !disableAnimation ? { transform: [{ scale: scaleAnim }] } : undefined
         }
       >
         {children}
@@ -116,7 +115,7 @@ export const Button: React.FC<ButtonProps & VariantProps<typeof buttonContainerV
     >
       <Animated.View
         style={
-          type === 'container' && !disableAnimation
+          (type === 'button' || type === 'touch') && !disableAnimation
             ? { transform: [{ scale: scaleAnim }] }
             : undefined
         }

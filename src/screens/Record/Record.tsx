@@ -6,6 +6,7 @@ import { Categories, KeyboardAvoidingView, SafeScreen } from '@/components/commo
 import { useCamera } from '@/hooks/useCamera'
 import { useGallery } from '@/hooks/useGallery'
 import { TextArea, ImagePickerModal, SvgIcon, Button } from '@/shared'
+import { ButtonPrimitive } from '@/shared/Button'
 
 const RecordScreen = () => {
   const scrollViewRef = useRef<KeyboardAwareScrollView>(null)
@@ -42,7 +43,7 @@ const RecordScreen = () => {
 
   return (
     <SafeScreen>
-      <KeyboardAvoidingView>
+      <KeyboardAvoidingView edge="top">
         <KeyboardAwareScrollView
           ref={scrollViewRef}
           enableOnAndroid
@@ -73,14 +74,9 @@ const RecordScreen = () => {
                     resizeMode="cover"
                   />
                   <View className="absolute right-3 top-2">
-                    <Button
-                      buttonStyle="null"
-                      textStyle="null"
-                      pressedColor="null"
-                      onPress={() => setCurrentPhotoUri(null)}
-                    >
+                    <ButtonPrimitive onPress={() => setCurrentPhotoUri(null)}>
                       <SvgIcon name="trash" size={24} className="text-BUSIM-blue" />
-                    </Button>
+                    </ButtonPrimitive>
                   </View>
                 </>
               ) : (
@@ -126,7 +122,7 @@ const RecordScreen = () => {
         {/* 하단 버튼 영역 */}
         <View className={`relative bottom-0 left-0 right-0 bg-white px-3 pb-2 pt-2`}>
           <Button variant="primary" size="full">
-            기록하기
+            완료
           </Button>
         </View>
       </KeyboardAvoidingView>

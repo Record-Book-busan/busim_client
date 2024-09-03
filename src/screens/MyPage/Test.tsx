@@ -1,6 +1,7 @@
 import { Text, View } from 'react-native'
 
-import { SafeScreen, SvgIcon } from '@/shared'
+import { SafeScreen } from '@/components/common'
+import { SvgIcon } from '@/shared'
 import { Button } from '@/shared/Button/Button'
 import { FAB } from '@/shared/FAB'
 
