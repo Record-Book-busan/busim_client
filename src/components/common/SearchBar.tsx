@@ -11,7 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { theme } from '@/theme'
 import { cn } from '@/utils/cn'
 
-import { SvgIcon } from '../SvgIcon'
+import { SvgIcon } from '../../shared/SvgIcon'
 
 const HeaderVariants = cva('', {
   variants: {
@@ -25,20 +25,32 @@ const HeaderVariants = cva('', {
   },
 })
 
-interface SearchHeaderProps extends VariantProps<typeof HeaderVariants>, TouchableOpacityProps {
+interface SearchBarProps extends VariantProps<typeof HeaderVariants>, TouchableOpacityProps {
   type?: 'default' | 'map'
   placeholder?: string
   containerStyle?: string
+  /** 검색바 높이를 반환하는 함수 */
+  onHeightChange?: (height: number) => void
 }
 
-export function SearchHeader({ type, placeholder, containerStyle, ...props }: SearchHeaderProps) {
+export function SearchBar({
+  type,
+  placeholder,
+  containerStyle,
+  onHeightChange,
+  ...props
+}: SearchBarProps) {
   const insets = useSafeAreaInsets()
 
   return (
     <View
       className={cn(HeaderVariants({ type }))}
       style={{
-        paddingTop: insets.top,
+        paddingTop: insets.top, // safeArea 상단 아래 위치
+      }}
+      onLayout={event => {
+        const { height } = event.nativeEvent.layout
+        onHeightChange?.(height)
       }}
     >
       <View className={cn('flex-row items-center px-4 pb-4 pt-2', containerStyle)}>
