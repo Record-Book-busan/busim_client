@@ -1,10 +1,8 @@
 import { useNavigation } from '@react-navigation/native'
 import { type StackNavigationProp } from '@react-navigation/stack'
-import { type ReactNode } from 'react'
 import { Text, TouchableOpacity, View, ScrollView } from 'react-native'
 
-import { ImageVariant, SafeScreen, SvgIcon } from '@/shared'
-import { Button } from '@/shared/Button/Button'
+import { Button, ImageVariant, SafeScreen, SvgIcon } from '@/shared'
 import { type RootStackParamList } from '@/types/navigation'
 
 type MenuItemProps = {

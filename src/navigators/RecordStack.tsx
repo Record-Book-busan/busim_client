@@ -14,6 +14,7 @@ function RecordStackNavigator() {
         component={RecordScreen}
         options={{
           headerTitle: '여행 기록 작성',
+          headerShown: false,
         }}
       />
     </Stack.Navigator>

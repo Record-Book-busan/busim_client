@@ -15,9 +15,9 @@ export interface ButtonProps extends PressableProps {
   hoverColor?: string
   /** 버튼 애니메이션 비활성화 여부 */
   disableAnimation?: boolean
-  /** 추가적인 버튼 스타일 */
+  /** 버튼 스타일 */
   buttonStyle?: string
-  /** 추가적인 버튼 텍스트 스타일 */
+  /** 버튼 텍스트 스타일 */
   textStyle?: string
   children: React.ReactNode
 }
@@ -85,7 +85,7 @@ export const Button: React.FC<ButtonProps & VariantProps<typeof buttonContainerV
   const renderContent = () => {
     const content = isString ? (
       <Animated.Text
-        className={cn(textVariantStyle, textStyle)}
+        className={cn(textStyle ? textStyle : textVariantStyle)}
         style={
           type === 'inner' && !disableAnimation ? { transform: [{ scale: scaleAnim }] } : undefined
         }
@@ -94,7 +94,7 @@ export const Button: React.FC<ButtonProps & VariantProps<typeof buttonContainerV
       </Animated.Text>
     ) : (
       <Animated.View
-        className={cn('w-full flex-row items-center justify-between', textVariantStyle, textStyle)}
+        className={cn(textStyle ? textStyle : textVariantStyle)}
         style={
           type === 'inner' && !disableAnimation ? { transform: [{ scale: scaleAnim }] } : undefined
         }
@@ -123,9 +123,8 @@ export const Button: React.FC<ButtonProps & VariantProps<typeof buttonContainerV
       >
         <View
           className={cn(
-            containerVariantStyle,
+            buttonStyle ? buttonStyle : containerVariantStyle,
             isPressed && (pressedColor || getHoverColor()),
-            buttonStyle,
           )}
         >
           {renderContent()}
