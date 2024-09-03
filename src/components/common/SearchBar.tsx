@@ -1,4 +1,4 @@
-import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { type NavigationProp, useNavigation } from '@react-navigation/native'
 import { cva, type VariantProps } from 'class-variance-authority'
 import {
   View,
