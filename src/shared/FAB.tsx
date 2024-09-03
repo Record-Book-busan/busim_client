@@ -1,10 +1,10 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import React, { useEffect, useRef } from 'react'
-import { Animated, View, Text } from 'react-native'
+import React from 'react'
+import { View, Text } from 'react-native'
 
 import { cn } from '@/utils/cn'
 
-import { Button, type ButtonProps } from './Button'
+import { ButtonPrimitive, type ButtonProps } from './Button'
 
 const fabVariants = cva('absolute shadow z-50', {
   variants: {
@@ -14,10 +14,13 @@ const fabVariants = cva('absolute shadow z-50', {
       large: 'h-16',
     },
     position: {
-      bottomRight: 'bottom-4 right-4',
-      bottomLeft: 'bottom-4 left-4',
+      center: 'w-full top-1/2 justify-center items-center',
+      topCenter: 'w-full top-4 justify-center items-center',
       topRight: 'top-4 right-4',
       topLeft: 'top-4 left-4',
+      bottomCenter: 'w-full bottom-4 justify-center items-center',
+      bottomRight: 'bottom-4 right-4',
+      bottomLeft: 'bottom-4 left-4',
     },
     hasText: {
       true: '',
@@ -43,7 +46,6 @@ const fabVariants = cva('absolute shadow z-50', {
   ],
   defaultVariants: {
     size: 'default',
-    position: 'bottomRight',
     hasText: false,
   },
 })
@@ -59,44 +61,30 @@ export const FAB: React.FC<FABProps> = ({
   leftAddon,
   rightAddon,
   onPress,
-  visible = true,
-  disabled = false,
   size = 'default',
   position = 'bottomRight',
-  textStyle,
   buttonStyle,
+  textStyle,
 }) => {
-  const animatedValue = useRef(new Animated.Value(visible ? 1 : 0)).current
+  // const animatedValue = useRef(new Animated.Value(visible ? 1 : 0)).current
   const hasText = typeof children === 'string'
 
-  useEffect(() => {
-    Animated.spring(animatedValue, {
-      toValue: visible ? 1 : 0,
-      useNativeDriver: true,
-    }).start()
-  }, [visible, animatedValue])
+  // useEffect(() => {
+  //   Animated.spring(animatedValue, {
+  //     toValue: visible ? 1 : 0,
+  //     useNativeDriver: true,
+  //   }).start()
+  // }, [visible, animatedValue])
 
-  const containerStyle = {
-    transform: [{ scale: animatedValue }],
-    opacity: animatedValue,
-  }
+  // const containerStyle = {
+  //   transform: [{ scale: animatedValue }],
+  //   opacity: animatedValue,
+  // }
 
   return (
-    <Animated.View style={containerStyle} className={fabVariants({ size, position, hasText })}>
-      <Button
-        type="container"
-        size="sm"
-        onPress={onPress}
-        disabled={disabled}
-        buttonStyle={cn(
-          'items-center justify-center',
-          fabVariants({ size, hasText }),
-          hasText ? 'rounded-full' : '',
-          buttonStyle,
-        )}
-        textStyle={textStyle}
-      >
-        <View className="flex-row items-center justify-center">
+    <View className={cn(fabVariants({ size, position, hasText }))}>
+      <ButtonPrimitive onPress={onPress}>
+        <View className={cn('flex-row items-center justify-center', buttonStyle)}>
           {leftAddon && <View className="mr-2">{leftAddon}</View>}
           {hasText ? (
             <Text className={cn('font-medium text-gray-800', textStyle)}>{children}</Text>
@@ -105,7 +93,7 @@ export const FAB: React.FC<FABProps> = ({
           )}
           {rightAddon && <View className="ml-2">{rightAddon}</View>}
         </View>
-      </Button>
-    </Animated.View>
+      </ButtonPrimitive>
+    </View>
   )
 }
