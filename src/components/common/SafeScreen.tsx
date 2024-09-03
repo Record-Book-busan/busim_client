@@ -7,7 +7,7 @@ type SafeScreenProps = {
   excludeEdges?: Edge[]
 }
 
-function SafeScreen({ children, excludeEdges = [] }: SafeScreenProps) {
+export function SafeScreen({ children, excludeEdges = [] }: SafeScreenProps) {
   const { colorScheme } = useColorScheme()
 
   return (
@@ -26,5 +26,3 @@ function SafeScreen({ children, excludeEdges = [] }: SafeScreenProps) {
     </SafeAreaView>
   )
 }
-
-export default SafeScreen

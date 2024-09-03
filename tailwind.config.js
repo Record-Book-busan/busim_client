@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+
 const plugin = require('tailwindcss/plugin')
 
 module.exports = {
@@ -7,7 +8,8 @@ module.exports = {
     g: ({ theme }) => theme('spacing'),
     extend: {
       colors: {
-        'BUSIM-blue': '#1D4ED8',
+        'BUSIM-blue': '#2653B0',
+        'BUSIM-blue-light': '#BECCE8',
         'BUSIM-gray': '#374151',
         'BUSIM-gray-light': '#9CA3AF',
         'BUSIM-gray-dark': '#1F2937',

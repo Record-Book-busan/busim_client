@@ -1,10 +1,11 @@
-import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { type NavigationProp, useNavigation } from '@react-navigation/native'
 import { useState, useCallback } from 'react'
 import { Text, TouchableOpacity, View, Platform } from 'react-native'
 
 import { logoWhite } from '@/assets/images'
+import { SafeScreen } from '@/components/common'
 import { kakaoLogin, unAuthorizedLogin } from '@/services/login/login'
-import { ImageVariant, SafeScreen, SvgIcon } from '@/shared'
+import { ImageVariant, SvgIcon } from '@/shared'
 import { RootStackParamList } from '@/types/navigation'
 
 function Login() {

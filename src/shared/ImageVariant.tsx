@@ -9,7 +9,7 @@ type ImageVariantProps = Omit<ImageProps, 'source'> & {
   className?: string
 }
 
-function ImageVariant({
+export function ImageVariant({
   source: defaultSource,
   sourceDark,
   sourceLight,
@@ -30,5 +30,3 @@ function ImageVariant({
 
   return <Image testID="variant-image" source={source} className={className} {...props} />
 }
-
-export default ImageVariant

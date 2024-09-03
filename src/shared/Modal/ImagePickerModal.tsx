@@ -8,7 +8,8 @@ import {
   Pressable,
 } from 'react-native'
 
-import SafeScreen from '../SafeScreen'
+import { SafeScreen } from '@/components/common'
+
 import { SvgIcon } from '../SvgIcon'
 
 interface ImagePickerModalProps {
@@ -19,31 +20,30 @@ interface ImagePickerModalProps {
 }
 
 // TODO: 모달 디자인 변경 필요
-function ImagePickerModal({
+export function ImagePickerModal({
   isVisible,
   onClose,
   onGalleryPress,
   onCameraPress,
 }: ImagePickerModalProps) {
   if (Platform.OS === 'ios') {
-    if (isVisible) {
-      ActionSheetIOS.showActionSheetWithOptions(
-        {
-          options: ['Cancel', 'Gallery', 'Camera'],
-          cancelButtonIndex: 0,
-        },
-        buttonIndex => {
-          if (buttonIndex === 1) {
-            onGalleryPress()
-          } else if (buttonIndex === 2) {
-            onCameraPress()
-          } else {
-            onClose()
-          }
-        },
-      )
-    }
-    return null
+    if (!isVisible) return
+
+    ActionSheetIOS.showActionSheetWithOptions(
+      {
+        options: ['Cancel', 'Gallery', 'Camera'],
+        cancelButtonIndex: 0,
+      },
+      buttonIndex => {
+        if (buttonIndex === 1) {
+          onGalleryPress()
+        } else if (buttonIndex === 2) {
+          onCameraPress()
+        } else {
+          onClose()
+        }
+      },
+    )
   }
 
   return (
@@ -82,5 +82,3 @@ function ImagePickerModal({
     </Modal>
   )
 }
-
-export default ImagePickerModal

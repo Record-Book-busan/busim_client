@@ -1,4 +1,3 @@
-import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { cva, type VariantProps } from 'class-variance-authority'
 import {
   View,
@@ -10,10 +9,9 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { theme } from '@/theme'
-import { RootStackParamList } from '@/types/navigation'
 import { cn } from '@/utils/cn'
 
-import { SvgIcon } from '../SvgIcon'
+import { SvgIcon } from '../../shared/SvgIcon'
 
 const HeaderVariants = cva('', {
   variants: {
@@ -27,42 +25,36 @@ const HeaderVariants = cva('', {
   },
 })
 
-interface SearchHeaderProps extends VariantProps<typeof HeaderVariants>, TouchableOpacityProps {
+interface SearchBarProps extends VariantProps<typeof HeaderVariants>, TouchableOpacityProps {
   type?: 'default' | 'map'
   placeholder?: string
   containerStyle?: string
-  isHeaderShown?: boolean
+  /** 검색바 높이를 반환하는 함수 */
+  onHeightChange?: (height: number) => void
 }
 
-export function SearchHeader({
+export function SearchBar({
   type,
   placeholder,
   containerStyle,
-  isHeaderShown = true,
+  onHeightChange,
   ...props
-}: SearchHeaderProps) {
-  const navigation = useNavigation<NavigationProp<RootStackParamList, 'SearchStack'>>()
-
+}: SearchBarProps) {
   const insets = useSafeAreaInsets()
-
-  const moveSearchHandler = () => {
-    navigation.navigate('SearchStack', {
-      screen: 'Search',
-      params: { keyword: '', selected: 'place' },
-    })
-  }
 
   return (
     <View
       className={cn(HeaderVariants({ type }))}
       style={{
-        paddingTop: isHeaderShown ? insets.top : 0,
+        paddingTop: insets.top, // safeArea 상단 아래 위치
+      }}
+      onLayout={event => {
+        const { height } = event.nativeEvent.layout
+        onHeightChange?.(height)
       }}
     >
       <View className={cn('flex-row items-center px-4 pb-4 pt-2', containerStyle)}>
-        <View
-          className={`flex-1 flex-row items-center rounded-full bg-white px-4 shadow ${type === 'default' ? 'border border-[#2653B0]' : ''}`}
-        >
+        <View className="flex-1 flex-row items-center rounded-full bg-white px-4 shadow">
           <TextInput
             className={cn(
               'h-10 flex-1 items-center text-base',
@@ -72,11 +64,7 @@ export function SearchHeader({
             placeholderTextColor={theme.colors['BUSIM-gray-light']}
             textAlignVertical="center"
           />
-          <TouchableOpacity
-            className="ml-2"
-            onPress={props.onPress || moveSearchHandler}
-            {...props}
-          >
+          <TouchableOpacity className="ml-2" onPress={props.onPress} {...props}>
             <SvgIcon name="search" className="text-BUSIM-blue" />
           </TouchableOpacity>
         </View>

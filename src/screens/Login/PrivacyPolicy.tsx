@@ -1,8 +1,9 @@
-import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { type NavigationProp, useNavigation } from '@react-navigation/native'
 import { useCallback, useEffect, useState } from 'react'
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 
-import { SafeScreen, SvgIcon } from '@/shared'
+import { SafeScreen } from '@/components/common'
+import { SvgIcon } from '@/shared'
 import { RootStackParamList } from '@/types/navigation'
 
 function PrivacyPolicyScreen() {
@@ -340,7 +341,7 @@ function PrivacyPolicyScreen() {
             </TouchableOpacity>
             <View className="flex-1">
               <View className="flex flex-row items-center gap-1">
-                <Text className="text-xl text-customBlu">[필수]</Text>
+                <Text className="text-xl text-BUSIM-blue">[필수]</Text>
                 <Text className="text-xl font-bold">{item.title}</Text>
                 <TouchableOpacity>
                   <Text className="ml-4 text-[#96979E]">전체 {'>'}</Text>

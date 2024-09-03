@@ -1,4 +1,4 @@
-import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { type NavigationProp, useNavigation } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import React from 'react'
 import { Text, TouchableOpacity } from 'react-native'
