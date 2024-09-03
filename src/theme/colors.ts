@@ -1,6 +1,8 @@
 export const colors = {
-  'BUSIM-blue': '#1D4ED8',
+  'BUSIM-blue': '#2653B0',
+  'BUSIM-blue-light': '#BECCE8',
+  'BUSIM-blue-dark': '#1e40af',
   'BUSIM-gray': '#374151',
-  'BUSIM-gray-light': '#9CA3AF',
+  'BUSIM-gray-light': '#f9fafb',
   'BUSIM-gray-dark': '#1F2937',
 }
