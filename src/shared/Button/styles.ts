@@ -17,7 +17,7 @@ export const buttonContainerVariants = cva(
         sm: 'h-10 px-1',
         md: 'h-12 px-1.5',
         lg: 'h-[54px] px-10',
-        full: 'h-12 px-6 flex-row w-full',
+        full: 'h-[56px] px-6 w-full rounded-2xl',
       },
       disabled: {
         true: 'opacity-50 cursor-not-allowed',
@@ -27,7 +27,7 @@ export const buttonContainerVariants = cva(
       { variant: ['default', 'primary'], size: 'sm', type: 'container', class: 'px-3' },
       { variant: ['default', 'primary'], size: 'md', type: 'container', class: 'w-1/2' },
       { variant: ['default', 'primary'], size: 'lg', type: 'container', class: 'w-2/3' },
-      { variant: ['default', 'primary'], size: 'full', type: 'container', class: 'h-12' },
+      { variant: ['default', 'primary'], size: 'full', type: 'container', class: '' },
     ],
     defaultVariants: {
       variant: 'ghost',
@@ -47,7 +47,7 @@ export const buttonTextVariants = cva('', {
       sm: 'text-sm',
       md: 'text-base',
       lg: 'text-base',
-      full: 'text-base',
+      full: 'text-base font-semibold',
     },
   },
   compoundVariants: [
@@ -60,6 +60,11 @@ export const buttonTextVariants = cva('', {
       variant: 'default',
       size: ['md', 'lg', 'full'],
       class: 'font-medium',
+    },
+    {
+      variant: 'ghost',
+      size: ['md'],
+      class: 'w-full flex-row items-center justify-between',
     },
   ],
   defaultVariants: {
