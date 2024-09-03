@@ -39,6 +39,8 @@ export interface ChipProps extends TouchableOpacityProps, VariantProps<typeof ch
 export function Chip({ title, isSelected, onPress, className, ...props }: ChipProps) {
   return (
     <Button
+      type="button"
+      animationConfig={{ toValue: 0.97 }}
       buttonStyle={cn(chipVariants({ isSelected }), className)}
       pressedColor={cn(isSelected ? 'bg-BUSIM-blue' : 'bg-white')}
       onPress={onPress}
