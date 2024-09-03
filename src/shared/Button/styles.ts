@@ -4,19 +4,22 @@ export const buttonContainerVariants = cva(
   'flex justify-center items-center rounded-xl transition-colors self-start',
   {
     variants: {
+      /** 버튼 유형 */
       type: {
-        container: '',
-        inner: '',
+        button: '', // 버튼 컨테이너 자체에 애니메이션
+        text: '', // 버튼 텍스트에 애니메이션
+        touch: '', // 터치 애니메이션
       },
+      /** 버튼 색상 */
       variant: {
         default: 'bg-white',
         primary: 'bg-BUSIM-blue',
         ghost: 'bg-transparent',
       },
       size: {
-        sm: 'h-10 px-1',
-        md: 'h-12 px-1.5',
-        lg: 'h-[54px] px-10',
+        sm: 'px-1',
+        md: 'px-1.5',
+        lg: 'px-10',
         full: 'h-[56px] px-6 w-full rounded-2xl',
       },
       disabled: {
@@ -24,15 +27,16 @@ export const buttonContainerVariants = cva(
       },
     },
     compoundVariants: [
-      { variant: ['default', 'primary'], size: 'sm', type: 'container', class: 'px-3' },
-      { variant: ['default', 'primary'], size: 'md', type: 'container', class: 'w-1/2' },
-      { variant: ['default', 'primary'], size: 'lg', type: 'container', class: 'w-2/3' },
-      { variant: ['default', 'primary'], size: 'full', type: 'container', class: '' },
+      /** 버튼 컨테이너 스타일 */
+      { variant: ['default', 'primary'], size: 'sm', type: 'button', class: 'h-10 px-3' },
+      { variant: ['default', 'primary'], size: 'md', type: 'button', class: 'h-12 px-2 ' },
+      { variant: ['default', 'primary'], size: 'lg', type: 'button', class: 'h-[54px] w-2/3' },
+      { variant: ['default', 'primary'], size: 'full', type: 'button', class: '' },
+      /** 텍스트 버튼 스타일 */
+      { variant: 'ghost', size: 'md', type: 'text', class: 'h-11 px-1.5' },
+      /** 터치 버튼 스타일 */
+      { variant: 'ghost', size: 'md', type: 'touch', class: 'px-2 py-2 rounded-full' },
     ],
-    defaultVariants: {
-      variant: 'ghost',
-      size: 'md',
-    },
   },
 )
 
