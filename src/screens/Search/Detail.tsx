@@ -1,10 +1,11 @@
 import { NavigationProp, RouteProp, useNavigation } from '@react-navigation/native'
 import { useEffect } from 'react'
-import { Platform, Text, TouchableOpacity, View } from 'react-native'
+import { Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { SafeScreen } from '@/components/common'
 import { MapDetail } from '@/components/map'
-import { ImageVariant, SafeScreen, SvgIcon } from '@/shared'
+import { ImageVariant, SvgIcon } from '@/shared'
 
 import type { SearchStackParamList, RootStackParamList } from '@/types/navigation'
 
@@ -55,71 +56,76 @@ function DetailScreen({ route }: { route: RouteProp<SearchStackParamList, 'Detai
 
   return (
     <SafeScreen>
-      <View
-        className="absolute left-0 right-0 z-50"
-        style={{
-          top: HEADER_HEIGHT,
-          paddingTop: insets.top,
-          height: headerHeight,
-        }}
-      >
-        <TouchableOpacity
-          className="mx-1 flex h-9 w-16 flex-row items-center justify-center gap-2 rounded-2xl border bg-white"
-          onPress={moveSearchHandler}
+      <ScrollView>
+        <View
+          className="absolute left-1/2 z-50 translate-x-[-88px]"
+          style={{
+            top: HEADER_HEIGHT - 24,
+            height: headerHeight,
+          }}
         >
-          <Text className="text-center text-xs text-black">여행기록 보러가기</Text>
-          <SvgIcon name="arrowRightBlack" />
-        </TouchableOpacity>
-      </View>
-      <View className="border-t-2 border-[#DADADA]">
-        <View className="flex">
-          {detail.images.map((item, index) => (
-            <ImageVariant className="h-64 w-full rounded-2xl" key={index} source={{ uri: item }} />
-          ))}
-          <View className="flex flex-row justify-center">
-            <Text>{detail.title}</Text>
-            <TouchableOpacity onPress={bookMarkHandler}>
-              <SvgIcon name="bookmark" />
-            </TouchableOpacity>
-          </View>
-          <View className="flex flex-row gap-2">
-            {detail.category.map((item, index) => (
-              <View
+          <TouchableOpacity
+            className="flex h-9 w-44 flex-row items-center justify-center rounded-2xl border bg-white"
+            onPress={moveSearchHandler}
+          >
+            <Text className="mr-2 text-xs text-black">여행기록 보러가기</Text>
+            <SvgIcon name="arrowRightBlack" />
+          </TouchableOpacity>
+        </View>
+        <View className="border-t-2 border-[#DADADA]">
+          <View className="my-2 flex px-2">
+            {detail.images.map((item, index) => (
+              <ImageVariant
+                className="h-72 w-full rounded-2xl"
                 key={index}
-                className="mx-1 flex h-9 w-16 justify-center rounded-2xl border bg-[#2653B0]"
-              >
-                <Text className="text-center text-xs text-white">{item}</Text>
-              </View>
+                source={{ uri: item }}
+              />
             ))}
+            <View className="mt-4 flex w-full flex-row items-center justify-between py-4">
+              <Text className="text-lg font-bold">{detail.title}</Text>
+              <TouchableOpacity onPress={bookMarkHandler}>
+                <SvgIcon name="bookmarkWhite" />
+              </TouchableOpacity>
+            </View>
+            <View className="flex flex-row gap-2 px-2">
+              {detail.category.map((item, index) => (
+                <View
+                  key={index}
+                  className="mx-1 flex h-9 w-20 justify-center rounded-2xl border bg-[#2653B0]"
+                >
+                  <Text className="text-center text-xs text-white">{item}</Text>
+                </View>
+              ))}
+            </View>
+            <View className="my-4 h-36 w-full">
+              <MapDetail geometry={detail.geometry} />
+            </View>
+            <View className="flex flex-row items-center px-2 py-1">
+              <SvgIcon name="marekrBorderGray" />
+              <Text className="ml-2">
+                경도: {detail.geometry.lon}, 위도: {detail.geometry.lat}
+              </Text>
+            </View>
+            <View className="flex flex-row items-center px-2 py-1">
+              <SvgIcon name="marekrBorderGray" />
+              <Text className="ml-2">{detail.time || '운영시간 정보 제공 칸입니다'}</Text>
+            </View>
           </View>
-          <View className="my-4 h-36 w-full">
-            <MapDetail geometry={detail.geometry} />
-          </View>
-          <View className="flex flex-row px-2 py-1">
-            <SvgIcon name="marekrBorderGray" />
-            <Text className="ml-2">
-              경도: {detail.geometry.lon}, 위도: {detail.geometry.lat}
-            </Text>
-          </View>
-          <View className="flex flex-row px-2 py-1">
-            <SvgIcon name="marekrBorderGray" />
-            <Text className="ml-2">{detail.time || '운영시간 정보 제공 칸입니다'}</Text>
+          <View className="m-2 border-t-2 border-[#DADADA]">
+            <Text className="mb-2 mt-4 text-lg font-bold">장소 소개</Text>
+            <View className="w-full rounded-xl bg-[#BECCE8] p-4">
+              <Text className="text-white">{detail.introduce || '장소 소개'}</Text>
+            </View>
+            <Text className="mb-2 mt-6 text-lg font-bold">정보</Text>
+            <View className="flex w-full rounded-xl bg-[#BECCE8] p-4">
+              <Text className="py-1 text-white">{detail.more.url || '웹사이트 링크'}</Text>
+              <Text className="py-1 text-white">{detail.more.instagram || '인스타그램 링크'}</Text>
+              <Text className="py-1 text-white">{detail.more.holiday || '휴무일'}</Text>
+              <Text className="py-1 text-white">{detail.more.phoneNumber || '전화번호'}</Text>
+            </View>
           </View>
         </View>
-        <View className="my-2 w-full border-t-2 border-[#DADADA]">
-          <Text className="my-2">장소 소개</Text>
-          <View className="w-full rounded-r-xl bg-[#BECCE8] px-2 py-4">
-            <Text>{detail.introduce || '장소 소개'}</Text>
-          </View>
-          <Text className="my-2">정보</Text>
-          <View className="flex w-full gap-2 rounded-r-xl bg-[#BECCE8] px-2 py-4">
-            <Text>{detail.more.url || '웹사이트 링크'}</Text>
-            <Text>{detail.more.instagram || '인스타그램 링크'}</Text>
-            <Text>{detail.more.holiday || '휴무일'}</Text>
-            <Text>{detail.more.phoneNumber || '전화번호'}</Text>
-          </View>
-        </View>
-      </View>
+      </ScrollView>
     </SafeScreen>
   )
 }

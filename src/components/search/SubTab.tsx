@@ -13,10 +13,48 @@ export function SubTab({ moveDetailHandler }: SubTabProps) {
   const [index, setIndex] = useState(0)
 
   const bookMarkHandler = (id: string) => {
-    console.log(`bookmark now ${id}`)
+    console.log(id)
+    const changedPlace = place.map(item => console.log(item.isBookMarked))
+    console.log(changedPlace)
   }
 
   const [place] = useState([
+    {
+      id: '1',
+      title: '장소 제목',
+      category: '관광지/자연',
+      description: '추가 설명글',
+      onPressBookMark: bookMarkHandler,
+      onPressMove: moveDetailHandler,
+      isBookMarked: false,
+      imageUrl:
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfVhju-h_98uFgOD8WzzMMHJ9PEkPSIhdRVA&s',
+    },
+    {
+      id: '2',
+      title: '장소 제목',
+      category: '관광지/자연',
+      description: '추가 설명글',
+      onPressBookMark: bookMarkHandler,
+      onPressMove: moveDetailHandler,
+      isBookMarked: false,
+      imageUrl:
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfVhju-h_98uFgOD8WzzMMHJ9PEkPSIhdRVA&s',
+    },
+    {
+      id: '3',
+      title: '장소 제목',
+      category: '관광지/자연',
+      description: '추가 설명글',
+      onPressBookMark: bookMarkHandler,
+      onPressMove: moveDetailHandler,
+      isBookMarked: false,
+      imageUrl:
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfVhju-h_98uFgOD8WzzMMHJ9PEkPSIhdRVA&s',
+    },
+  ])
+
+  const [history] = useState([
     {
       id: '1',
       title: '여행 기록 제목',
@@ -24,8 +62,9 @@ export function SubTab({ moveDetailHandler }: SubTabProps) {
       description: '추가 설명글',
       onPressBookMark: bookMarkHandler,
       onPressMove: moveDetailHandler,
+      isBookMarked: false,
       imageUrl:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfVhju-h_98uFgOD8WzzMMHJ9PEkPSIhdRVA&s',
+        'https://gscaltexmediahub.com/wp-content/uploads/2023/05/the-day-of-ocean-2023_1.png',
     },
     {
       id: '2',
@@ -34,8 +73,9 @@ export function SubTab({ moveDetailHandler }: SubTabProps) {
       description: '추가 설명글',
       onPressBookMark: bookMarkHandler,
       onPressMove: moveDetailHandler,
+      isBookMarked: false,
       imageUrl:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfVhju-h_98uFgOD8WzzMMHJ9PEkPSIhdRVA&s',
+        'https://gscaltexmediahub.com/wp-content/uploads/2023/05/the-day-of-ocean-2023_1.png',
     },
     {
       id: '3',
@@ -44,8 +84,9 @@ export function SubTab({ moveDetailHandler }: SubTabProps) {
       description: '추가 설명글',
       onPressBookMark: bookMarkHandler,
       onPressMove: moveDetailHandler,
+      isBookMarked: false,
       imageUrl:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfVhju-h_98uFgOD8WzzMMHJ9PEkPSIhdRVA&s',
+        'https://gscaltexmediahub.com/wp-content/uploads/2023/05/the-day-of-ocean-2023_1.png',
     },
   ])
 
@@ -67,7 +108,7 @@ export function SubTab({ moveDetailHandler }: SubTabProps) {
         </TabView.Item>
         <TabView.Item>
           <View>
-            {place.map(item => (
+            {history.map(item => (
               <ImagePlaceItem key={item.id} {...item} />
             ))}
           </View>

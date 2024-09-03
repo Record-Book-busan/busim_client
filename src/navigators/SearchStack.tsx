@@ -16,7 +16,13 @@ function SearchStackNavigator() {
           headerTitle: '',
         }}
       />
-      <Stack.Screen name="Detail" component={DetailScreen} />
+      <Stack.Screen
+        name="Detail"
+        component={DetailScreen}
+        options={{
+          headerTitle: '',
+        }}
+      />
     </Stack.Navigator>
   )
 }

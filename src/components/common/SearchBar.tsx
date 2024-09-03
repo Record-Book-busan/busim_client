@@ -1,3 +1,4 @@
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { cva, type VariantProps } from 'class-variance-authority'
 import {
   View,
@@ -9,6 +10,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { theme } from '@/theme'
+import { RootStackParamList } from '@/types/navigation'
 import { cn } from '@/utils/cn'
 
 import { SvgIcon } from '../../shared/SvgIcon'
@@ -42,6 +44,15 @@ export function SearchBar({
 }: SearchBarProps) {
   const insets = useSafeAreaInsets()
 
+  const navigation = useNavigation<NavigationProp<RootStackParamList, 'SearchStack'>>()
+
+  const moveSearchHandler = () => {
+    navigation.navigate('SearchStack', {
+      screen: 'Search',
+      params: { keyword: 'test', selected: 'record' },
+    })
+  }
+
   return (
     <View
       className={cn(HeaderVariants({ type }))}
@@ -54,7 +65,9 @@ export function SearchBar({
       }}
     >
       <View className={cn('flex-row items-center px-4 pb-4 pt-2', containerStyle)}>
-        <View className="flex-1 flex-row items-center rounded-full bg-white px-4 shadow">
+        <View
+          className={`flex-1 flex-row items-center rounded-full bg-white px-4 shadow ${type === 'default' ? 'border border-[#2653b0]' : ''}`}
+        >
           <TextInput
             className={cn(
               'h-10 flex-1 items-center text-base',
@@ -64,7 +77,11 @@ export function SearchBar({
             placeholderTextColor={theme.colors['BUSIM-gray-light']}
             textAlignVertical="center"
           />
-          <TouchableOpacity className="ml-2" onPress={props.onPress} {...props}>
+          <TouchableOpacity
+            className="ml-2"
+            onPress={props.onPress || moveSearchHandler}
+            {...props}
+          >
             <SvgIcon name="search" className="text-BUSIM-blue" />
           </TouchableOpacity>
         </View>

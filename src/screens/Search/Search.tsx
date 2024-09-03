@@ -2,8 +2,8 @@ import { NavigationProp, RouteProp, useNavigation } from '@react-navigation/nati
 import { useEffect, useState } from 'react'
 import { Text } from 'react-native'
 
+import { SafeScreen, SearchBar } from '@/components/common'
 import { PlaceItem, SubTab } from '@/components/search'
-import { SafeScreen, SearchHeader } from '@/shared'
 
 import type { RootStackParamList, SearchStackParamList } from '@/types/navigation'
 
@@ -19,6 +19,12 @@ function SearchScreen({ route }: { route: RouteProp<SearchStackParamList, 'Searc
   const searchClickHandler = () => {
     setSearch(true)
   }
+
+  useEffect(() => {
+    if (isSearch) {
+      navigation.setOptions({ headerTitle: '검색 결과' })
+    }
+  }, [isSearch])
 
   const moveDetailHandler = (id: string) => {
     navigation.navigate('SearchStack', { screen: 'Detail', params: { id: id } })
@@ -54,12 +60,7 @@ function SearchScreen({ route }: { route: RouteProp<SearchStackParamList, 'Searc
 
   return (
     <SafeScreen excludeEdges={['top']}>
-      <SearchHeader
-        type="default"
-        placeholder="장소 검색"
-        onPress={searchClickHandler}
-        isHeaderShown={false}
-      />
+      <SearchBar type="default" placeholder="장소 검색" onPress={searchClickHandler} />
       {!isSearch && <Text className="px-2 py-4 font-bold">최근 검색 기록</Text>}
       {!isSearch ? (
         history.map(item => <PlaceItem key={item.id} {...item} />)
