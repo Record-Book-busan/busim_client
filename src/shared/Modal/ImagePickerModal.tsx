@@ -8,7 +8,7 @@ import {
   Pressable,
 } from 'react-native'
 
-import SafeScreen from '../SafeScreen'
+import SafeScreen from '../../components/common/SafeScreen'
 import { SvgIcon } from '../SvgIcon'
 
 interface ImagePickerModalProps {

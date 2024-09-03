@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { View } from 'react-native'
 
+import { KeyboardDismissPressable, SafeScreen } from '@/components/common'
 import { Feed, Place } from '@/components/record'
-import { KeyboardDismissPressable, SafeScreen, SearchHeader, Tab, TabView } from '@/shared'
+import { SearchHeader, Tab, TabView } from '@/shared'
 
 export default function RecordMainScreen() {
   const [index, setIndex] = useState(0)

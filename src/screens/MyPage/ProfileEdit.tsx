@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { View, Text, TouchableOpacity, Alert, Image } from 'react-native'
 
+import { KeyboardDismissPressable, SafeScreen } from '@/components/common'
 import { useGallery } from '@/hooks/useGallery'
-import { KeyboardDismissPressable, SafeScreen, SvgIcon } from '@/shared'
+import { SvgIcon } from '@/shared'
 import { TextField } from '@/shared/TextField'
 
 function ProfileEditScreen() {

@@ -6,7 +6,7 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 
 import type { PropsWithChildren } from 'react'
 
-export default function KeyboardDismissPressable({ children }: PropsWithChildren) {
+export function KeyboardDismissPressable({ children }: PropsWithChildren) {
   const isTargetTextInput = useRef(false)
 
   const tap = Gesture.Tap()

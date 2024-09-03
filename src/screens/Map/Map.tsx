@@ -2,8 +2,9 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Platform, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { SafeScreen } from '@/components/common'
 import { MapView } from '@/components/map'
-import { SafeScreen, SearchHeader } from '@/shared'
+import { SearchHeader } from '@/shared'
 
 const HEADER_CONTENT_HEIGHT = 50
 const HEADER_HEIGHT =

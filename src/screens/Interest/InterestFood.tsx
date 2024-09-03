@@ -1,8 +1,8 @@
-import { NavigationProp, RouteProp, useNavigation } from '@react-navigation/native'
+import { type NavigationProp, type RouteProp, useNavigation } from '@react-navigation/native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
 
-import { SafeScreen } from '@/shared'
+import { SafeScreen } from '@/components/common'
 
 import type { InterestStackParamList, RootStackParamList } from '@/types/navigation'
 
