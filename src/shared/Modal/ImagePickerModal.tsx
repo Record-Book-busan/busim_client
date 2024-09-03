@@ -26,24 +26,23 @@ function ImagePickerModal({
   onCameraPress,
 }: ImagePickerModalProps) {
   if (Platform.OS === 'ios') {
-    if (isVisible) {
-      ActionSheetIOS.showActionSheetWithOptions(
-        {
-          options: ['Cancel', 'Gallery', 'Camera'],
-          cancelButtonIndex: 0,
-        },
-        buttonIndex => {
-          if (buttonIndex === 1) {
-            onGalleryPress()
-          } else if (buttonIndex === 2) {
-            onCameraPress()
-          } else {
-            onClose()
-          }
-        },
-      )
-    }
-    return null
+    if (!isVisible) return
+
+    ActionSheetIOS.showActionSheetWithOptions(
+      {
+        options: ['Cancel', 'Gallery', 'Camera'],
+        cancelButtonIndex: 0,
+      },
+      buttonIndex => {
+        if (buttonIndex === 1) {
+          onGalleryPress()
+        } else if (buttonIndex === 2) {
+          onCameraPress()
+        } else {
+          onClose()
+        }
+      },
+    )
   }
 
   return (
