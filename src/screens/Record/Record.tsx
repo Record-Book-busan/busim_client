@@ -2,10 +2,10 @@ import React, { useRef, useState } from 'react'
 import { View, Text, TouchableOpacity, Image, TextInput } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-import { Categories, KeyboardAvoidingView } from '@/components/common'
+import { Categories, KeyboardAvoidingView, SafeScreen } from '@/components/common'
 import { useCamera } from '@/hooks/useCamera'
 import { useGallery } from '@/hooks/useGallery'
-import { TextArea, ImagePickerModal, SafeScreen, SvgIcon, Button } from '@/shared'
+import { TextArea, ImagePickerModal, SvgIcon, Button } from '@/shared'
 
 const RecordScreen = () => {
   const scrollViewRef = useRef<KeyboardAwareScrollView>(null)
@@ -48,7 +48,7 @@ const RecordScreen = () => {
           enableOnAndroid
           enableAutomaticScroll={false}
           keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{ flexGrow: 1, backgroundColor: 'white' }}
         >
           <View className="px-3 pt-4">
             <View className="mb-4 items-center justify-center">
