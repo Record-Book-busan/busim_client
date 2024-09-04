@@ -3,7 +3,7 @@ import { View } from 'react-native'
 
 import { Chip } from '@/shared'
 
-import { CATEGORY } from './constant'
+import { CATEGORY } from '../../constants/data'
 
 export const MAP_TYPE = {
   TOUR_LIST: 'tourist',
