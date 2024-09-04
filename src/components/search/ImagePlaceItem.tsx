@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
 
 import { ImageVariant, SvgIcon } from '@/shared'
+
+import { BookmarkButton } from '../common'
 
 type ImagePlaceItemProps = {
   id: string
@@ -24,22 +25,13 @@ export function ImagePlaceItem({
   isBookMarked,
   imageUrl,
 }: ImagePlaceItemProps) {
-  const [bookMark, setBookMark] = useState(isBookMarked)
-
-  useEffect(() => {
-    setBookMark(isBookMarked)
-  }, [isBookMarked])
-
   return (
     <View className="flex flex-row border border-y-[#DBDCE5] px-2 py-4">
       <View className="flex flex-row">
         <ImageVariant className="h-24 w-20" source={{ uri: imageUrl }} />
-        <TouchableOpacity onPress={() => onPressBookMark(id)}>
-          <SvgIcon
-            className="left-[-75px] top-2 z-50 p-2"
-            name={`${bookMark ? 'bookmarkYellow' : 'bookmarkWhite'}`}
-          />
-        </TouchableOpacity>
+        <View className="left-[-75px] top-1">
+          <BookmarkButton isBookMarked={isBookMarked} onPress={() => onPressBookMark(id)} />
+        </View>
       </View>
       <View className="flex flex-auto">
         <Text>{title}</Text>

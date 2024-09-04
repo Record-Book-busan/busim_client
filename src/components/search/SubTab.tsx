@@ -14,8 +14,6 @@ export function SubTab({ moveDetailHandler }: SubTabProps) {
 
   const bookMarkHandler = (id: string) => {
     console.log(id)
-    const changedPlace = place.map(item => console.log(item.isBookMarked))
-    console.log(changedPlace)
   }
 
   const [place] = useState([

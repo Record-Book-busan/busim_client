@@ -4,11 +4,12 @@ import { TouchableOpacity } from 'react-native'
 import { SvgIcon } from '@/shared/SvgIcon'
 
 interface Props {
+  isBookMarked: boolean
   onPress: () => void
 }
 
-export const BookmarkButton = ({ onPress }: Props) => {
-  const [isPressed, setIsPressed] = useState(false)
+export const BookmarkButton = ({ isBookMarked = false, onPress }: Props) => {
+  const [isPressed, setIsPressed] = useState(isBookMarked)
 
   const handlePress = () => {
     onPress?.()
