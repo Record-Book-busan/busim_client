@@ -1,9 +1,11 @@
 import React from 'react'
-import { Dimensions, Platform } from 'react-native'
+import { Platform } from 'react-native'
 import Animated, { useAnimatedKeyboard, useAnimatedStyle } from 'react-native-reanimated'
 import { type Edge, useSafeAreaFrame, useSafeAreaInsets } from 'react-native-safe-area-context'
 
-const height = Dimensions.get('window').height
+import { window } from '@/constants'
+
+const height = window.height
 
 // TODO: 안드로이드 테스트가 필요함
 export function KeyboardAvoidingView({

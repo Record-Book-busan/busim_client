@@ -1,6 +1,6 @@
-import { NavigationProp, RouteProp, useNavigation } from '@react-navigation/native'
+import { type NavigationProp, type RouteProp, useNavigation } from '@react-navigation/native'
 import { useEffect, useState } from 'react'
-import { Text } from 'react-native'
+import { Text, View } from 'react-native'
 
 import { SafeScreen, SearchBar } from '@/components/common'
 import { PlaceItem, SubTab } from '@/components/search'
@@ -60,7 +60,9 @@ function SearchScreen({ route }: { route: RouteProp<SearchStackParamList, 'Searc
 
   return (
     <SafeScreen excludeEdges={['top']}>
-      <SearchBar type="default" placeholder="장소 검색" onPress={searchClickHandler} />
+      <View className="bg-white pt-2 shadow">
+        <SearchBar type="default" placeholder="장소 검색" onPress={searchClickHandler} />
+      </View>
       {!isSearch && <Text className="px-2 py-4 font-bold">최근 검색 기록</Text>}
       {!isSearch ? (
         history.map(item => <PlaceItem key={item.id} {...item} />)

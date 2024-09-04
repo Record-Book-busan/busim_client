@@ -57,7 +57,7 @@ export function SearchBar({
     <View
       className={cn(HeaderVariants({ type }))}
       style={{
-        paddingTop: insets.top, // safeArea 상단 아래 위치
+        paddingTop: type === 'map' ? insets.top : undefined, // safeArea 상단 아래 위치
       }}
       onLayout={event => {
         const { height } = event.nativeEvent.layout

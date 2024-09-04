@@ -1,6 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack'
 
 import { ProfileEditScreen } from '@/screens'
+import { ImageCarouselTest } from '@/screens/MyPage/CarouselTest'
 import Test from '@/screens/MyPage/Test'
 
 import type { MyPageStackParamList } from '@/types/navigation'
@@ -19,7 +20,8 @@ function MyPageStackNavigator() {
         }}
       />
       {/* <Stack.Screen name="MyPageSettings" component={SettingsScreen} /> */}
-      <Stack.Screen name="Test" component={Test} />
+      <Stack.Screen name="Test" component={Test} options={{ headerShown: false }} />
+      <Stack.Screen name="Test1" component={ImageCarouselTest} />
     </Stack.Navigator>
   )
 }

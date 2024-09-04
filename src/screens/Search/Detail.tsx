@@ -1,47 +1,20 @@
-import { NavigationProp, RouteProp, useNavigation } from '@react-navigation/native'
-import { useEffect } from 'react'
-import { Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { type NavigationProp, type RouteProp, useNavigation } from '@react-navigation/native'
+import React from 'react'
+import { ScrollView, Text, View } from 'react-native'
 
-import { SafeScreen } from '@/components/common'
+import { BookmarkButton, ImageCarousel, SafeScreen, Tag } from '@/components/common'
 import { MapDetail } from '@/components/map'
-import { ImageVariant, SvgIcon } from '@/shared'
+import { FAB, type IconName, SvgIcon } from '@/shared'
 
 import type { SearchStackParamList, RootStackParamList } from '@/types/navigation'
 
-const HEADER_CONTENT_HEIGHT = 50
-const HEADER_HEIGHT =
-  Platform.OS === 'ios' ? HEADER_CONTENT_HEIGHT + 44 : HEADER_CONTENT_HEIGHT + 10
+interface DetailScreenProps {
+  route: RouteProp<SearchStackParamList, 'Detail'>
+}
 
-function DetailScreen({ route }: { route: RouteProp<SearchStackParamList, 'Detail'> }) {
-  useEffect(() => {
-    console.log(route.params)
-  }, [])
-
-  const insets = useSafeAreaInsets()
-  const headerHeight = HEADER_HEIGHT + insets.top
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const DetailScreen: React.FC<DetailScreenProps> = ({ route }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList, 'SearchStack'>>()
-
-  const detail = {
-    title: '장소명',
-    category: ['지연', '테마'],
-    images: [
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfVhju-h_98uFgOD8WzzMMHJ9PEkPSIhdRVA&s',
-    ],
-    geometry: {
-      lon: 33.450701,
-      lat: 126.570667,
-    },
-    time: '',
-    introduce: '',
-    more: {
-      url: '',
-      instagram: '',
-      holiday: '수요일 휴무\n수요일이 공휴일인 경우 개관(다른날 휴무)',
-      phoneNumber: '041-730-2955',
-    },
-  }
 
   const moveSearchHandler = () => {
     navigation.navigate('SearchStack', {
@@ -50,84 +23,101 @@ function DetailScreen({ route }: { route: RouteProp<SearchStackParamList, 'Detai
     })
   }
 
-  const bookMarkHandler = () => {
+  const onBookMarkPress = () => {
     console.log(`bookmark now`)
   }
 
   return (
-    <SafeScreen>
-      <ScrollView>
-        <View
-          className="absolute left-1/2 z-50 translate-x-[-88px]"
-          style={{
-            top: HEADER_HEIGHT - 24,
-            height: headerHeight,
-          }}
-        >
-          <TouchableOpacity
-            className="flex h-9 w-44 flex-row items-center justify-center rounded-2xl border bg-white"
-            onPress={moveSearchHandler}
-          >
-            <Text className="mr-2 text-xs text-black">여행기록 보러가기</Text>
-            <SvgIcon name="arrowRightBlack" />
-          </TouchableOpacity>
+    <SafeScreen excludeEdges={['top']}>
+      <FAB
+        position={'topCenter'}
+        buttonStyle="bg-white rounded-full px-5 py-2 shadow-md"
+        rightAddon={<SvgIcon name="arrowRightBlack" />}
+        onPress={moveSearchHandler}
+      >
+        여행기록 보러가기
+      </FAB>
+
+      <ScrollView className="flex-1 bg-gray-100">
+        <View className="bg-white px-4 pt-4">
+          <ImageCarousel images={mockData.imageUrl} />
+          {/* <ImageVariant className="h-72 w-full rounded-xl" source={{ uri: mockData.imageUrl[0] }} /> */}
         </View>
-        <View className="border-t-2 border-[#DADADA]">
-          <View className="my-2 flex px-2">
-            {detail.images.map((item, index) => (
-              <ImageVariant
-                className="h-72 w-full rounded-2xl"
-                key={index}
-                source={{ uri: item }}
-              />
+
+        <View className="bg-white px-5 pb-6">
+          <View className="mt-2 flex-row items-center justify-between py-4">
+            <Text className="flex-1 text-xl font-bold text-gray-800">{mockData.title}</Text>
+            <BookmarkButton onPress={onBookMarkPress} />
+          </View>
+
+          <View className="mb-4 flex-row flex-wrap" style={{ columnGap: 6 }}>
+            {mockData.cat2.map((item, index) => (
+              <Tag key={index} catId={item} />
             ))}
-            <View className="mt-4 flex w-full flex-row items-center justify-between py-4">
-              <Text className="text-lg font-bold">{detail.title}</Text>
-              <TouchableOpacity onPress={bookMarkHandler}>
-                <SvgIcon name="bookmarkWhite" />
-              </TouchableOpacity>
-            </View>
-            <View className="flex flex-row gap-2 px-2">
-              {detail.category.map((item, index) => (
-                <View
-                  key={index}
-                  className="mx-1 flex h-9 w-20 justify-center rounded-2xl border bg-[#2653B0]"
-                >
-                  <Text className="text-center text-xs text-white">{item}</Text>
-                </View>
-              ))}
-            </View>
-            <View className="my-4 h-36 w-full">
-              <MapDetail geometry={detail.geometry} />
-            </View>
-            <View className="flex flex-row items-center px-2 py-1">
-              <SvgIcon name="marekrBorderGray" />
-              <Text className="ml-2">
-                경도: {detail.geometry.lon}, 위도: {detail.geometry.lat}
-              </Text>
-            </View>
-            <View className="flex flex-row items-center px-2 py-1">
-              <SvgIcon name="marekrBorderGray" />
-              <Text className="ml-2">{detail.time || '운영시간 정보 제공 칸입니다'}</Text>
-            </View>
           </View>
-          <View className="m-2 border-t-2 border-[#DADADA]">
-            <Text className="mb-2 mt-4 text-lg font-bold">장소 소개</Text>
-            <View className="w-full rounded-xl bg-[#BECCE8] p-4">
-              <Text className="text-white">{detail.introduce || '장소 소개'}</Text>
-            </View>
-            <Text className="mb-2 mt-6 text-lg font-bold">정보</Text>
-            <View className="flex w-full rounded-xl bg-[#BECCE8] p-4">
-              <Text className="py-1 text-white">{detail.more.url || '웹사이트 링크'}</Text>
-              <Text className="py-1 text-white">{detail.more.instagram || '인스타그램 링크'}</Text>
-              <Text className="py-1 text-white">{detail.more.holiday || '휴무일'}</Text>
-              <Text className="py-1 text-white">{detail.more.phoneNumber || '전화번호'}</Text>
-            </View>
+
+          <View className="mb-4 h-36 w-full">
+            <MapDetail geometry={{ lon: mockData.lng, lat: mockData.lat }} />
           </View>
+
+          <InfoItem icon="marekrBorderGray" text={`경도: ${mockData.lng}, 위도: ${mockData.lat}`} />
+          <InfoItem icon="time" text={mockData.operatingTime || '운영시간 정보 제공 칸입니다'} />
+        </View>
+
+        <View className="mt-3 bg-white px-5 py-6">
+          <InfoSection title="장소 소개" content={mockData.content || '장소 소개'} />
+          <InfoSection title="정보">
+            <InfoItem icon="phone" text={mockData.phone || '전화번호'} />
+            <InfoItem
+              icon="calendar"
+              text={mockData.operatingTime || '운영시간 정보 제공 칸입니다'}
+            />
+          </InfoSection>
         </View>
       </ScrollView>
     </SafeScreen>
   )
 }
 
+const InfoItem: React.FC<{ icon: IconName; text: string }> = ({ icon, text }) => (
+  <View className="flex-row items-center py-1">
+    <SvgIcon name={icon} size={16} className="text-neutral-400" />
+    <Text className="ml-2 text-sm text-neutral-500">{text}</Text>
+  </View>
+)
+
+const InfoSection: React.FC<{ title: string; content?: string; children?: React.ReactNode }> = ({
+  title,
+  content,
+  children,
+}) => (
+  <View className="mb-6">
+    <Text className="mb-4 text-lg font-semibold text-gray-700">{title}</Text>
+    <View className="w-full rounded-xl bg-slate-100 p-4">
+      {content ? <Text className="text-sm text-gray-700">{content}</Text> : children}
+    </View>
+  </View>
+)
+
 export default DetailScreen
+
+const mockData = {
+  id: 1,
+  title: '부산 해운대 해수욕장',
+  content: '한국에서 가장 유명한 해수욕장 중 하나로, 여름철 많은 사람들이 방문하는 관광지입니다.',
+  imageUrl: [
+    'https://picsum.photos/600/400',
+    'https://picsum.photos/600/400',
+    'https://picsum.photos/600/400',
+    'https://picsum.photos/600/400',
+  ],
+  address: '부산광역시 해운대구 우동',
+  addressDetail: '',
+  zipcode: '48094',
+  lat: 35.1587,
+  lng: 129.1603,
+  cat1: 'PLACE',
+  cat2: [1, 4],
+  operatingTime: '09:00 - 18:00 (여름 시즌)',
+  phone: '051-123-4567',
+}
