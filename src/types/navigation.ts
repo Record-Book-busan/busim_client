@@ -35,7 +35,7 @@ export type MapStackParamList = {
 
 export type RecordStackParamList = {
   RecordMain: undefined
-  RecordDetail: undefined
+  RecordDetail: { id: number }
   CreateRecord: undefined
 }
 
@@ -43,6 +43,7 @@ export type MyPageStackParamList = {
   MyPageProfile: undefined
   MyPageSettings: undefined
   Test: undefined
+  Test1: undefined
 }
 
 type SearchProps = {

@@ -25,6 +25,12 @@ export default function MyPageScreen() {
         navigation.navigate('MyPageStack', { screen: 'Test' })
       },
     },
+    {
+      title: '캐로셀 테스트',
+      onPress: () => {
+        navigation.navigate('MyPageStack', { screen: 'Test1' })
+      },
+    },
   ]
 
   const settingsItems = [
