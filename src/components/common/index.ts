@@ -6,3 +6,4 @@ export * from './SearchBar'
 
 export * from './BookMarkButton'
 export * from './Tag'
+export * from './ImageCarousel'
