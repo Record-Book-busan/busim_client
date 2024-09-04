@@ -3,7 +3,7 @@ import { Text, View } from 'react-native'
 
 import { cn } from '@/utils/cn'
 
-import { CATEGORY, type CategoryKey } from './constant'
+import { CATEGORY, type CategoryKey } from '../../constants/data'
 
 const tagVariants = cva('rounded-full min-w-[60px] px-5 py-2', {
   variants: {
