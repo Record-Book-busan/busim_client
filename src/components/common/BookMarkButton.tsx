@@ -1,6 +1,6 @@
 import { useState } from 'react'
+import { TouchableOpacity } from 'react-native'
 
-import { Button } from '@/shared/Button'
 import { SvgIcon } from '@/shared/SvgIcon'
 
 interface Props {
@@ -16,11 +16,11 @@ export const BookmarkButton = ({ onPress }: Props) => {
   }
 
   return (
-    <Button onPress={handlePress} animationConfig={{ toValue: 0.93 }}>
+    <TouchableOpacity onPress={handlePress}>
       <SvgIcon
         name="bookmarkWhite"
-        className={`h-6 w-6 ${isPressed ? 'text-BUSIM-blue' : 'text-transparent'}`}
+        className={`h-6 w-6 ${isPressed ? 'text-BUSIM-blue' : 'text-white'}`}
       />
-    </Button>
+    </TouchableOpacity>
   )
 }
