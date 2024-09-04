@@ -2,9 +2,9 @@ import { createStackNavigator } from '@react-navigation/stack'
 
 import { LoginScreen, PrivacyPolicyScreen } from '@/screens'
 
-import InterestStackNavigator from './InterestStack'
 import MainTabNavigator from './MainTab'
 import MyPageStackNavigator from './MyPageStack'
+import OnboardingStackNavigator from './OnboardingStack'
 import RecordStackNavigator from './RecordStack'
 import SearchStackNavigator from './SearchStack'
 
@@ -25,7 +25,7 @@ function ApplicationNavigator() {
           headerTitleAlign: 'center',
         }}
       />
-      <Stack.Screen name="InterestStack" component={InterestStackNavigator} />
+      <Stack.Screen name="OnBoardingStack" component={OnboardingStackNavigator} />
       <Stack.Screen name="MainTab" component={MainTabNavigator} />
       <Stack.Screen name="RecordStack" component={RecordStackNavigator} />
       <Stack.Screen name="MyPageStack" component={MyPageStackNavigator} />
