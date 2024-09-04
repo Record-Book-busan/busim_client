@@ -8,7 +8,7 @@ const Stack = createStackNavigator<SearchStackParamList>()
 
 function SearchStackNavigator() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{ presentation: 'modal' }}>
       <Stack.Screen
         name="Search"
         component={SearchScreen}
