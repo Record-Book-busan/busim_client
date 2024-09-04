@@ -35,7 +35,7 @@ export const buttonContainerVariants = cva(
       /** 텍스트 버튼 스타일 */
       { variant: 'ghost', size: 'md', type: 'text', class: 'h-11 px-1.5' },
       /** 터치 버튼 스타일 */
-      { variant: 'ghost', size: 'md', type: 'touch', class: 'px-2 py-2 rounded-full' },
+      { variant: 'ghost', size: 'md', type: 'touch', class: 'px-2 py-2 rounded-xl' },
     ],
   },
 )
