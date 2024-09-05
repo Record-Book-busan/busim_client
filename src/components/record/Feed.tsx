@@ -1,27 +1,43 @@
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
-import { useNavigation } from '@react-navigation/native'
+import { type BottomTabNavigationProp, useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
+import { type CompositeNavigationProp, useNavigation } from '@react-navigation/native'
 import { FlatList, Image, useWindowDimensions, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import type { MainTabParamList, RootStackParamList } from '@/types/navigation'
 import type { StackNavigationProp } from '@react-navigation/stack'
 
 const NUM_COLUMNS = 3
 
-export interface ItemData {
-  id: number
-  imageUrl: string
-  lat: number
-  lng: number
-  cat1: string
-  cat2: number
-}
+type FeedNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<MainTabParamList, 'Record'>,
+  StackNavigationProp<RootStackParamList>
+>
 
-type RootStackParamList = {
-  FeedScreen: undefined
-  DetailScreen: { item: ItemData }
-}
+export function Feed() {
+  const navigation = useNavigation<FeedNavigationProp>()
+  const bottomTabBarHeight = useBottomTabBarHeight()
+  const { bottom } = useSafeAreaInsets()
 
-type FeedScreenNavigationProp = StackNavigationProp<RootStackParamList, 'FeedScreen'>
+  const handleNavigation = (id: number) => {
+    navigation.navigate('RecordStack', {
+      screen: 'ReadRecord',
+      params: { id },
+    })
+  }
+  return (
+    <View className="flex-1">
+      <FlatList
+        data={DATA}
+        renderItem={({ item }) => <Item item={item} onPress={() => handleNavigation(item.id)} />}
+        keyExtractor={item => item.id.toString()}
+        numColumns={NUM_COLUMNS}
+        contentContainerStyle={{
+          paddingBottom: bottomTabBarHeight - bottom,
+        }}
+      />
+    </View>
+  )
+}
 
 const Item = ({ item, onPress }: { item: ItemData; onPress: () => void }) => {
   const { width } = useWindowDimensions()
@@ -38,28 +54,13 @@ const Item = ({ item, onPress }: { item: ItemData; onPress: () => void }) => {
   )
 }
 
-export function Feed() {
-  const navigation = useNavigation<FeedScreenNavigationProp>()
-  const bottomTabBarHeight = useBottomTabBarHeight()
-  const { bottom } = useSafeAreaInsets()
-
-  const handleItemPress = (item: ItemData) => {
-    navigation.navigate('DetailScreen', { item })
-  }
-
-  return (
-    <View className="flex-1">
-      <FlatList
-        data={DATA}
-        renderItem={({ item }) => <Item item={item} onPress={() => handleItemPress(item)} />}
-        keyExtractor={item => item.id.toString()}
-        numColumns={NUM_COLUMNS}
-        contentContainerStyle={{
-          paddingBottom: bottomTabBarHeight - bottom,
-        }}
-      />
-    </View>
-  )
+export interface ItemData {
+  id: number
+  imageUrl: string
+  lat: number
+  lng: number
+  cat1: string
+  cat2: number
 }
 
 const DATA: ItemData[] = [

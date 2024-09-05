@@ -9,10 +9,10 @@ export default function RecordMainScreen() {
   const [index, setIndex] = useState(0)
 
   return (
-    <SafeScreen excludeEdges={['top']}>
+    <SafeScreen>
       <KeyboardDismissPressable>
         <View className="flex-1 bg-white">
-          <View className="bg-white shadow">
+          <View className="bg-white pt-2 shadow">
             <SearchBar type="default" />
             <Tab value={index} onValueChange={setIndex}>
               <Tab.Item>장소 기록</Tab.Item>
