@@ -7,6 +7,7 @@ import { useCamera } from '@/hooks/useCamera'
 import { useGallery } from '@/hooks/useGallery'
 import { TextArea, ImagePickerModal, SvgIcon, Button } from '@/shared'
 import { ButtonPrimitive } from '@/shared/Button'
+import { Header } from '@/shared/Header'
 
 const RecordScreen = () => {
   const scrollViewRef = useRef<KeyboardAwareScrollView>(null)
@@ -43,6 +44,9 @@ const RecordScreen = () => {
 
   return (
     <SafeScreen>
+      {/* 헤더 */}
+      <Header />
+
       <KeyboardAvoidingView edge="top">
         <KeyboardAwareScrollView
           ref={scrollViewRef}
@@ -50,6 +54,7 @@ const RecordScreen = () => {
           enableAutomaticScroll={false}
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{ flexGrow: 1, backgroundColor: 'white' }}
+          scrollEventThrottle={16}
         >
           <View className="px-3 pt-4">
             <View className="mb-4 items-center justify-center">
@@ -62,6 +67,12 @@ const RecordScreen = () => {
             {/* 지도 영역*/}
             <View className="my-4 h-48 items-center justify-center rounded-xl bg-gray-200">
               <Text>지도 영역</Text>
+            </View>
+            <View className="mb-4 flex-row items-center">
+              <View className="flex-row items-center">
+                <SvgIcon name="marekrBorderGray" size={16} className="mr-3 text-neutral-400" />
+                <Text className="text-sm text-gray-500">현재 위치</Text>
+              </View>
             </View>
 
             {/* 사진 영역 */}
@@ -109,6 +120,12 @@ const RecordScreen = () => {
               />
             </View>
           </View>
+          {/* 하단 버튼 영역 */}
+          <View className="px-3 pb-2 pt-2">
+            <Button variant="primary" type="button" size="full">
+              완료
+            </Button>
+          </View>
         </KeyboardAwareScrollView>
 
         {/* 이미지 선택 액션 시트 */}
@@ -119,12 +136,12 @@ const RecordScreen = () => {
           onCameraPress={handleTakePhoto}
         />
 
-        {/* 하단 버튼 영역 */}
-        <View className={`relative bottom-0 left-0 right-0 bg-white px-3 pb-2 pt-2`}>
-          <Button variant="primary" size="full">
+        {/* 키보드가 올라올 때 보이는 버튼 */}
+        {/* <View className={`relative bottom-0 left-0 right-0 px-3 pb-2 pt-2`}>
+          <Button variant="primary" type="button" size="full">
             완료
           </Button>
-        </View>
+        </View> */}
       </KeyboardAvoidingView>
     </SafeScreen>
   )
