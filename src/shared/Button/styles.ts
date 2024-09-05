@@ -31,7 +31,8 @@ export const buttonContainerVariants = cva(
       { variant: ['default', 'primary'], size: 'sm', type: 'button', class: 'h-10 px-3' },
       { variant: ['default', 'primary'], size: 'md', type: 'button', class: 'h-12 px-2 ' },
       { variant: ['default', 'primary'], size: 'lg', type: 'button', class: 'h-[54px] w-2/3' },
-      { variant: ['default', 'primary'], size: 'full', type: 'button', class: '' },
+      { variant: ['default'], size: 'full', type: 'button', class: '' },
+      { variant: ['primary'], size: 'full', type: 'button', class: 'rounded-full' },
       /** 텍스트 버튼 스타일 */
       { variant: 'ghost', size: 'md', type: 'text', class: 'h-11 px-1.5' },
       /** 터치 버튼 스타일 */

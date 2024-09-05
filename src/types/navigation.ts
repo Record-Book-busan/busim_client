@@ -29,8 +29,9 @@ export type MapStackParamList = {
 
 export type RecordStackParamList = {
   RecordMain: undefined
-  RecordDetail: { id: number }
   CreateRecord: undefined
+  ReadRecord: { id: number }
+  EditRecord: { id: number }
 }
 
 export type MyPageStackParamList = {
