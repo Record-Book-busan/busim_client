@@ -1,8 +1,9 @@
-import React, { useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { View, Text, TouchableOpacity, Image, TextInput } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { Categories, KeyboardAvoidingView, SafeScreen } from '@/components/common'
+import { MapDetail } from '@/components/map'
 import { useCamera } from '@/hooks/useCamera'
 import { useGallery } from '@/hooks/useGallery'
 import { TextArea, ImagePickerModal, SvgIcon, Button } from '@/shared'
@@ -65,8 +66,8 @@ const RecordScreen = () => {
             <Categories onCategoryChange={handleCategoryChange} />
 
             {/* 지도 영역*/}
-            <View className="my-4 h-48 items-center justify-center rounded-xl bg-gray-200">
-              <Text>지도 영역</Text>
+            <View className="my-4 h-48">
+              <MapDetail geometry={{ lon: 128.1603, lat: 36.1587 }} />
             </View>
             <View className="mb-4 flex-row items-center">
               <View className="flex-row items-center">

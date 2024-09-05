@@ -47,42 +47,55 @@ const DetailScreen: React.FC<DetailScreenProps> = ({ route }) => {
         <View className="bg-white px-5 pb-6">
           <View className="mt-2 flex-row items-center justify-between py-4">
             <Text className="flex-1 text-xl font-bold text-gray-800">{mockData.title}</Text>
-            <BookmarkButton onPress={onBookMarkPress} />
+            <BookmarkButton onPress={onBookMarkPress} isBookMarked={mockData.isBookMarked} />
           </View>
 
-          <View className="mb-4 flex-row flex-wrap" style={{ columnGap: 6 }}>
+          <View className="mb-8 flex-row flex-wrap" style={{ columnGap: 6 }}>
             {mockData.cat2.map((item, index) => (
               <Tag key={index} catId={item} />
             ))}
           </View>
 
+          <InfoSection title="장소 소개" content={mockData.content || '장소 소개'} />
+          <InfoSection title="정보">
+            <InfoItem icon="phone" text={mockData.phone || '전화번호'} isBlack={true} />
+            <InfoItem
+              icon="calendar"
+              text={mockData.operatingTime || '운영시간 정보 제공 칸입니다'}
+              isBlack={true}
+            />
+          </InfoSection>
+        </View>
+
+        <View className="mt-3 bg-white px-5 py-6">
           <View className="mb-4 h-36 w-full">
             <MapDetail geometry={{ lon: mockData.lng, lat: mockData.lat }} />
           </View>
 
-          <InfoItem icon="marekrBorderGray" text={`경도: ${mockData.lng}, 위도: ${mockData.lat}`} />
-          <InfoItem icon="time" text={mockData.operatingTime || '운영시간 정보 제공 칸입니다'} />
-        </View>
-
-        <View className="mt-3 bg-white px-5 py-6">
-          <InfoSection title="장소 소개" content={mockData.content || '장소 소개'} />
-          <InfoSection title="정보">
-            <InfoItem icon="phone" text={mockData.phone || '전화번호'} />
-            <InfoItem
-              icon="calendar"
-              text={mockData.operatingTime || '운영시간 정보 제공 칸입니다'}
-            />
-          </InfoSection>
+          <InfoItem
+            icon="marekrBorderGray"
+            text={`경도: ${mockData.lng}, 위도: ${mockData.lat}`}
+            isBlack={false}
+          />
+          <InfoItem
+            icon="time"
+            text={mockData.operatingTime || '운영시간 정보 제공 칸입니다'}
+            isBlack={false}
+          />
         </View>
       </ScrollView>
     </SafeScreen>
   )
 }
 
-const InfoItem: React.FC<{ icon: IconName; text: string }> = ({ icon, text }) => (
+const InfoItem: React.FC<{ icon: IconName; text: string; isBlack: boolean }> = ({
+  icon,
+  text,
+  isBlack,
+}) => (
   <View className="flex-row items-center py-1">
-    <SvgIcon name={icon} size={16} className="text-neutral-400" />
-    <Text className="ml-2 text-sm text-neutral-500">{text}</Text>
+    <SvgIcon name={icon} size={16} className={`${isBlack ? 'text-black' : 'text-neutral-400'}`} />
+    <Text className={`ml-2 text-sm ${isBlack ? 'text-black' : 'text-neutral-500'}`}>{text}</Text>
   </View>
 )
 
@@ -93,8 +106,8 @@ const InfoSection: React.FC<{ title: string; content?: string; children?: React.
 }) => (
   <View className="mb-6">
     <Text className="mb-4 text-lg font-semibold text-gray-700">{title}</Text>
-    <View className="w-full rounded-xl bg-slate-100 p-4">
-      {content ? <Text className="text-sm text-gray-700">{content}</Text> : children}
+    <View className="w-full rounded-xl bg-[#BECCE8] p-4">
+      {content ? <Text className="text-sm text-black">{content}</Text> : children}
     </View>
   </View>
 )
@@ -114,10 +127,11 @@ const mockData = {
   address: '부산광역시 해운대구 우동',
   addressDetail: '',
   zipcode: '48094',
-  lat: 128.1603,
-  lng: 36.1587,
+  lat: 36.1587,
+  lng: 128.1603,
   cat1: 'PLACE',
   cat2: [1, 4],
   operatingTime: '09:00 - 18:00 (여름 시즌)',
   phone: '051-123-4567',
+  isBookMarked: true,
 }

@@ -6,7 +6,6 @@ export const CATEGORY = {
   핫플: 4,
   맛집: 32,
   카페: 64,
-  술집: 128,
 } as const
 export type CategoryKey = keyof typeof CATEGORY
 export type CategoryType = (typeof CATEGORY)[keyof typeof CATEGORY]

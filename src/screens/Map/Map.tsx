@@ -7,7 +7,6 @@ import { MapView } from '@/components/map'
 import { RecommendSheet } from './RecommendSheet'
 
 function MapScreen() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [activeCategory, setActiveCategory] = useState<number[]>([])
   const [searchBarHeight, setSearchBarHeight] = useState(0)
 
@@ -36,7 +35,7 @@ function MapScreen() {
         <Categories onCategoryChange={handleCategoryChange} />
       </View>
       {/* 지도 웹뷰 */}
-      <MapView />
+      <MapView activeCategory={activeCategory} />
 
       {/* 하단 추천 시트 */}
       <RecommendSheet headerHeight={headerHeight} />

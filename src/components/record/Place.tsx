@@ -3,6 +3,8 @@ import { Text, TouchableOpacity, View } from 'react-native'
 
 import { ClearableField } from '@/shared'
 
+import { MapDetail } from '../map'
+
 import type { RootStackParamList } from '@/types/navigation'
 import type { StackNavigationProp } from '@react-navigation/stack'
 
@@ -13,7 +15,9 @@ export function Place() {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'MainTab'>>()
   return (
     <View>
-      <Text>장소 화면</Text>
+      <View className="h-96 w-full">
+        <MapDetail geometry={{ lon: 128.1603, lat: 36.1587 }} />
+      </View>
       <ClearableField />
       <TouchableOpacity
         className="flex h-12 items-center justify-center bg-blue-400"

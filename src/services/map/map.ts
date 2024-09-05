@@ -49,19 +49,19 @@ const getMarkerImage = `
   const tour = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjIiIGhlaWdodD0iMjIiIHZpZXdCb3g9IjAgMCAyMiAyMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxyZWN0IHdpZHRoPSIyMiIgaGVpZ2h0PSIyMiIgcng9IjExIiBmaWxsPSIjNzlBNzEwIi8+DQo8cGF0aCBkPSJNNi43ODk0NSA4LjEwNTI2QzcuMzcwOCA4LjEwNTI2IDcuODQyMDggNy42MzM5OCA3Ljg0MjA4IDcuMDUyNjNDNy44NDIwOCA2LjQ3MTI4IDcuMzcwOCA2IDYuNzg5NDUgNkM2LjIwODEgNiA1LjczNjgyIDYuNDcxMjggNS43MzY4MiA3LjA1MjYzQzUuNzM2ODIgNy42MzM5OCA2LjIwODEgOC4xMDUyNiA2Ljc4OTQ1IDguMTA1MjZaIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEuMDUyNjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTEzLjEwNTMgMTIuMzE1OEMxMy4xMDUzIDEyLjMxNTggMTMuNjMxNiAxMC43MzY4IDEzLjYzMTYgOC4xMDUyNlY3LjA1MjYzQzEzLjYzMTYgNy4wNTI2MyAxMy4xMDUzIDYgMTIuMDUyNiA2QzExLjUyNjMgNiAxMSA2LjI2MzE2IDExIDYuMjYzMTYiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMS4wNTI2MyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTEuNTI2NCA5LjE1OEMxMS41MjY0IDguNTk5NjUgMTEuNzQ4MiA4LjA2NDE3IDEyLjE0MyA3LjY2OTM1QzEyLjUzNzggNy4yNzQ1NCAxMy4wNzMzIDcuMDUyNzMgMTMuNjMxNiA3LjA1MjczQzE0LjE5IDcuMDUyNzMgMTQuNzI1NSA3LjI3NDU0IDE1LjEyMDMgNy42NjkzNUMxNS41MTUxIDguMDY0MTcgMTUuNzM2OSA4LjU5OTY1IDE1LjczNjkgOS4xNTgiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMS4wNTI2MyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTMuNjMxNiA3LjA1MjYzQzEzLjYzMTYgNy4wNTI2MyAxNC4xNTc5IDYgMTUuMjEwNiA2QzE1LjczNjkgNiAxNi4yNjMyIDYuMjYzMTYgMTYuMjYzMiA2LjI2MzE2TTguODk0NzYgMTEuNzg5NUw5Ljk0NzM5IDE2TTYuMjYzMTggMTZMNi42MzE2IDE0Ljg5NDdDNi43MzY4NyAxNC42MzE2IDcuMDAwMDMgMTQuNDIxMSA3LjMxNTgyIDE0LjQyMTFIMTMuNjMxNkMxMy44OTQ4IDE0LjQyMTEgMTQuMzE1OCAxNC4yMTA1IDE0LjQ3MzcgMTRMMTYuMjYzMiAxMS43ODk1TTE1LjczNjkgMTZMMTQuMTU3OSAxNC40MjExTTYuNzg5NSAxMi4zMTU4TDguMzY4NDUgOS42ODQyMUwxMSAxMS4yNjMyTDYuNzg5NSAxMi4zMTU4WiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjA1MjYzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjwvc3ZnPg0K'
 
   switch(type) {
-    case 'food':
+    case '1':
         return foodSvg
-    case 'hotPlace':
+    case '2':
         return hotPlace
-    case 'lesureSports':
+    case '4':
         return lesureSports
-    case 'nature':
+    case '8':
         return nature
-    case 'park':
+    case '16':
         return park
-    case 'star':
+    case '32':
         return star
-    case 'tour':
+    case '64':
         return tour
   }
 `
@@ -75,58 +75,59 @@ const settingMarkers = `
   const data = [
     {
         title: '카카오', 
-        type: 'food',
+        type: '1',
         latlng: new kakao.maps.LatLng(33.450705, 126.570677)
     },
     {
         title: '생태연못', 
-        type: 'food',
+        type: '1',
         latlng: new kakao.maps.LatLng(33.450936, 126.569477)
     },
     {
         title: '텃밭', 
-        type: 'hotPlace',
+        type: '2',
         latlng: new kakao.maps.LatLng(33.450879, 126.569940)
     },
     {
         title: '근린공원',
-        type: 'food',
+        type: '1',
         latlng: new kakao.maps.LatLng(33.451393, 126.570738)
     },
     {
         title: '카카오', 
-        type: 'hotPlace',
+        type: '2',
         latlng: new kakao.maps.LatLng(33.450705, 126.570677)
     },
     {
         title: '생태연못', 
-        type: 'lesureSports',
+        type: '4',
         latlng: new kakao.maps.LatLng(33.450936, 126.569477)
     },
     {
         title: '텃밭', 
-        type: 'nature',
+        type: '8',
         latlng: new kakao.maps.LatLng(33.450879, 126.569940)
     },
     {
         title: '근린공원',
-        type: 'park',
+        type: '16',
         latlng: new kakao.maps.LatLng(33.451393, 126.570738)
     },
     {
         title: '카카오', 
-        type: 'star',
+        type: '32',
         latlng: new kakao.maps.LatLng(33.450705, 126.570677)
     },
     {
         title: '생태연못', 
-        type: 'tour',
+        type: '64',
         latlng: new kakao.maps.LatLng(33.450936, 126.569477)
     },
   ]
 
   data.forEach((d) => {
-      if(d.type === type) {
+      type.forEach((t) => {
+        if(d.type === t.toString()) {
           const markerImage = new kakao.maps.MarkerImage(getMarkerImage(d.type), new kakao.maps.Size(40, 40))
 
           const marker = new kakao.maps.Marker({
@@ -136,7 +137,8 @@ const settingMarkers = `
           })
 
           showingMarkers.push(marker)
-      }
+        }
+      })
   })
 
   showMarkers()
@@ -182,14 +184,7 @@ function js() {
     registFn += `function ${fn.key} { ${fn.val} }`
   })
 
-  const initFn = `
-    kakao.maps.load(function(){ 
-      createMap()
-      settingMarkers('food')
-    })
-  `
-
-  return { registFn, initFn }
+  return registFn
 }
 
 const map = `
@@ -206,50 +201,10 @@ const map = `
         let map;
         let showingMarkers = [];
 
-        ${js().initFn}
-        ${js().registFn}
+        ${js()}
       </script>
   </body>
   </html>
 `
 
-type detailProps = {
-  lon: number
-  lat: number
-}
-
-const detail = ({ lon, lat }: detailProps) => {
-  return `
-    <html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${
-          process.env.KakaoJsApiKey
-        }&libraries=services,clusterer,drawing"></script> 
-    </head>
-    <body >
-        <div id="map" style="width: 100%; height: 100%;"></div>
-        <script>
-          let map;
-
-          const container = document.getElementById('map');
-          const options = {
-              center: new kakao.maps.LatLng(${lon}, ${lat}),
-              level: 3
-          };
-          
-          map = new kakao.maps.Map(container, options)
-
-          const marker = new kakao.maps.Marker({
-              position: new kakao.maps.LatLng(${lon}, ${lat})
-          });
-
-          marker.setMap(map);
-          map.setDraggable(false);
-        </script>
-    </body>
-    </html>
-  `
-}
-
-export { map, detail }
+export default map

@@ -8,7 +8,7 @@ interface Props {
   onPress: () => void
 }
 
-export const BookmarkButton = ({ isBookMarked = false, onPress }: Props) => {
+export const BookmarkButton = ({ isBookMarked, onPress }: Props) => {
   const [isPressed, setIsPressed] = useState(isBookMarked)
 
   const handlePress = () => {
