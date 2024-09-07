@@ -46,7 +46,7 @@ export function Chip({ title, isSelected, onPress, className, ...props }: ChipPr
       onPress={onPress}
       {...props}
     >
-      <Text className={cn(textVariants({ isSelected }))} numberOfLines={1}>
+      <Text className={cn(textVariants({ isSelected }), 'leading-normal')} numberOfLines={1}>
         {title}
       </Text>
     </Button>

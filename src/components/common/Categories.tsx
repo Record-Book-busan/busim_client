@@ -27,7 +27,7 @@ const CATEGORIES = {
   ],
   [MAP_TYPE.FOOD]: [
     { id: CATEGORY.맛집, title: '맛집' },
-    { id: CATEGORY.카페, title: '카페' },
+    { id: CATEGORY.특별한_맛집, title: '특별한 맛집' },
   ],
 } as const
 

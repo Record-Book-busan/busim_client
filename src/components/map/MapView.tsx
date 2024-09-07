@@ -8,7 +8,7 @@ function MapView({ activeCategory }: { activeCategory: number[] }) {
 
   useEffect(() => {
     if (webViewRef.current) {
-      const script = `settingMarkers(${JSON.stringify(activeCategory)})`
+      const script = `settingPlaceMarkers(${JSON.stringify(activeCategory)})`
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       ;(webViewRef.current as any).injectJavaScript(script)
@@ -18,6 +18,13 @@ function MapView({ activeCategory }: { activeCategory: number[] }) {
   const initFn = `
     kakao.maps.load(function(){ 
       createMap()
+      settingPlaceMarkers(${JSON.stringify(activeCategory)})
+      kakao.maps.event.addListener(map, 'zoom_changed', () => {
+        settingPlaceMarkers(${JSON.stringify(activeCategory)})
+      })
+
+      // settingImageMarkers()
+      // kakao.maps.event.addListener(map, 'zoom_changed', settingImageMarkers)
     })
   `
 
