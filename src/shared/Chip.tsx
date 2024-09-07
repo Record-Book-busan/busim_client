@@ -20,7 +20,7 @@ const chipVariants = cva(
   },
 )
 
-const textVariants = cva('text-center text-sm leading-[0px]', {
+const textVariants = cva('text-center text-sm leading-normal', {
   variants: {
     isSelected: {
       true: 'font-semibold text-white',
@@ -46,7 +46,7 @@ export function Chip({ title, isSelected, onPress, className, ...props }: ChipPr
       onPress={onPress}
       {...props}
     >
-      <Text className={cn(textVariants({ isSelected }), 'leading-normal')} numberOfLines={1}>
+      <Text className={cn(textVariants({ isSelected }))} numberOfLines={1}>
         {title}
       </Text>
     </Button>

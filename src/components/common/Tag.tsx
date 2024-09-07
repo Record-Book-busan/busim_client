@@ -23,7 +23,7 @@ const tagVariants = cva('rounded-full min-w-[60px] px-5 py-2', {
   },
 })
 
-const TextVariants = cva('text-center text-xs font-semibold leading-[0px]', {
+const TextVariants = cva('text-center text-xs font-semibold leading-normal', {
   variants: {
     category: {
       관광지: 'text-white',
