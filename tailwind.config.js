@@ -8,8 +8,12 @@ module.exports = {
     g: ({ theme }) => theme('spacing'),
     extend: {
       colors: {
-        'BUSIM-blue': '#00339D',
-        'BUSIM-blue-light': '#BECCE8',
+        'BUSIM-blue': '#1753e3',
+        'BUSIM-blue-light': '#f4f8ff',
+        'BUSIM-blue-dark': '#1243b6',
+        'BUSIM-slate': '#b2bfd1',
+        'BUSIM-slate-light': '#f1f4fb',
+        'BUSIM-slate-dark': '#6e7d9d',
         'BUSIM-gray': '#374151',
         'BUSIM-gray-light': '#9CA3AF',
         'BUSIM-gray-dark': '#1F2937',

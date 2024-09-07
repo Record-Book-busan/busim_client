@@ -37,22 +37,14 @@ export type RecordStackParamList = {
 export type MyPageStackParamList = {
   MyPageProfile: undefined
   MyPageSettings: undefined
+  BookMarkList: undefined
   Test: undefined
   Test1: undefined
 }
 
-type SearchProps = {
-  keyword: string
-  selected: string
-}
-
-type DetailProps = {
-  id: string
-}
-
 export type SearchStackParamList = {
-  Search: SearchProps
-  Detail: DetailProps
+  Search: { keyword: string; selected: string }
+  Detail: { id: number }
 }
 
 export type RootScreenProps<S extends keyof RootStackParamList = keyof RootStackParamList> =

@@ -18,7 +18,12 @@ export default function MyPageScreen() {
   }
   const menuItems = [
     { title: '기록한 여행 사진', onPress: () => {} },
-    { title: '북마크', onPress: () => {} },
+    {
+      title: '북마크',
+      onPress: () => {
+        navigation.navigate('MyPageStack', { screen: 'BookMarkList' })
+      },
+    },
     {
       title: '테스트',
       onPress: () => {
