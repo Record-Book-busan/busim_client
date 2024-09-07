@@ -49,20 +49,12 @@ export const ButtonPrimitive: React.FC<ButtonPrimitiveProps> = ({
     }
   }
 
-  const isString = typeof children === 'string'
-
   const renderContent = () => {
-    const content = isString ? (
-      <Animated.Text style={!disableAnimation ? { transform: [{ scale: scaleAnim }] } : undefined}>
-        {children}
-      </Animated.Text>
-    ) : (
+    return (
       <Animated.View style={!disableAnimation ? { transform: [{ scale: scaleAnim }] } : undefined}>
         {children}
       </Animated.View>
     )
-
-    return content
   }
 
   return (
