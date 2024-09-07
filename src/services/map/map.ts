@@ -130,7 +130,17 @@ const fetchPlaces = () => {
  * 클러스터 키 가져오기
  */
 const getClusterKey = `
-  const gridSize = 50
+  let gridSize = 50
+
+  const zoomLevel = map.getLevel()
+  
+  if (zoomLevel < 5) {
+    gridSize = 100
+  } else if (zoomLevel >= 5 && zoomLevel < 10) {
+    gridSize = 75
+  } else {
+    gridSize = 50
+  }
 
   const projection = map.getProjection()
   const point = projection.pointFromCoords(position)
@@ -170,8 +180,8 @@ const settingPlaceMarkers = `
     if (items.length === 1) {
       const d = items[0]
       const imageUrl = getMarkerImage(d.type)
-      const content = '<div class="customoverlay" style="position:relative;bottom:40px;background:#00339D;border-radius:20px 20px 20px 0;padding:10px;box-shadow:0 2px 6px rgba(0,0,0,0.3);">' +
-        '  <div style="position:relative;display:flex;align-items:center;">' +
+      const content = '<div class="customoverlay" data-key="' + d.title + '" style="position:relative;bottom:40px;background:#00339D;border-radius:20px 20px 20px 0;padding:10px;box-shadow:0 2px 6px rgba(0,0,0,0.3);">' +
+        '  <div style="position:relative;display:flex;align-items:center;pointer-events: none;">' +
         '    <img src="' + imageUrl + '" style="width:30px;height:30px;">' +
         '  </div>' +
         '  <div style="position:absolute;bottom:-10px;left:0;width:0;height:0;border-top:10px solid #00339D;border-right:10px solid transparent;"></div>' +
@@ -188,13 +198,16 @@ const settingPlaceMarkers = `
     } else {
       let sumLat = 0
       let sumLng = 0
+      let keys = ''
       const uniqueTypes = new Set()
     
       for (const item of items) {
+        keys += item.title + ','
         sumLat += item.latlng.getLat()
         sumLng += item.latlng.getLng()
         uniqueTypes.add(item.type)
       }
+      keys = keys.substring(0, keys.length - 1)
       
       const position = new kakao.maps.LatLng(sumLat / items.length, sumLng / items.length)
       
@@ -214,8 +227,8 @@ const settingPlaceMarkers = `
       let countHtml = ''
       countHtml = '<div style="background-color: white;border-radius: 50px;padding:8px;color:black;font-size:12px;text-align:center;margin-left:' + ((typeArray.length - 1) * 15 + 35) + 'px;">+' + items.length + '</div>'
 
-      const content = '<div class="customoverlay" style="position:relative;bottom:40px;background:#00339D;border-radius:20px 20px 20px 0;padding:10px;box-shadow:0 2px 6px rgba(0,0,0,0.3);">' +
-        '  <div style="position:relative;display:flex;align-items:center;">' +
+      const content = '<div class="customoverlay" data-key="' + keys + '" style="position:relative;bottom:40px;background:#00339D;border-radius:20px 20px 20px 0;padding:10px;box-shadow:0 2px 6px rgba(0,0,0,0.3);">' +
+        '  <div style="position:relative;display:flex;align-items:center;pointer-events: none;">' +
         imagesHtml + countHtml +
         '  </div>' +
         '  <div style="position:absolute;bottom:-10px;left:0;width:0;height:0;border-top:10px solid #00339D;border-right:10px solid transparent;"></div>' +
@@ -242,21 +255,25 @@ const fetchImages = () => {
   return `
     [
       {
-          url: 'https://img.freepik.com/premium-photo/beautiful-landscap_849761-6949.jpg', 
+          id: 1,
+          url: 'https://img.freepik.com/premium-photo/beautiful-landscape_849761-6949.jpg', 
           latlng: new kakao.maps.LatLng(33.450705, 126.570677)
       },
       {
+          id: 2,
           url: 'https://cdn.dgtimes.co.kr/news/photo/202308/507969_26787_1530.jpg', 
           latlng: new kakao.maps.LatLng(33.450936, 126.569477)
       },
       {
+          id: 3,
           url: 'https://image.dongascience.com/Photo/2017/03/14885035562557.jpg', 
           latlng: new kakao.maps.LatLng(33.450879, 126.569940)
       },
       {
+          id: 4,
           url: 'https://blog.kakaocdn.net/dn/d1e6IL/btr41J8GWEF/YyPzwHfiDY5jOyAZWr6G7K/img.jpg',
           latlng: new kakao.maps.LatLng(33.451393, 126.570738)
-      },
+      }
     ]
   `
 }
@@ -269,23 +286,72 @@ const settingImageMarkers = `
 
   const data = ${fetchImages()}
 
+  const clusters = {}
+
   data.forEach((d) => {
-    const content = '<div class="customoverlay" style="position:relative;bottom:40px;background:#00339D;border-radius:20px 20px 20px 0;padding:10px;box-shadow:0 2px 6px rgba(0,0,0,0.3);">' +
-        '  <div style="position:relative;display:flex;align-items:center;">' +
+    const key = getClusterKey(d.latlng)
+
+    if (!clusters[key]) {
+      clusters[key] = []
+    }
+
+    clusters[key].push(d)
+  });
+
+  for (const key in clusters) {
+    const items = clusters[key]
+
+    if (items.length === 1) {
+      const d = items[0]
+      const content = '<div class="customoverlay" data-key="' + d.id + '" style="position:relative;bottom:40px;background:#00339D;border-radius:20px 20px 20px 0;padding:10px;box-shadow:0 2px 6px rgba(0,0,0,0.3);">' +
+        '  <div style="position:relative;display:flex;align-items:center;pointer-events: none;">' +
         '    <img src="' + d.url + '" style="width:30px;height:30px;">' +
         '  </div>' +
+        '</div>'
+
+      const overlay = new kakao.maps.CustomOverlay({
+        position: d.latlng,
+        content: content,
+        yAnchor: 0,
+        xAnchor: 0
+      })
+
+      showingMarkers.push(overlay)
+    } else {
+      let keys = ''
+      let sumLat = 0
+      let sumLng = 0
+      let imagesHtml = ''
+    
+      for (let i = 0; i < items.length && i < 5; i++) {
+        sumLat += items[i].latlng.getLat()
+        sumLng += items[i].latlng.getLng()
+        imagesHtml += '<img src="' + items[i].url + '" style="width:30px;height:30px;position:absolute;left:' + (i * 15) + 'px;z-index:' + (items.length - i) + ';">'
+      }
+
+      items.map(item => keys += item.id + ',')
+      keys = keys.substring(0, keys.length - 1)
+
+      const position = new kakao.maps.LatLng(sumLat / items.length, sumLng / items.length)
+      const countHtml = '<div style="background-color: white;border-radius: 50px;padding:8px;color:black;font-size:12px;text-align:center;margin-left:' + ((items.length - 1) * 15 + 35) + 'px;">+' + items.length + '</div>'
+
+      const content = '<div class="customoverlay" data-key="' + keys + '" style="position:relative;bottom:40px;background:#00339D;border-radius:20px 20px 20px 0;padding:10px;box-shadow:0 2px 6px rgba(0,0,0,0.3);">' +
+        '  <div style="position:relative;display:flex;align-items:center;pointer-events: none;">' +
+        imagesHtml + countHtml +
+        '  </div>' +
         '  <div style="position:absolute;bottom:-10px;left:0;width:0;height:0;border-top:10px solid #00339D;border-right:10px solid transparent;"></div>' +
-        '</div>';
+        '</div>'
 
-    const overlay = new kakao.maps.CustomOverlay({
-      position: d.latlng,
-      content: content,
-      yAnchor: 0,
-      xAnchor: 0
-    })
+      const overlay = new kakao.maps.CustomOverlay({
+        position: position,
+        content: content,
+        yAnchor: 0,
+        xAnchor: 0
+      })
 
-    showingMarkers.push(overlay)
-  })
+      showingMarkers.push(overlay)
+    }
+  }
 
   showMarkers()
 `
@@ -352,8 +418,8 @@ const map = `
   <body >
       <div id="map" style="width: 100%; height: 100%;"></div>
       <script>
-        let map;
-        let showingMarkers = [];
+        let map
+        let showingMarkers = []
 
         ${js()}
       </script>
