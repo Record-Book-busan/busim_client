@@ -19,7 +19,7 @@ export const BookmarkButton = ({ isBookMarked, onPress }: Props) => {
   return (
     <TouchableOpacity onPress={handlePress}>
       <SvgIcon
-        name="bookmarkWhite"
+        name="bookmark"
         className={`h-6 w-6 ${isPressed ? 'text-BUSIM-blue' : 'text-white'}`}
       />
     </TouchableOpacity>
