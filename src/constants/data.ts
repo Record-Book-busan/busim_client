@@ -9,3 +9,8 @@ export const CATEGORY = {
 } as const
 export type CategoryKey = keyof typeof CATEGORY
 export type CategoryType = (typeof CATEGORY)[keyof typeof CATEGORY]
+
+export const getCategoryText = (categoryId: CategoryType) => {
+  const entry = Object.entries(CATEGORY).find(([_, value]) => value === categoryId)
+  return entry ? (entry[0] as CategoryKey) : '정보 없음'
+}
