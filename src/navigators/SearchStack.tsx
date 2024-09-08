@@ -8,21 +8,9 @@ const Stack = createStackNavigator<SearchStackParamList>()
 
 function SearchStackNavigator() {
   return (
-    <Stack.Navigator screenOptions={{ presentation: 'modal' }}>
-      <Stack.Screen
-        name="Search"
-        component={SearchScreen}
-        options={{
-          headerTitle: '',
-        }}
-      />
-      <Stack.Screen
-        name="Detail"
-        component={DetailScreen}
-        options={{
-          headerTitle: '',
-        }}
-      />
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Search" component={SearchScreen} options={{ animationEnabled: false }} />
+      <Stack.Screen name="Detail" component={DetailScreen} options={{ presentation: 'modal' }} />
     </Stack.Navigator>
   )
 }
