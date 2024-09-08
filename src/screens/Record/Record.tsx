@@ -6,9 +6,8 @@ import { Categories, KeyboardAvoidingView, SafeScreen } from '@/components/commo
 import { MapDetail } from '@/components/map'
 import { useCamera } from '@/hooks/useCamera'
 import { useGallery } from '@/hooks/useGallery'
-import { TextArea, ImagePickerModal, SvgIcon, Button } from '@/shared'
+import { TextArea, ImagePickerModal, SvgIcon, Button, Header } from '@/shared'
 import { ButtonPrimitive } from '@/shared/Button'
-import { Header } from '@/shared/Header'
 
 const RecordScreen = () => {
   const scrollViewRef = useRef<KeyboardAwareScrollView>(null)
@@ -71,7 +70,7 @@ const RecordScreen = () => {
             </View>
             <View className="mb-4 flex-row items-center">
               <View className="flex-row items-center">
-                <SvgIcon name="marekrBorderGray" size={16} className="mr-3 text-neutral-400" />
+                <SvgIcon name="marker" size={16} className="mr-3 text-neutral-400" />
                 <Text className="text-sm text-gray-500">현재 위치</Text>
               </View>
             </View>

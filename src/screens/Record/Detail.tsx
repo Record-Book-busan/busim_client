@@ -16,8 +16,7 @@ import {
 } from 'react-native'
 
 import { SafeScreen, Tag } from '@/components/common'
-import { SvgIcon } from '@/shared'
-import { Header } from '@/shared/Header'
+import { SvgIcon, Header } from '@/shared'
 
 import type { RecordStackParamList } from '@/types/navigation'
 
@@ -74,7 +73,7 @@ export default function RecordDetailScreen() {
           {/* 위치 정보 */}
           <View className="mb-4 flex-row items-center">
             <View className="flex-row items-center">
-              <SvgIcon name="marekrBorderGray" size={16} className="mr-3 text-neutral-400" />
+              <SvgIcon name="marker" size={16} className="mr-3 text-neutral-400" />
               <Text className="text-sm text-gray-500">
                 {mockData.address + ' ' + mockData.addressDetail}
               </Text>
