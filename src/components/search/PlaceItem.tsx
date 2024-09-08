@@ -1,31 +1,31 @@
-import { Text, TouchableOpacity, View } from 'react-native'
+import { Text, View } from 'react-native'
 
 import { SvgIcon } from '@/shared'
+import { Button, ButtonPrimitive } from '@/shared/Button'
 
 type PlaceItemProps = {
-  id: string
+  id: number
   title: string
   position: string
-  onPressDel: (id: string) => void
-  onPressMove: (id: string) => void
+  onPressDel: (id: number) => void
+  onPressMove: (id: number) => void
 }
 
 export function PlaceItem({ id, title, position, onPressDel, onPressMove }: PlaceItemProps) {
   return (
-    <TouchableOpacity
-      className="flex w-full flex-row border-y border-y-[#DBDCE5] px-2 py-4"
-      onPress={() => onPressMove(id)}
-    >
-      <View className="flex flex-auto">
-        <Text className="text-lg font-bold">{title}</Text>
-        <View className="flex flex-row items-center">
-          <SvgIcon name="markerBorderBlue" />
-          <Text className="ml-1">{position}</Text>
+    <ButtonPrimitive animationConfig={{ toValue: 0.99 }} onPress={() => onPressMove(id)}>
+      <View className="mx-5 flex-row items-center justify-between border-b border-neutral-100 py-3.5">
+        <View className="flex-1">
+          <Text className="mb-1 text-base font-semibold text-gray-800">{title}</Text>
+          <View className="flex-row items-center">
+            <SvgIcon name="marker" className="text-gray-400" size={12} />
+            <Text className="ml-1 text-sm leading-[0px] text-gray-500">{position}</Text>
+          </View>
         </View>
+        <Button className="z-50" onPress={() => onPressDel(id)}>
+          <SvgIcon name="x" className="text-gray-500" size={18} />
+        </Button>
       </View>
-      <TouchableOpacity className="z-50" onPress={() => onPressDel(id)}>
-        <SvgIcon name="xCircle" />
-      </TouchableOpacity>
-    </TouchableOpacity>
+    </ButtonPrimitive>
   )
 }

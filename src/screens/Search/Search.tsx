@@ -1,76 +1,57 @@
-import { type NavigationProp, type RouteProp, useNavigation } from '@react-navigation/native'
-import { useEffect, useState } from 'react'
-import { Text, View } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
+import { Text, FlatList, View } from 'react-native'
 
-import { SafeScreen, SearchBar } from '@/components/common'
-import { PlaceItem, SubTab } from '@/components/search'
+import { SafeScreen, SearchHeader } from '@/components/common'
+import { PlaceItem, useRecentSearch, useSearch } from '@/components/search'
 
-import type { RootStackParamList, SearchStackParamList } from '@/types/navigation'
+import type { SearchStackParamList } from '@/types/navigation'
+import type { Place } from '@/types/schemas/search'
+import type { StackNavigationProp } from '@react-navigation/stack'
 
-function SearchScreen({ route }: { route: RouteProp<SearchStackParamList, 'Search'> }) {
-  useEffect(() => {
-    console.log(route.params)
-  }, [])
-
-  const navigation = useNavigation<NavigationProp<RootStackParamList, 'SearchStack'>>()
-
-  const [isSearch, setSearch] = useState(false)
-
-  const searchClickHandler = () => {
-    setSearch(true)
+export default function SearchScreen() {
+  const navigation = useNavigation<StackNavigationProp<SearchStackParamList, 'Search'>>()
+  const { recentSearches, addRecentSearch, removeRecentSearch } = useRecentSearch()
+  const { query, searchResults, searchPlaces } = useSearch()
+  const handleSearch = (text: string) => {
+    searchPlaces(text)
   }
 
-  useEffect(() => {
-    if (isSearch) {
-      navigation.setOptions({ headerTitle: '검색 결과' })
-    }
-  }, [isSearch])
-
-  const moveDetailHandler = (id: string) => {
-    navigation.navigate('SearchStack', { screen: 'Detail', params: { id: id } })
+  const navigateToDetail = (place: Place) => {
+    addRecentSearch(place)
+    navigation.navigate('Detail', { id: place.id })
   }
 
-  const deleteHistoryHandler = (id: string) => {
-    setHistory(prevHistory => prevHistory.filter(item => item.id !== id))
-  }
+  const keyExtractor = (item: Place) => item.id.toString()
 
-  const [history, setHistory] = useState([
-    {
-      id: '1',
-      title: '장소명',
-      position: '위치 정보 제공 칸입니다',
-      onPressMove: moveDetailHandler,
-      onPressDel: deleteHistoryHandler,
-    },
-    {
-      id: '2',
-      title: '장소명',
-      position: '위치 정보 제공 칸입니다',
-      onPressMove: moveDetailHandler,
-      onPressDel: deleteHistoryHandler,
-    },
-    {
-      id: '3',
-      title: '장소명',
-      position: '위치 정보 제공 칸입니다',
-      onPressMove: moveDetailHandler,
-      onPressDel: deleteHistoryHandler,
-    },
-  ])
+  const displayData = query ? searchResults : recentSearches
 
   return (
-    <SafeScreen excludeEdges={['top']}>
-      <View className="bg-white pt-2 shadow">
-        <SearchBar type="default" placeholder="장소 검색" onPress={searchClickHandler} />
+    <SafeScreen>
+      <SearchHeader placeholder="장소 검색" onChangeText={handleSearch} value={query} />
+      <View className="flex-1">
+        {!query && (
+          <Text className="px-5 pb-1 pt-5 text-sm font-light text-gray-700">최근 검색 기록</Text>
+        )}
+        {displayData.length > 0 ? (
+          <FlatList
+            data={displayData}
+            renderItem={({ item }: { item: Place }) => (
+              <PlaceItem
+                id={item.id}
+                title={item.name}
+                position={item.address}
+                onPressMove={() => navigateToDetail(item)}
+                onPressDel={() => removeRecentSearch(item.id)}
+              />
+            )}
+            keyExtractor={keyExtractor}
+          />
+        ) : (
+          <Text className="px-2 py-4">
+            {query ? '검색 결과가 없습니다.' : '최근 검색 기록이 없습니다.'}
+          </Text>
+        )}
       </View>
-      {!isSearch && <Text className="px-2 py-4 font-bold">최근 검색 기록</Text>}
-      {!isSearch ? (
-        history.map(item => <PlaceItem key={item.id} {...item} />)
-      ) : (
-        <SubTab moveDetailHandler={moveDetailHandler} />
-      )}
     </SafeScreen>
   )
 }
-
-export default SearchScreen
