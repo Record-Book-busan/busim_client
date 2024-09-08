@@ -6,19 +6,19 @@ import { Tab, TabView } from '@/shared'
 import { ImagePlaceItem } from '.'
 
 type SubTabProps = {
-  moveDetailHandler: (id: string) => void
+  moveDetailHandler: (id: number) => void
 }
 
 export function SubTab({ moveDetailHandler }: SubTabProps) {
   const [index, setIndex] = useState(0)
 
-  const bookMarkHandler = (id: string) => {
+  const bookMarkHandler = (id: number) => {
     console.log(id)
   }
 
   const [place] = useState([
     {
-      id: '1',
+      id: 1,
       title: '장소 제목',
       category: '관광지/자연',
       description: '추가 설명글',
@@ -29,7 +29,7 @@ export function SubTab({ moveDetailHandler }: SubTabProps) {
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfVhju-h_98uFgOD8WzzMMHJ9PEkPSIhdRVA&s',
     },
     {
-      id: '2',
+      id: 2,
       title: '장소 제목',
       category: '관광지/자연',
       description: '추가 설명글',
@@ -40,7 +40,7 @@ export function SubTab({ moveDetailHandler }: SubTabProps) {
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfVhju-h_98uFgOD8WzzMMHJ9PEkPSIhdRVA&s',
     },
     {
-      id: '3',
+      id: 3,
       title: '장소 제목',
       category: '관광지/자연',
       description: '추가 설명글',
@@ -54,7 +54,7 @@ export function SubTab({ moveDetailHandler }: SubTabProps) {
 
   const [history] = useState([
     {
-      id: '1',
+      id: 1,
       title: '여행 기록 제목',
       category: '관광지/자연',
       description: '추가 설명글',
@@ -65,7 +65,7 @@ export function SubTab({ moveDetailHandler }: SubTabProps) {
         'https://gscaltexmediahub.com/wp-content/uploads/2023/05/the-day-of-ocean-2023_1.png',
     },
     {
-      id: '2',
+      id: 2,
       title: '여행 기록 제목',
       category: '관광지/자연',
       description: '추가 설명글',
@@ -76,7 +76,7 @@ export function SubTab({ moveDetailHandler }: SubTabProps) {
         'https://gscaltexmediahub.com/wp-content/uploads/2023/05/the-day-of-ocean-2023_1.png',
     },
     {
-      id: '3',
+      id: 3,
       title: '여행 기록 제목',
       category: '관광지/자연',
       description: '추가 설명글',

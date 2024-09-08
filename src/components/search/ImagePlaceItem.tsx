@@ -5,12 +5,12 @@ import { ImageVariant, SvgIcon } from '@/shared'
 import { BookmarkButton } from '../common'
 
 type ImagePlaceItemProps = {
-  id: string
+  id: number
   title: string
   category: string
   description: string
-  onPressBookMark: (id: string) => void
-  onPressMove: (id: string) => void
+  onPressBookMark: (id: number) => void
+  onPressMove: (id: number) => void
   isBookMarked: boolean
   imageUrl: string
 }

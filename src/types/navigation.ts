@@ -38,12 +38,12 @@ export type MyPageStackParamList = {
   MyPageProfile: undefined
   MyPageSettings: undefined
   BookMarkList: undefined
+  RecordList: undefined
   Test: undefined
-  Test1: undefined
 }
 
 export type SearchStackParamList = {
-  Search: { keyword: string; selected: string }
+  Search: undefined
   Detail: { id: number }
 }
 
