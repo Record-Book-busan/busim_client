@@ -12,6 +12,7 @@ interface HeaderProps {
   rightContent?: React.ReactNode
   containerStyle?: string
   titleStyle?: string
+  children?: React.ReactNode
 }
 
 export function Header({
@@ -20,6 +21,7 @@ export function Header({
   rightContent,
   containerStyle,
   titleStyle,
+  children,
 }: HeaderProps) {
   const navigation = useNavigation()
 
@@ -50,8 +52,9 @@ export function Header({
           {title}
         </Text>
       )}
+      {children}
 
-      <View className="mr-2 w-10 items-end">{rightContent}</View>
+      {rightContent && <View className="mr-2 w-10 items-end">{rightContent}</View>}
     </View>
   )
 }

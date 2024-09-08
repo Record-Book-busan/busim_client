@@ -1,44 +1,66 @@
-import { useCallback, useMemo, useState } from 'react'
+import { type NavigationProp, useNavigation } from '@react-navigation/native'
+import { useRef, useState } from 'react'
 import { View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { Categories, SafeScreen, SearchBar } from '@/components/common'
+import { Categories, SafeScreen, SearchBarView } from '@/components/common'
 import { MapView } from '@/components/map'
+import { useForceUpdate } from '@/hooks/useForceUpdate'
+import { RootStackParamList } from '@/types/navigation'
 
 import { RecommendSheet } from './RecommendSheet'
 
 function MapScreen() {
   const [activeCategory, setActiveCategory] = useState<number[]>([])
-  const [searchBarHeight, setSearchBarHeight] = useState(0)
+  const searchBarHight = useRef(0)
+  const forceUpdate = useForceUpdate()
+  const insets = useSafeAreaInsets()
+  const navigation = useNavigation<NavigationProp<RootStackParamList, 'MainTab'>>()
 
   const handleCategoryChange = (catId: number[]) => {
     console.log('선택한 카테고리 id:', catId)
     setActiveCategory(catId)
   }
 
-  // 전체 헤더 높이 계산
-  const headerHeight = useMemo(() => searchBarHeight, [searchBarHeight])
-  const handleSearchBarHeightChange = useCallback((height: number) => {
-    setSearchBarHeight(height)
-  }, [])
+  const handleSearchBarPress = () =>
+    navigation.navigate('SearchStack', {
+      screen: 'Search',
+    })
 
   return (
     <SafeScreen excludeEdges={['top']}>
       {/* 검색바 */}
-      <SearchBar type="map" placeholder="장소 검색" onHeightChange={handleSearchBarHeightChange} />
-      {/* 카테고리 */}
       <View
-        className={`absolute left-0 right-0 z-[1px]`}
         style={{
-          top: headerHeight,
+          position: 'relative',
+          marginTop: insets.top,
         }}
       >
-        <Categories onCategoryChange={handleCategoryChange} />
+        <View
+          onLayout={event => {
+            const { height } = event.nativeEvent.layout
+            searchBarHight.current = height
+            forceUpdate()
+          }}
+        >
+          <SearchBarView placeholder="장소 검색" onPress={handleSearchBarPress} />
+        </View>
+
+        {/* 카테고리 */}
+        <View
+          className={`absolute left-0 right-0 z-[1px]`}
+          style={{
+            top: searchBarHight.current,
+          }}
+        >
+          <Categories onCategoryChange={handleCategoryChange} />
+        </View>
       </View>
       {/* 지도 웹뷰 */}
       <MapView activeCategory={activeCategory} />
 
       {/* 하단 추천 시트 */}
-      <RecommendSheet headerHeight={headerHeight} />
+      <RecommendSheet headerHeight={searchBarHight.current + insets.top} />
     </SafeScreen>
   )
 }

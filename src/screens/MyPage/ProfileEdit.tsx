@@ -19,7 +19,7 @@ function ProfileEditScreen() {
   }
 
   return (
-    <SafeScreen excludeEdges={['top']}>
+    <SafeScreen>
       <KeyboardDismissPressable>
         <View className="flex-1 bg-white">
           <View className="mt-12 items-center">

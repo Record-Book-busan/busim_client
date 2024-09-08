@@ -4,11 +4,10 @@ import { useState } from 'react'
 import { View, Text } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { BookmarkButton, FlatList, SafeScreen } from '@/components/common'
+import { BookmarkButton, FlatList } from '@/components/common'
 import { CATEGORY, getCategoryText, type CategoryType } from '@/constants'
 import { SegmentedControl } from '@/shared'
 import { ButtonPrimitive } from '@/shared/Button'
-import { Header } from '@/shared/Header'
 
 import type { MyPageStackParamList, RootStackParamList } from '@/types/navigation'
 import type { StackNavigationProp } from '@react-navigation/stack'
@@ -88,8 +87,7 @@ export default function BookmarkListScreen() {
   }
 
   return (
-    <SafeScreen>
-      <Header title="북마크" />
+    <View className="bg-white">
       <FlatList
         data={data?.pages.flatMap(page => page.content)}
         HeaderComponent={<View className="pt-3" />}
@@ -105,7 +103,7 @@ export default function BookmarkListScreen() {
           >
             <View className="mx-5 flex-row items-center justify-between border-b border-neutral-100 py-3.5">
               <View className="flex-1">
-                <Text className="mb-1 text-base font-semibold text-gray-700">{item.title}</Text>
+                <Text className="mb-1 text-base font-semibold text-gray-800">{item.title}</Text>
                 <View className="flex-row items-center">
                   <Text className="text-sm leading-[0px] text-gray-500">
                     {getCategoryText(item.cat2)}
@@ -135,6 +133,6 @@ export default function BookmarkListScreen() {
         }
       />
       {isLoading && <Text className="py-4 text-center text-gray-500">로딩 중...</Text>}
-    </SafeScreen>
+    </View>
   )
 }

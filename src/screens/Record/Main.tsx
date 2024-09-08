@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { View } from 'react-native'
 
-import { KeyboardDismissPressable, SafeScreen, SearchBar } from '@/components/common'
+import { KeyboardDismissPressable, SafeScreen, SearchHeader } from '@/components/common'
 import { Feed, Place } from '@/components/record'
 import { Tab, TabView } from '@/shared'
 
@@ -11,9 +11,9 @@ export default function RecordMainScreen() {
   return (
     <SafeScreen>
       <KeyboardDismissPressable>
+        <SearchHeader />
         <View className="flex-1 bg-white">
-          <View className="bg-white pt-2 shadow">
-            <SearchBar type="default" />
+          <View className="bg-white pt-2">
             <Tab value={index} onValueChange={setIndex}>
               <Tab.Item>장소 기록</Tab.Item>
               <Tab.Item>기록 피드</Tab.Item>

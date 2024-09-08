@@ -11,39 +11,27 @@ export default function MyPageScreen() {
 
   const profileItem = {
     title: '프로필 설정',
-    onPress: () => {
-      console.log('Navigating to MyPageProfile')
-      navigation.navigate('MyPageStack', { screen: 'MyPageProfile' })
-    },
+    onPress: () => navigation.navigate('MyPageStack', { screen: 'MyPageProfile' }),
   }
   const menuItems = [
-    { title: '기록한 여행 사진', onPress: () => {} },
+    {
+      title: '나의 여행 기록',
+      onPress: () => navigation.navigate('MyPageStack', { screen: 'RecordList' }),
+    },
     {
       title: '북마크',
-      onPress: () => {
-        navigation.navigate('MyPageStack', { screen: 'BookMarkList' })
-      },
+      onPress: () => navigation.navigate('MyPageStack', { screen: 'BookMarkList' }),
     },
     {
       title: '테스트',
-      onPress: () => {
-        navigation.navigate('MyPageStack', { screen: 'Test' })
-      },
-    },
-    {
-      title: '캐로셀 테스트',
-      onPress: () => {
-        navigation.navigate('MyPageStack', { screen: 'Test1' })
-      },
+      onPress: () => navigation.navigate('MyPageStack', { screen: 'Test' }),
     },
   ]
 
   const settingsItems = [
     { title: '문의 및 지원', onPress: () => {} },
     { title: '도움말', onPress: () => {} },
-    { title: '어플 버전', onPress: () => {} },
     { title: '개인 정보 동의', onPress: () => {} },
-    { title: '언어 설정', onPress: () => {} },
     { title: '이용약관', onPress: () => {} },
   ]
 
