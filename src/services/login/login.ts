@@ -1,7 +1,7 @@
 import appleAuth from '@invertase/react-native-apple-authentication'
 import { login, logout, isLogined, me } from '@react-native-kakao/user'
 
-import { storage } from '@/services/storage/storage'
+import { storage } from '@/utils/storage'
 
 /**
  * 모든 로그인 로그아웃 처리
