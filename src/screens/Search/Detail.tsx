@@ -4,7 +4,7 @@ import { ScrollView, Text, View } from 'react-native'
 
 import { BookmarkButton, ImageCarousel, SafeScreen, Tag } from '@/components/common'
 import { MapDetail } from '@/components/map'
-import { FAB, type IconName, SvgIcon } from '@/shared'
+import { FAB, SvgIcon, type IconName } from '@/shared'
 
 import type { SearchStackParamList, RootStackParamList } from '@/types/navigation'
 
@@ -12,14 +12,13 @@ interface DetailScreenProps {
   route: RouteProp<SearchStackParamList, 'Detail'>
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const DetailScreen: React.FC<DetailScreenProps> = ({ route }) => {
+export default function DetailScreen({ route }: DetailScreenProps) {
   const navigation = useNavigation<NavigationProp<RootStackParamList, 'SearchStack'>>()
 
-  const moveSearchHandler = () => {
-    navigation.navigate('SearchStack', {
-      screen: 'Search',
-      params: { keyword: 'test', selected: 'record' },
+  const handleButtonPress = (id: number) => {
+    navigation.navigate('RecordStack', {
+      screen: 'ReadRecord',
+      params: { id },
     })
   }
 
@@ -33,7 +32,7 @@ const DetailScreen: React.FC<DetailScreenProps> = ({ route }) => {
         position={'topCenter'}
         buttonStyle="bg-white rounded-full px-5 py-2 shadow-md"
         rightAddon={<SvgIcon name="arrowRightBlack" />}
-        onPress={moveSearchHandler}
+        onPress={() => handleButtonPress(route.params.id)}
       >
         여행기록 보러가기
       </FAB>
@@ -73,7 +72,7 @@ const DetailScreen: React.FC<DetailScreenProps> = ({ route }) => {
           </View>
 
           <InfoItem
-            icon="marekrBorderGray"
+            icon="marker"
             text={`경도: ${mockData.lng}, 위도: ${mockData.lat}`}
             isBlack={false}
           />
@@ -111,8 +110,6 @@ const InfoSection: React.FC<{ title: string; content?: string; children?: React.
     </View>
   </View>
 )
-
-export default DetailScreen
 
 const mockData = {
   id: 1,
