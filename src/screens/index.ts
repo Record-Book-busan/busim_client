@@ -10,6 +10,8 @@ export { default as RecordDetailScreen } from './Record/Detail'
 export { default as MyPageScreen } from './MyPage/MyPage'
 export { default as ProfileEditScreen } from './MyPage/ProfileEdit'
 export { default as BookmarkListScreen } from './MyPage/BookmarkList'
+export { default as RecordListScreen } from './MyPage/RecordList'
+
 export { default as MapScreen } from './Map/Map'
 
 export { default as SearchScreen } from './Search/Search'
