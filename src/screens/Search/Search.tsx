@@ -1,8 +1,10 @@
 import { useNavigation } from '@react-navigation/native'
-import { Text, FlatList, View } from 'react-native'
+import { Suspense, useState } from 'react'
+import { View, Text, TouchableOpacity } from 'react-native'
 
 import { SafeScreen, SearchHeader } from '@/components/common'
-import { PlaceItem, useRecentSearch, useSearch } from '@/components/search'
+import { SearchResults, RecentSearches } from '@/components/search'
+import { useRecentSearch } from '@/services/search'
 
 import type { SearchStackParamList } from '@/types/navigation'
 import type { Place } from '@/types/schemas/search'
@@ -10,10 +12,19 @@ import type { StackNavigationProp } from '@react-navigation/stack'
 
 export default function SearchScreen() {
   const navigation = useNavigation<StackNavigationProp<SearchStackParamList, 'Search'>>()
+  const [query, setQuery] = useState('')
+  const [isSearching, setIsSearching] = useState(false)
   const { recentSearches, addRecentSearch, removeRecentSearch } = useRecentSearch()
-  const { query, searchResults, searchPlaces } = useSearch()
-  const handleSearch = (text: string) => {
-    searchPlaces(text)
+
+  const handleSearch = () => {
+    if (query.trim()) {
+      setIsSearching(true)
+    }
+  }
+
+  const handleInputChange = (text: string) => {
+    setQuery(text)
+    setIsSearching(false)
   }
 
   const navigateToDetail = (place: Place) => {
@@ -21,37 +32,38 @@ export default function SearchScreen() {
     navigation.navigate('Detail', { id: place.id })
   }
 
-  const keyExtractor = (item: Place) => item.id.toString()
-
-  const displayData = query ? searchResults : recentSearches
-
   return (
     <SafeScreen>
-      <SearchHeader placeholder="장소 검색" onChangeText={handleSearch} value={query} />
+      <SearchHeader
+        placeholder="장소 검색"
+        onChangeText={handleInputChange}
+        value={query}
+        onPress={handleSearch}
+        onSubmitEditing={handleSearch}
+      />
+
       <View className="flex-1">
-        {!query && (
-          <Text className="px-5 pb-1 pt-5 text-sm font-light text-gray-700">최근 검색 기록</Text>
-        )}
-        {displayData.length > 0 ? (
-          <FlatList
-            data={displayData}
-            renderItem={({ item }: { item: Place }) => (
-              <PlaceItem
-                id={item.id}
-                title={item.name}
-                position={item.address}
-                onPressMove={() => navigateToDetail(item)}
-                onPressDel={() => removeRecentSearch(item.id)}
-              />
-            )}
-            keyExtractor={keyExtractor}
+        {!isSearching ? (
+          <RecentSearches
+            recentSearches={recentSearches}
+            onItemPress={navigateToDetail}
+            onItemDelete={removeRecentSearch}
           />
         ) : (
-          <Text className="px-2 py-4">
-            {query ? '검색 결과가 없습니다.' : '최근 검색 기록이 없습니다.'}
-          </Text>
+          <Suspense fallback={<Text>Loading...</Text>}>
+            {query.trim() !== '' && <SearchResults query={query} onItemPress={navigateToDetail} />}
+          </Suspense>
         )}
       </View>
+
+      {query && !isSearching && (
+        <TouchableOpacity
+          onPress={handleSearch}
+          className="absolute bottom-5 left-5 right-5 rounded-full bg-blue-500 p-3"
+        >
+          <Text className="text-center font-bold text-white">검색</Text>
+        </TouchableOpacity>
+      )}
     </SafeScreen>
   )
 }
