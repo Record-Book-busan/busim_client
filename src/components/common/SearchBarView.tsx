@@ -22,7 +22,16 @@ export function SearchBarView({ placeholder, containerStyle, ...props }: SearchB
         onPress={props.onPress}
         {...props}
       >
-        <View className="flex-1 flex-row items-center rounded-full bg-white px-4 shadow">
+        <View
+          style={{
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+          }}
+          className="flex-1 flex-row items-center rounded-full bg-white px-4"
+        >
           <TextInput
             className={cn(
               'h-10 flex-1 items-center text-base',

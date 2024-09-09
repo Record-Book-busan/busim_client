@@ -1,6 +1,6 @@
 import { type NavigationProp, useNavigation } from '@react-navigation/native'
 import React, { useState } from 'react'
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, Text, TouchableOpacity, View, Linking } from 'react-native'
 
 import { SafeScreen } from '@/components/common'
 import { SvgIcon } from '@/shared'
@@ -41,9 +41,29 @@ const PRIVACY_CONTENTS = [
   },
 ]
 
+const handlerClickWhole = (type: string) => {
+  switch (type) {
+    case 'use':
+      Linking.openURL(
+        'https://ambitious-wavelength-253.notion.site/90044340c2804d058645e31a76c1740a',
+      )
+        .then(() => true)
+        .catch(err => console.log(`Link 오류가 발생했습니다.: ${err}`))
+      break
+    case 'personal':
+      Linking.openURL(
+        'https://ambitious-wavelength-253.notion.site/f794884e02ee42f098c94dba79999199?pvs=4',
+      )
+        .then(() => true)
+        .catch(err => console.log(`Link 오류가 발생했습니다.: ${err}`))
+      break
+  }
+}
+
 function PrivacyPolicyScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList, 'OnBoardingStack'>>()
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({})
+  const [notice, setNotice] = useState('')
 
   const handleCheckItem = (id: string) => {
     setCheckedItems(prev => ({ ...prev, [id]: !prev[id] }))
@@ -61,14 +81,33 @@ function PrivacyPolicyScreen() {
     setCheckedItems(newState)
   }
 
+  const makeAlert = async (message: string) => {
+    setNotice(message)
+    await new Promise(res => setTimeout(res, 1000))
+    setNotice('')
+  }
+
   const moveInterestTourHandler = () => {
-    navigation.navigate('OnBoardingStack', { screen: 'OnBoarding' })
+    const allChecked = PRIVACY_CONTENTS.every(item => checkedItems[item.id])
+
+    if (allChecked) {
+      navigation.navigate('OnBoardingStack', { screen: 'OnBoarding' })
+    } else {
+      void makeAlert('모든 이용 약관에 대한 동의가 필요합니다.')
+    }
   }
 
   const allChecked = PRIVACY_CONTENTS.every(item => checkedItems[item.id])
 
   return (
     <SafeScreen excludeEdges={['top']}>
+      {!!notice && (
+        <View className="absolute left-[12.5%] top-2 z-10 w-3/4 flex-row items-center rounded-xl border border-[#FF0000] bg-[#FFF0F0] px-3 py-4">
+          <SvgIcon name="notice" />
+          <Text className="ml-2 text-sm font-semibold text-black">{notice}</Text>
+        </View>
+      )}
+
       <CheckboxItem
         title="전체 동의"
         checked={allChecked}
@@ -130,18 +169,18 @@ interface PrivacyItemProps {
 }
 
 const PrivacyItem: React.FC<PrivacyItemProps> = ({ item, checked, onPress }) => (
-  <View className="mb-4 flex flex-row gap-2">
+  <View className="mb-4 flex flex-row items-start">
     <CheckboxItem title="" checked={checked} onPress={onPress} />
-    <View className="flex-1">
+    <View className="flex-1 py-0.5">
       <View className="flex flex-row items-center gap-1">
         <Text className="text-base text-BUSIM-blue">[필수]</Text>
         <Text className="text-base font-medium">{item.title}</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => handlerClickWhole(item.id)}>
           <Text className="ml-4 text-[#96979E]">전체 {'>'}</Text>
         </TouchableOpacity>
       </View>
       <View className="my-2 h-52 rounded-2xl border p-4">
-        <ScrollView>
+        <ScrollView className="pr-4">
           <Text>{item.content}</Text>
         </ScrollView>
       </View>

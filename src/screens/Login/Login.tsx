@@ -1,8 +1,9 @@
 import { type NavigationProp, useNavigation } from '@react-navigation/native'
 import { useState, useCallback } from 'react'
 import { Text, TouchableOpacity, View, Platform } from 'react-native'
+import LinearGradient from 'react-native-linear-gradient'
 
-import { logoWhite } from '@/assets/images'
+import { logoWelcome } from '@/assets/images'
 import { SafeScreen } from '@/components/common'
 import { kakaoLogin, unAuthorizedLogin } from '@/services/login/login'
 import { ImageVariant, SvgIcon } from '@/shared'
@@ -27,29 +28,31 @@ function Login() {
   }, [unAuthorizedLogin])
 
   return (
-    <SafeScreen>
-      <View className="flex w-full flex-1 items-center justify-between bg-white px-10 py-20">
+    <SafeScreen bgColor="#5e7dc0" textColor="light-content">
+      <LinearGradient
+        className="flex w-full flex-1 items-center justify-between px-10 py-20"
+        colors={['#5e7dc0', '#bac8e4', '#FFFFFF']}
+      >
         {!!notice && (
-          <View className="absolute top-12 w-full flex-row items-center rounded-xl border border-[#FF0000] bg-[#FFF0F0] px-3 py-4">
+          <View className="absolute top-2 w-full flex-row items-center rounded-xl border border-[#FF0000] bg-[#FFF0F0] px-3 py-4">
             <SvgIcon name="notice" />
             <Text className="ml-2 text-sm font-semibold text-black">{notice}</Text>
           </View>
         )}
 
         <View className="w-full items-center">
-          <ImageVariant className="mb-8 mt-10 h-32 w-3/4" source={logoWhite} />
-          <Text className="text-lg">안녕하세요!</Text>
-          <Text>끼록부에 오신 것을 환영합니다.</Text>
-          <Text className="mt-8 text-xl font-bold">로그인하기</Text>
+          <ImageVariant className="mb-6 mt-10 h-32 w-3/4" source={logoWelcome} />
+          <Text className="font-bold">끼록부에 오신 것을 환영합니다.</Text>
         </View>
 
         <View className="w-full gap-2">
+          <Text className="mb-16 text-center text-xl font-bold">로그인하기</Text>
           <TouchableOpacity
             className="relative flex-row items-center rounded-lg bg-[#FEE500] px-4 py-4"
             onPress={handleWrapKakaoLogin}
           >
             <SvgIcon name="kakao" size={20} />
-            <Text className="flex-1 text-center text-[#191919]">카카오로 계속하기</Text>
+            <Text className="flex-1 text-center font-bold text-[#191919]">카카오로 계속하기</Text>
           </TouchableOpacity>
           {Platform.OS === 'ios' && (
             <TouchableOpacity
@@ -57,7 +60,7 @@ function Login() {
               onPress={handleWrapUnAuthorizedLogin}
             >
               <SvgIcon name="apple" size={20} color="white" />
-              <Text className="flex-1 text-center text-white">Apple로 계속하기</Text>
+              <Text className="flex-1 text-center font-bold text-white">Apple로 계속하기</Text>
             </TouchableOpacity>
           )}
           <TouchableOpacity
@@ -65,10 +68,10 @@ function Login() {
             onPress={handleWrapUnAuthorizedLogin}
           >
             <SvgIcon name="user" size={20} />
-            <Text className="flex-1 text-center text-[#191919]">비회원으로 계속하기</Text>
+            <Text className="flex-1 text-center font-bold text-[#191919]">비회원으로 계속하기</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </LinearGradient>
     </SafeScreen>
   )
 }

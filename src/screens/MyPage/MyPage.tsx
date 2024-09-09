@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
 import { type StackNavigationProp } from '@react-navigation/stack'
-import { Text, TouchableOpacity, View, ScrollView } from 'react-native'
+import { Text, TouchableOpacity, View, ScrollView, Linking } from 'react-native'
 
 import { SafeScreen } from '@/components/common'
 import { Button, ImageVariant, SvgIcon } from '@/shared'
@@ -31,8 +31,26 @@ export default function MyPageScreen() {
   const settingsItems = [
     { title: '문의 및 지원', onPress: () => {} },
     { title: '도움말', onPress: () => {} },
-    { title: '개인 정보 동의', onPress: () => {} },
-    { title: '이용약관', onPress: () => {} },
+    {
+      title: '개인 정보 동의',
+      onPress: () => {
+        Linking.openURL(
+          'https://ambitious-wavelength-253.notion.site/90044340c2804d058645e31a76c1740a',
+        )
+          .then(() => true)
+          .catch(err => console.log(`Link 오류가 발생했습니다.: ${err}`))
+      },
+    },
+    {
+      title: '이용약관',
+      onPress: () => {
+        Linking.openURL(
+          'https://ambitious-wavelength-253.notion.site/f794884e02ee42f098c94dba79999199?pvs=4',
+        )
+          .then(() => true)
+          .catch(err => console.log(`Link 오류가 발생했습니다.: ${err}`))
+      },
+    },
   ]
 
   const footerItems = [

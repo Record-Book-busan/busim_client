@@ -4514,9 +4514,11 @@ __metadata:
     react: "npm:18.3.1"
     react-i18next: "npm:^15.0.1"
     react-native: "npm:0.75.2"
+    react-native-geolocation-service: "npm:^5.3.1"
     react-native-gesture-handler: "npm:^2.18.1"
     react-native-image-picker: "npm:^7.1.2"
     react-native-keyboard-aware-scroll-view: "npm:^0.9.5"
+    react-native-linear-gradient: "npm:^2.8.3"
     react-native-mmkv: "npm:^3.0.2"
     react-native-permissions: "npm:^4.1.5"
     react-native-reanimated: "npm:^3.15.1"
@@ -10898,6 +10900,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-geolocation-service@npm:^5.3.1":
+  version: 5.3.1
+  resolution: "react-native-geolocation-service@npm:5.3.1"
+  checksum: 10c0/54cbd8b36dcfcbc3d7a6303766d07c944e634cb40ff1f353c3b965f07bfe2d39a3514e05a48e5008d5d2529dde3ef0e6f8bc8ed1f729988fe3497eba29635c90
+  languageName: node
+  linkType: hard
+
 "react-native-gesture-handler@npm:^2.18.1":
   version: 2.19.0
   resolution: "react-native-gesture-handler@npm:2.19.0"
@@ -10941,6 +10950,16 @@ __metadata:
   peerDependencies:
     react-native: ">=0.48.4"
   checksum: 10c0/932c724f86ba355f1a1db938123eef67844550dd6e2d117222eff0012a47c6a293ad79c965e16930e5eb14adb58a5c340c00e03eeabbe3d78229236125b8a6aa
+  languageName: node
+  linkType: hard
+
+"react-native-linear-gradient@npm:^2.8.3":
+  version: 2.8.3
+  resolution: "react-native-linear-gradient@npm:2.8.3"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/cd41bf28e9f468173f1e5e768685128ebf8bbf9077710e43b63482c1a76f37bff8ab3d1d6adfd7b4d54e648672356c02bea46c47cdbdb1844ebe5c5caf720114
   languageName: node
   linkType: hard
 

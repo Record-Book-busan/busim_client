@@ -1,5 +1,5 @@
-import { View } from 'react-native'
+import { Text } from 'react-native'
 
 export default function RecordListScreen() {
-  return <View>RecordList</View>
+  return <Text>RecordList</Text>
 }
