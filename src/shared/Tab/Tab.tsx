@@ -74,7 +74,7 @@ const TabRoot: React.FC<TabProps> = ({
       {!disableIndicator && (
         <Animated.View
           className={cn(
-            'absolute bottom-0 left-0 right-0 h-0.5 rounded bg-neutral-700',
+            'absolute bottom-[-2px] left-0 right-0 h-0.5 bg-BUSIM-blue',
             indicatorStyle,
           )}
           style={[
@@ -117,15 +117,15 @@ const TabItem: React.FC<TabItemProps> = ({
       accessibilityRole="tab"
       accessibilityState={{ selected: isSelected, disabled }}
       className={cn(
-        'relative flex items-center rounded-md bg-transparent px-4 py-2 transition-colors duration-200',
+        'relative flex-1 items-center rounded-md bg-transparent px-4 py-2 transition-colors duration-200',
         disabled && 'opacity-50',
         addClassName,
       )}
     >
       <Text
         className={cn(
-          'text-sm',
-          isSelected ? 'font-bold text-gray-700' : 'font-semibold text-gray-500',
+          'text-base',
+          isSelected ? 'font-bold text-BUSIM-blue' : 'font-semibold text-gray-500',
           disabled && 'text-gray-400',
         )}
       >
