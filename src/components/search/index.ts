@@ -1,5 +1,4 @@
 export * from './PlaceItem'
 export * from './ImagePlaceItem'
-export * from './SubTab'
 export * from './RecentSearches'
 export * from './SearchResults'
