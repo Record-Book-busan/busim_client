@@ -9,7 +9,7 @@ import { kakaoLogin, unAuthorizedLogin } from '@/services/login/login'
 import { ImageVariant, SvgIcon } from '@/shared'
 import { RootStackParamList } from '@/types/navigation'
 
-function Login() {
+export default function LoginScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const [notice, setNotice] = useState('')
 
@@ -75,5 +75,3 @@ function Login() {
     </SafeScreen>
   )
 }
-
-export default Login
