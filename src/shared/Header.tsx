@@ -13,6 +13,7 @@ interface HeaderProps {
   containerStyle?: string
   titleStyle?: string
   children?: React.ReactNode
+  center?: boolean
 }
 
 export function Header({
@@ -22,6 +23,7 @@ export function Header({
   containerStyle,
   titleStyle,
   children,
+  center = true,
 }: HeaderProps) {
   const navigation = useNavigation()
 
@@ -36,7 +38,7 @@ export function Header({
   return (
     <View
       className={cn(
-        'flex-row items-center justify-between border-b border-b-gray-100 bg-white px-4 pb-2.5 pt-2',
+        'flex-row items-center border-b border-b-gray-100 bg-white px-4 pb-2.5 pt-2',
         containerStyle,
       )}
     >
@@ -44,17 +46,34 @@ export function Header({
         <SvgIcon name="chevronLeft" width={18} height={18} className="text-gray-800" />
       </TouchableOpacity>
 
-      {title && (
-        <Text
-          className={cn('flex-1 text-center text-lg font-semibold text-gray-800', titleStyle)}
-          numberOfLines={1}
-        >
-          {title}
-        </Text>
+      {center ? (
+        <>
+          <View className="flex-1 items-center">
+            {title && (
+              <Text
+                className={cn('text-lg font-semibold text-gray-800', titleStyle)}
+                numberOfLines={1}
+              >
+                {title}
+              </Text>
+            )}
+            {children}
+          </View>
+          <View className="w-10 items-end">{rightContent}</View>
+        </>
+      ) : (
+        <>
+          {title && (
+            <Text
+              className={cn('text-lg font-semibold text-gray-800', titleStyle)}
+              numberOfLines={1}
+            >
+              {title}
+            </Text>
+          )}
+          {children}
+        </>
       )}
-      {children}
-
-      {rightContent && <View className="mr-2 w-10 items-end">{rightContent}</View>}
     </View>
   )
 }

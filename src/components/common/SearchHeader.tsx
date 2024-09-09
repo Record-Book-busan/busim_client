@@ -12,7 +12,7 @@ interface SearchHeaderProps extends SearchBarProps {
 export function SearchHeader({ containerStyle, ...props }: SearchHeaderProps) {
   return (
     <>
-      <Header containerStyle="pt-0">
+      <Header containerStyle="pt-0" center={false}>
         <View className={cn('flex-1', containerStyle)}>
           <SearchBar containerStyle="p-0" {...props} />
         </View>
