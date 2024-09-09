@@ -7,4 +7,5 @@ export const instance = ky.extend({
   headers: {
     Accept: 'application/json',
   },
+  retry: 0,
 })
