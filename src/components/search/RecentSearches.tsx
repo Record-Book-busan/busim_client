@@ -26,7 +26,7 @@ export const RecentSearches: React.FC<RecentSearchesProps> = ({
             <PlaceItem
               id={item.id}
               title={item.name}
-              position={item.address}
+              address={item.address}
               onPressMove={() => onItemPress(item)}
               onPressDel={() => onItemDelete(item.id)}
             />

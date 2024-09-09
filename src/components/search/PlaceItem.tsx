@@ -6,20 +6,20 @@ import { Button, ButtonPrimitive } from '@/shared/Button'
 type PlaceItemProps = {
   id: number
   title: string
-  position: string
+  address?: string
   onPressDel: (id: number) => void
   onPressMove: (id: number) => void
 }
 
-export function PlaceItem({ id, title, position, onPressDel, onPressMove }: PlaceItemProps) {
+export function PlaceItem({ id, title, address, onPressDel, onPressMove }: PlaceItemProps) {
   return (
     <ButtonPrimitive animationConfig={{ toValue: 0.99 }} onPress={() => onPressMove(id)}>
-      <View className="mx-5 flex-row items-center justify-between border-b border-neutral-100 py-3.5">
+      <View className="flex-row items-center justify-between border-b border-neutral-200 py-3.5">
         <View className="flex-1">
           <Text className="mb-1 text-base font-semibold text-gray-800">{title}</Text>
           <View className="flex-row items-center">
-            <SvgIcon name="marker" className="text-gray-400" size={12} />
-            <Text className="ml-1 text-sm leading-[0px] text-gray-500">{position}</Text>
+            <SvgIcon name="marker" className="text-gray-400" size={14} />
+            <Text className="ml-1 text-sm leading-[0px] text-gray-500">{address}</Text>
           </View>
         </View>
         <Button className="z-50" onPress={() => onPressDel(id)}>
