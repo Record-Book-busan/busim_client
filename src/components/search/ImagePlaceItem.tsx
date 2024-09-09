@@ -11,9 +11,10 @@ type ImagePlaceItemProps = {
   title: string
   category: string
   address?: string
-  onPressBookMark: (id: number) => void
+  content?: string
+  onPressBookMark?: (id: number) => void
   onPressMove: (id: number) => void
-  isBookMarked: boolean
+  isBookMarked?: boolean
   imageUrl?: string
 }
 
@@ -22,6 +23,7 @@ export function ImagePlaceItem({
   title,
   category,
   address,
+  content,
   onPressBookMark,
   onPressMove,
   isBookMarked,
@@ -36,13 +38,15 @@ export function ImagePlaceItem({
               className="aspect-3/4 h-24 w-20 rounded-lg"
               source={{ uri: 'https://via.placeholder.com/640x480' }} // FIXME: 디폴트 이미지 추가 필요!
             />
-            <View className="absolute left-1 top-1">
-              <BookmarkButton
-                size={24}
-                isBookMarked={isBookMarked}
-                onPress={() => onPressBookMark(id)}
-              />
-            </View>
+            {isBookMarked && onPressBookMark && (
+              <View className="absolute left-1 top-1">
+                <BookmarkButton
+                  size={24}
+                  isBookMarked={isBookMarked}
+                  onPress={() => onPressBookMark(id)}
+                />
+              </View>
+            )}
           </View>
           <View className="mt-2 flex-1 justify-start">
             <Text className="text-base font-semibold text-gray-800">{title}</Text>
@@ -50,6 +54,14 @@ export function ImagePlaceItem({
               <SvgIcon name="category" size={14} />
               <Text className="ml-1 text-sm text-gray-500">{category}</Text>
             </View>
+            {content && (
+              <View className="mt-1 flex-row items-center">
+                <SvgIcon name="explain" className="text-gray-400" size={14} />
+                <Text className="ml-1 text-sm text-gray-500" numberOfLines={1}>
+                  {content}
+                </Text>
+              </View>
+            )}
             {address && (
               <View className="mt-1 flex-row items-center">
                 <SvgIcon name="marker" className="text-gray-400" size={14} />

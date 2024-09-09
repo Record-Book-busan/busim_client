@@ -19,40 +19,21 @@ export const SearchResults = React.memo(({ query, onItemPress }: SearchResultsPr
 
   const allPlaces = data?.pages.flatMap(page => page) ?? []
 
-  const loadMore = useCallback(() => {
-    if (hasNextPage) {
-      void fetchNextPage()
-    }
-  }, [hasNextPage, fetchNextPage])
-
   const handleBookMarkPress = useCallback((id: number) => {
     console.log(id)
   }, [])
 
-  const renderItem = useCallback(
-    ({ item }: { item: Place }) => (
-      <ImagePlaceItem
-        id={item.id}
-        title={item.name}
-        category={item.category}
-        address={item.address}
-        onPressBookMark={() => handleBookMarkPress(item.id)}
-        onPressMove={() => onItemPress(item)}
-        isBookMarked={false}
-        imageUrl={item.imageUrl}
-      />
-    ),
-    [handleBookMarkPress, onItemPress],
-  )
-
-  const ListEmptyComponent = useCallback(
-    () => <Text className="p-4">검색 결과가 없습니다.</Text>,
-    [],
-  )
-
-  const ListFooterComponent = useCallback(
-    () => (isFetchingNextPage ? <ActivityIndicator /> : null),
-    [isFetchingNextPage],
+  const renderItem = ({ item }: { item: Place }) => (
+    <ImagePlaceItem
+      id={item.id}
+      title={item.name}
+      category={item.category}
+      address={item.address}
+      onPressBookMark={() => handleBookMarkPress(item.id)}
+      onPressMove={() => onItemPress(item)}
+      isBookMarked={false}
+      imageUrl={item.imageUrl}
+    />
   )
 
   return (
@@ -68,10 +49,10 @@ export const SearchResults = React.memo(({ query, onItemPress }: SearchResultsPr
               data={allPlaces}
               renderItem={renderItem}
               keyExtractor={item => item.id.toString()}
-              onEndReached={loadMore}
+              onEndReached={() => hasNextPage && fetchNextPage()}
               onEndReachedThreshold={0.5}
-              ListEmptyComponent={ListEmptyComponent}
-              ListFooterComponent={ListFooterComponent}
+              ListEmptyComponent={<Text className="p-4">검색 결과가 없습니다.</Text>}
+              ListFooterComponent={isFetchingNextPage ? <ActivityIndicator /> : null}
               contentContainerStyle={{
                 flexGrow: 1,
               }}
