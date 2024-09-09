@@ -1,12 +1,12 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import { Text, type TouchableOpacityProps } from 'react-native'
+import { Text, View, type TouchableOpacityProps } from 'react-native'
 
 import { cn } from '@/utils/cn'
 
 import { Button } from './Button'
 
 const chipVariants = cva(
-  'mx-1 flex min-w-[60px] items-center justify-center rounded-full border px-4 py-2.5 shadow',
+  'mx-1 min-w-[60px] items-center justify-center rounded-full border px-4 h-9 shadow',
   {
     variants: {
       isSelected: {
@@ -20,7 +20,7 @@ const chipVariants = cva(
   },
 )
 
-const textVariants = cva('text-center text-sm leading-normal', {
+const textVariants = cva('text-center text-sm', {
   variants: {
     isSelected: {
       true: 'font-semibold text-white',
@@ -46,9 +46,11 @@ export function Chip({ title, isSelected, onPress, className, ...props }: ChipPr
       onPress={onPress}
       {...props}
     >
-      <Text className={cn(textVariants({ isSelected }))} numberOfLines={1}>
-        {title}
-      </Text>
+      <View className="items-center justify-center">
+        <Text className={cn(textVariants({ isSelected }))} numberOfLines={1}>
+          {title}
+        </Text>
+      </View>
     </Button>
   )
 }

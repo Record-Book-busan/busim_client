@@ -27,6 +27,9 @@ module.exports = {
         'BUSIM-beaver': '#A08168',
         'BUSIM-sandy-beach': '#F5E1A6',
       },
+      aspectRatio: {
+        '3/4': '3 / 4',
+      },
     },
   },
   plugins: [
