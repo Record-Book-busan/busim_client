@@ -1,5 +1,5 @@
 export * from './PlaceItem'
 export * from './ImagePlaceItem'
 export * from './SubTab'
-export * from './hooks/useSearch'
-export * from './hooks/useRecentSearch'
+export * from './RecentSearches'
+export * from './SearchResults'
