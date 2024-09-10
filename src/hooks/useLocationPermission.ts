@@ -37,7 +37,6 @@ export const useLocationPermission = () => {
 
   const requestLocationAccess = useCallback(async () => {
     const status = await checkPermission()
-    // console.log('Initial permission status:', status)
 
     if (status === RESULTS.DENIED) {
       return await requestPermission()
@@ -46,7 +45,6 @@ export const useLocationPermission = () => {
       await openSettings()
     }
 
-    // console.log('위치 권한 상태:', status)
     return status
   }, [checkPermission, requestPermission])
 
