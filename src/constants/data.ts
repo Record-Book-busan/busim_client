@@ -1,11 +1,11 @@
 export const CATEGORY = {
-  관광지: 64,
-  자연: 8,
-  테마: 16,
-  레포츠: 4,
-  핫플: 2,
-  맛집: 1,
-  특별한_맛집: 32,
+  관광지: 'TOURIST_SPOT',
+  자연: 'NATURE',
+  테마: 'THEME',
+  레포츠: 'LEISURE_SPORTS',
+  핫플: 'HOT_PLACE',
+  맛집: 'NORMAL_RESTAURANT',
+  특별한_맛집: 'SPECIAL_RESTAURANT',
 } as const
 export type CategoryKey = keyof typeof CATEGORY
 export type CategoryType = (typeof CATEGORY)[keyof typeof CATEGORY]

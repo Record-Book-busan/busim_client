@@ -4,7 +4,7 @@ import { WebView } from 'react-native-webview'
 import map from '@/services/map/map'
 
 type MapViewProps = {
-  activeCategory: number[]
+  activeCategory: string[]
   eyeState: boolean
   location: {
     lng: number
@@ -56,11 +56,28 @@ function MapView({
     )
   }, [isTrafficPressed])
 
+  const testData = `
+    [
+      {
+          title: '카카오', 
+          type: 'TOURIST_SPOT',
+          lat: 33.450705,
+          lng: 126.570677
+      },
+      {
+          title: '생태연못', 
+          type: 'TOURIST_SPOT',
+          lat: 33.450936,
+          lng: 126.569477
+      },
+    ]
+  `
+
   const initFn = `
     kakao.maps.load(function(){
       createMap(${JSON.stringify(location)})
 
-      settingPlaceOverlays(${JSON.stringify(activeCategory)})
+      settingPlaceOverlays(${(JSON.stringify(activeCategory), JSON.stringify(testData))})
 
       // settingImageOverlays()
       // kakao.maps.event.addListener(map, 'bounds_changed', settingImageOverlays)

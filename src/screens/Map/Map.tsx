@@ -13,11 +13,11 @@ import { RootStackParamList } from '@/types/navigation'
 import { RecommendSheet } from './RecommendSheet'
 
 function MapScreen() {
-  const [activeCategory, setActiveCategory] = useState<number[]>([])
+  const [activeCategory, setActiveCategory] = useState<string[]>([])
   const [eyeState, setEyeState] = useState(true)
   const [location, setLocation] = useState<{ lng: number; lat: number }>({
-    lng: 126.570667,
-    lat: 33.450701,
+    lng: 126.56994,
+    lat: 33.450879,
   })
   const [locationPressed, setLocationPressed] = useState(false)
   const [isBookMarked, setIsBookMarked] = useState(false)
@@ -58,7 +58,7 @@ function MapScreen() {
     setLocation(getCurrentLocation())
   }, [])
 
-  const handleCategoryChange = (catId: number[]) => {
+  const handleCategoryChange = (catId: string[]) => {
     console.log('선택한 카테고리 id:', catId)
     setActiveCategory(catId)
   }

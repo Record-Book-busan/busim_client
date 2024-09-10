@@ -79,19 +79,19 @@ const getOverlayImage = `
   const tour = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjIiIGhlaWdodD0iMjIiIHZpZXdCb3g9IjAgMCAyMiAyMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxyZWN0IHdpZHRoPSIyMiIgaGVpZ2h0PSIyMiIgcng9IjExIiBmaWxsPSIjNzlBNzEwIi8+DQo8cGF0aCBkPSJNNi43ODk0NSA4LjEwNTI2QzcuMzcwOCA4LjEwNTI2IDcuODQyMDggNy42MzM5OCA3Ljg0MjA4IDcuMDUyNjNDNy44NDIwOCA2LjQ3MTI4IDcuMzcwOCA2IDYuNzg5NDUgNkM2LjIwODEgNiA1LjczNjgyIDYuNDcxMjggNS43MzY4MiA3LjA1MjYzQzUuNzM2ODIgNy42MzM5OCA2LjIwODEgOC4xMDUyNiA2Ljc4OTQ1IDguMTA1MjZaIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEuMDUyNjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTEzLjEwNTMgMTIuMzE1OEMxMy4xMDUzIDEyLjMxNTggMTMuNjMxNiAxMC43MzY4IDEzLjYzMTYgOC4xMDUyNlY3LjA1MjYzQzEzLjYzMTYgNy4wNTI2MyAxMy4xMDUzIDYgMTIuMDUyNiA2QzExLjUyNjMgNiAxMSA2LjI2MzE2IDExIDYuMjYzMTYiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMS4wNTI2MyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTEuNTI2NCA5LjE1OEMxMS41MjY0IDguNTk5NjUgMTEuNzQ4MiA4LjA2NDE3IDEyLjE0MyA3LjY2OTM1QzEyLjUzNzggNy4yNzQ1NCAxMy4wNzMzIDcuMDUyNzMgMTMuNjMxNiA3LjA1MjczQzE0LjE5IDcuMDUyNzMgMTQuNzI1NSA3LjI3NDU0IDE1LjEyMDMgNy42NjkzNUMxNS41MTUxIDguMDY0MTcgMTUuNzM2OSA4LjU5OTY1IDE1LjczNjkgOS4xNTgiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMS4wNTI2MyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTMuNjMxNiA3LjA1MjYzQzEzLjYzMTYgNy4wNTI2MyAxNC4xNTc5IDYgMTUuMjEwNiA2QzE1LjczNjkgNiAxNi4yNjMyIDYuMjYzMTYgMTYuMjYzMiA2LjI2MzE2TTguODk0NzYgMTEuNzg5NUw5Ljk0NzM5IDE2TTYuMjYzMTggMTZMNi42MzE2IDE0Ljg5NDdDNi43MzY4NyAxNC42MzE2IDcuMDAwMDMgMTQuNDIxMSA3LjMxNTgyIDE0LjQyMTFIMTMuNjMxNkMxMy44OTQ4IDE0LjQyMTEgMTQuMzE1OCAxNC4yMTA1IDE0LjQ3MzcgMTRMMTYuMjYzMiAxMS43ODk1TTE1LjczNjkgMTZMMTQuMTU3OSAxNC40MjExTTYuNzg5NSAxMi4zMTU4TDguMzY4NDUgOS42ODQyMUwxMSAxMS4yNjMyTDYuNzg5NSAxMi4zMTU4WiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjA1MjYzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjwvc3ZnPg0K'
 
   switch(type) {
-    case '1':
+    case 'NORMAL_RESTAURANT':
         return food
-    case '2':
+    case 'HOT_PLACE':
         return hotPlace
-    case '4':
+    case 'LEISURE_SPORTS':
         return lesureSports
-    case '8':
+    case 'NATURE':
         return nature
-    case '16':
+    case 'THEME':
         return park
-    case '32':
+    case 'SPECIAL_RESTAURANT':
         return star
-    case '64':
+    case 'TOURIST_SPOT':
         return tour
   }
 `
@@ -104,53 +104,15 @@ const fetchPlaces = () => {
     [
       {
           title: '카카오', 
-          type: '1',
-          latlng: new kakao.maps.LatLng(33.450705, 126.570677)
+          type: 'TOURIST_SPOT',
+          lat: 33.450705,
+          lng: 126.570677
       },
       {
           title: '생태연못', 
-          type: '1',
-          latlng: new kakao.maps.LatLng(33.450936, 126.569477)
-      },
-      {
-          title: '텃밭', 
-          type: '2',
-          latlng: new kakao.maps.LatLng(33.450879, 126.569940)
-      },
-      {
-          title: '근린공원',
-          type: '1',
-          latlng: new kakao.maps.LatLng(33.451393, 126.570738)
-      },
-      {
-          title: '카카오', 
-          type: '2',
-          latlng: new kakao.maps.LatLng(33.450705, 126.570677)
-      },
-      {
-          title: '생태연못', 
-          type: '4',
-          latlng: new kakao.maps.LatLng(33.450936, 126.569477)
-      },
-      {
-          title: '텃밭', 
-          type: '8',
-          latlng: new kakao.maps.LatLng(33.450879, 126.569940)
-      },
-      {
-          title: '근린공원',
-          type: '16',
-          latlng: new kakao.maps.LatLng(33.451393, 126.570738)
-      },
-      {
-          title: '카카오', 
-          type: '32',
-          latlng: new kakao.maps.LatLng(33.450705, 126.570677)
-      },
-      {
-          title: '생태연못', 
-          type: '64',
-          latlng: new kakao.maps.LatLng(33.450936, 126.569477)
+          type: 'TOURIST_SPOT',
+          lat: 33.450936,
+          lng: 126.569477
       },
     ]
   `
@@ -185,7 +147,8 @@ const getClusterKey = `
  */
 const settingPlaceOverlays = `
   const data = ${fetchPlaces()}
-  const level = map.getLevel();
+  // const data = fetchData
+  const level = map.getLevel()
   const clusters = {}
 
   initOverlays()
@@ -193,7 +156,7 @@ const settingPlaceOverlays = `
   data.forEach((d) => {
     type.forEach((t) => {
       if(d.type === t.toString()) {
-        const key = getClusterKey(d.latlng)
+        const key = getClusterKey(new kakao.maps.LatLng(d.lat, d.lng))
 
         if (!clusters[key]) {
           clusters[key] = []
@@ -218,7 +181,7 @@ const settingPlaceOverlays = `
         '</div>'
 
       const overlay = new kakao.maps.CustomOverlay({
-        position: d.latlng,
+        position: new kakao.maps.LatLng(d.lat, d.lng),
         content: content,
         yAnchor: 0,
         xAnchor: 0  
@@ -233,8 +196,8 @@ const settingPlaceOverlays = `
     
       for (const item of items) {
         keys += item.title + ','
-        sumLat += item.latlng.getLat()
-        sumLng += item.latlng.getLng()
+        sumLat += item.lat
+        sumLng += item.lng
         uniqueTypes.add(item.type)
       }
       keys = keys.substring(0, keys.length - 1)
@@ -287,22 +250,26 @@ const fetchImages = () => {
       {
           id: 1,
           url: 'https://img.freepik.com/premium-photo/beautiful-landscape_849761-6949.jpg', 
-          latlng: new kakao.maps.LatLng(33.450705, 126.570677)
+          lat: 33.450705,
+          lng: 126.570677
       },
       {
           id: 2,
           url: 'https://cdn.dgtimes.co.kr/news/photo/202308/507969_26787_1530.jpg', 
-          latlng: new kakao.maps.LatLng(33.450936, 126.569477)
+          lat: 33.450936,
+          lng: 126.569477
       },
       {
           id: 3,
           url: 'https://image.dongascience.com/Photo/2017/03/14885035562557.jpg', 
-          latlng: new kakao.maps.LatLng(33.450879, 126.569940)
+          lat: 33.450879,
+          lng: 126.569940
       },
       {
           id: 4,
           url: 'https://blog.kakaocdn.net/dn/d1e6IL/btr41J8GWEF/YyPzwHfiDY5jOyAZWr6G7K/img.jpg',
-          latlng: new kakao.maps.LatLng(33.451393, 126.570738)
+          lat: 33.451393,
+          lng: 126.570738
       }
     ]
   `
@@ -319,7 +286,7 @@ const settingImageOverlays = `
   const clusters = {}
 
   data.forEach((d) => {
-    const key = getClusterKey(d.latlng)
+    const key = getClusterKey(new kakao.maps.LatLng(d.lat, d.lng))
 
     if (!clusters[key]) {
       clusters[key] = []
@@ -340,7 +307,7 @@ const settingImageOverlays = `
         '</div>'
 
       const overlay = new kakao.maps.CustomOverlay({
-        position: d.latlng,
+        position: new kakao.maps.LatLng(d.lat, d.lng),
         content: content,
         yAnchor: 0,
         xAnchor: 0
@@ -354,8 +321,8 @@ const settingImageOverlays = `
       let imagesHtml = ''
     
       for (let i = 0; i < items.length && i < 5; i++) {
-        sumLat += items[i].latlng.getLat()
-        sumLng += items[i].latlng.getLng()
+        sumLat += items[i].lat
+        sumLng += items[i].lng
         imagesHtml += '<img src="' + items[i].url + '" style="width:30px;height:30px;position:absolute;left:' + (i * 15) + 'px;z-index:' + (items.length - i) + ';">'
       }
 
@@ -430,7 +397,7 @@ const RegistFn = [
     val: getOverlayImage,
   },
   {
-    key: 'settingPlaceOverlays(type)',
+    key: 'settingPlaceOverlays(type, fetchData)',
     val: settingPlaceOverlays,
   },
   {

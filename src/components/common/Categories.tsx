@@ -32,19 +32,19 @@ const CATEGORIES = {
 } as const
 
 interface CategoriesProps {
-  onCategoryChange: (categories: number[]) => void
+  onCategoryChange: (categories: string[]) => void
 }
 
 export function Categories({ onCategoryChange }: CategoriesProps) {
   const [activeMapType, setActiveMapType] = useState<MapType | null>(null)
-  const [selectedCategories, setSelectedCategories] = useState<number[]>([])
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
 
   const handleMapTypeChange = (type: MapType) => {
     setActiveMapType(prevType => (prevType === type ? null : type))
     setSelectedCategories([])
   }
 
-  const handleCategoryChange = (id: number) => {
+  const handleCategoryChange = (id: string) => {
     setSelectedCategories(prev => {
       const newCategories = prev.includes(id)
         ? prev.filter(categoryId => categoryId !== id)
