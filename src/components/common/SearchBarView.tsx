@@ -18,7 +18,7 @@ export function SearchBarView({ placeholder, containerStyle, ...props }: SearchB
   return (
     <View className="left-0 right-0 top-0 z-50">
       <Pressable
-        className={cn('flex-row items-center px-4 pb-4 pt-2', containerStyle)}
+        className={cn('flex-row items-center px-4 pb-3 pt-2', containerStyle)}
         onPress={props.onPress}
         {...props}
       >
@@ -34,7 +34,7 @@ export function SearchBarView({ placeholder, containerStyle, ...props }: SearchB
         >
           <TextInput
             className={cn(
-              'h-10 flex-1 items-center text-base',
+              'h-11 flex-1 items-center text-base',
               Platform.OS === 'ios' && 'leading-[0px]',
             )}
             placeholder={placeholder}
