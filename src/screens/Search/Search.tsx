@@ -35,7 +35,6 @@ export default function SearchScreen() {
   return (
     <SafeScreen>
       <SearchHeader
-        placeholder="장소 검색"
         onChangeText={handleInputChange}
         value={query}
         onPress={handleSearch}

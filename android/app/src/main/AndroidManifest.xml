@@ -33,16 +33,17 @@
       </intent-filter>
     </activity>
     <!-- 카카오 로그인 -->
-    <!-- <activity 
+    <activity
       android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
       android:exported="true">
       <intent-filter>
           <action android:name="android.intent.action.VIEW" />
           <category android:name="android.intent.category.DEFAULT" />
           <category android:name="android.intent.category.BROWSABLE" />
+
           <data android:host="oauth"
-            android:scheme="kakao572d2540a7893d0c189b2b872193effb" />
+                  android:scheme="kakao572d2540a7893d0c189b2b872193effb" />
       </intent-filter>
-    </activity>  -->
+    </activity>
   </application>
 </manifest>

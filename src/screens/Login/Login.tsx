@@ -5,7 +5,7 @@ import LinearGradient from 'react-native-linear-gradient'
 
 import { logoWelcome } from '@/assets/images'
 import { SafeScreen } from '@/components/common'
-import { kakaoLogin, unAuthorizedLogin } from '@/services/login/login'
+import { kakaoLogin, unAuthorizedLogin, appleLogin } from '@/services/login/login'
 import { ImageVariant, SvgIcon } from '@/shared'
 import { RootStackParamList } from '@/types/navigation'
 
@@ -13,40 +13,50 @@ export default function LoginScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const [notice, setNotice] = useState('')
 
-  const handleWrapKakaoLogin = useCallback(() => {
-    navigation.navigate('MainTab', { screen: 'Map' })
-
-    // const isSuccess = await kakaoLogin(setNotice)
-    // if(isSuccess) navigation.navigate('PrivacyPolicy')
+  const handleWrapKakaoLogin = useCallback(async () => {
+    if (await kakaoLogin(setNotice)) {
+      navigation.navigate('PrivacyPolicy')
+    } else {
+      console.log('카카오 로그인에 실패하였습니다.')
+    }
   }, [kakaoLogin])
 
   const handleWrapUnAuthorizedLogin = useCallback(async () => {
-    await unAuthorizedLogin(setNotice)
-    navigation.navigate('PrivacyPolicy')
-
-    // navigation.navigate('MainTab', { screen: 'Map' })
+    if (await unAuthorizedLogin(setNotice)) {
+      navigation.navigate('MainTab', { screen: 'Map' })
+    } else {
+      console.log('비회원 로그인에 실패하였습니다.')
+    }
   }, [unAuthorizedLogin])
+
+  const handleWrapAppleLogin = useCallback(async () => {
+    if (await appleLogin(setNotice)) {
+      navigation.navigate('PrivacyPolicy')
+    } else {
+      console.log('애플 로그인에 실패하였습니다.')
+    }
+  }, [appleLogin])
 
   return (
     <SafeScreen bgColor="#5e7dc0" textColor="light-content">
       <LinearGradient
-        className="flex w-full flex-1 items-center justify-between px-10 py-20"
+        className="flex w-full flex-1 items-center justify-start"
         colors={['#5e7dc0', '#bac8e4', '#FFFFFF']}
       >
         {!!notice && (
-          <View className="absolute top-2 w-full flex-row items-center rounded-xl border border-[#FF0000] bg-[#FFF0F0] px-3 py-4">
+          <View className="absolute top-2 w-5/6 flex-row items-center rounded-xl border border-[#FF0000] bg-[#FFF0F0] px-3 py-4">
             <SvgIcon name="notice" />
             <Text className="ml-2 text-sm font-semibold text-black">{notice}</Text>
           </View>
         )}
 
         <View className="w-full items-center">
-          <ImageVariant className="mb-6 mt-10 h-32 w-3/4" source={logoWelcome} />
+          <ImageVariant className="mb-6 mt-10 h-1/2 w-3/4" source={logoWelcome} />
           <Text className="font-bold">끼록부에 오신 것을 환영합니다.</Text>
         </View>
 
-        <View className="w-full gap-2">
-          <Text className="mb-16 text-center text-xl font-bold">로그인하기</Text>
+        <View className="w-5/6 gap-2">
+          <Text className="mb-8 text-center text-xl font-bold">로그인하기</Text>
           <TouchableOpacity
             className="relative flex-row items-center rounded-lg bg-[#FEE500] px-4 py-4"
             onPress={handleWrapKakaoLogin}
@@ -57,7 +67,7 @@ export default function LoginScreen() {
           {Platform.OS === 'ios' && (
             <TouchableOpacity
               className="relative flex-row items-center rounded-lg bg-black px-4 py-4"
-              onPress={handleWrapUnAuthorizedLogin}
+              onPress={handleWrapAppleLogin}
             >
               <SvgIcon name="apple" size={20} color="white" />
               <Text className="flex-1 text-center font-bold text-white">Apple로 계속하기</Text>

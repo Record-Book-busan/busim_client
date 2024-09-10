@@ -102,7 +102,7 @@ function PrivacyPolicyScreen() {
   return (
     <SafeScreen excludeEdges={['top']}>
       {!!notice && (
-        <View className="absolute left-[12.5%] top-2 z-10 w-3/4 flex-row items-center rounded-xl border border-[#FF0000] bg-[#FFF0F0] px-3 py-4">
+        <View className="absolute left-[12.5%] top-2 z-10 w-4/5 flex-row items-center rounded-xl border border-[#FF0000] bg-[#FFF0F0] px-3 py-4">
           <SvgIcon name="notice" />
           <Text className="ml-2 text-sm font-semibold text-black">{notice}</Text>
         </View>

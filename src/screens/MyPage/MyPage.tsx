@@ -3,6 +3,7 @@ import { type StackNavigationProp } from '@react-navigation/stack'
 import { Text, TouchableOpacity, View, ScrollView, Linking } from 'react-native'
 
 import { SafeScreen } from '@/components/common'
+import { logoutAll, showLoginInfo } from '@/services/login/login'
 import { Button, ImageVariant, SvgIcon } from '@/shared'
 import { type RootStackParamList } from '@/types/navigation'
 
@@ -53,8 +54,18 @@ export default function MyPageScreen() {
     },
   ]
 
+  const handleLogoutPress = () => {
+    showLoginInfo()
+    logoutAll()
+      .then(() => {
+        showLoginInfo()
+        navigation.navigate('Login')
+      })
+      .catch(err => console.log(`로그아웃 오류가 발생했습니다.: ${err}`))
+  }
+
   const footerItems = [
-    { title: '로그아웃', onPress: () => {} },
+    { title: '로그아웃', onPress: handleLogoutPress },
     { title: '회원탈퇴', onPress: () => {} },
   ]
 
