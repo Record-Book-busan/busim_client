@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
-import { Alert, Platform } from 'react-native'
+import { Alert, Linking, Platform } from 'react-native'
 import {
   check,
   request,
@@ -41,7 +41,15 @@ export const useLocationPermission = () => {
     if (status === RESULTS.DENIED) {
       return await requestPermission()
     } else if (status === RESULTS.BLOCKED) {
-      Alert.prompt('위치 권한이 차단되어 있습니다.') // TODO: 알럿모달 UI 띄우기
+      Alert.alert(
+        '위치 서비스를 사용할 수 없습니다.',
+        '기기의 "설정 > 개인정보 보호"에서 위치서비스를 켜주세요.',
+        [
+          { text: '취소', style: 'cancel' },
+          { text: '설정으로 이동', onPress: () => Linking.openSettings() },
+        ],
+      )
+      Alert.alert('위치 권한이 차단되어 있습니다.') // TODO: 알럿모달 UI 띄우기
       await openSettings()
     }
 
