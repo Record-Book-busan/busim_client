@@ -5,7 +5,7 @@ import { ZodError } from 'zod'
 import { PlaceArraySchema, PlaceSchema, type Place } from '@/types/schemas/search'
 import { storage } from '@/utils/storage'
 
-import { instance } from './instance'
+import * as service from './service'
 
 /**
  * 검색어를 기반으로 맛집 또는 관광지를 검색합니다.
@@ -30,7 +30,7 @@ export const get_place_search = async ({
       limit: limit.toString(),
     }
 
-    const response = await instance.get('search', { searchParams: params }).json()
+    const response = await service.searchPlace(params)
     return PlaceArraySchema.parse(response)
   } catch (error) {
     if (error instanceof ZodError) {
