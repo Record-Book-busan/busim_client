@@ -5,7 +5,6 @@ import {
   request,
   PERMISSIONS,
   RESULTS,
-  openSettings,
   type PermissionStatus,
 } from 'react-native-permissions'
 
@@ -48,9 +47,7 @@ export const useLocationPermission = () => {
           { text: '취소', style: 'cancel' },
           { text: '설정으로 이동', onPress: () => Linking.openSettings() },
         ],
-      )
-      Alert.alert('위치 권한이 차단되어 있습니다.') // TODO: 알럿모달 UI 띄우기
-      await openSettings()
+      ) // TODO: 알럿모달 UI 띄우기
     }
 
     return status
