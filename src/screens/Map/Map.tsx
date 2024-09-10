@@ -1,24 +1,22 @@
 import { type NavigationProp, useNavigation } from '@react-navigation/native'
-import { useEffect, useRef, useState } from 'react'
-import { PermissionsAndroid, Platform, Text, TouchableOpacity, View } from 'react-native'
-import Geolocation from 'react-native-geolocation-service'
+import { useRef, useState } from 'react'
+import { Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { Categories, SafeScreen, SearchBarView } from '@/components/common'
 import { MapView } from '@/components/map'
 import { useForceUpdate } from '@/hooks/useForceUpdate'
+import { useLocation } from '@/hooks/useLocation'
 import { SvgIcon } from '@/shared'
 import { RootStackParamList } from '@/types/navigation'
 
 import { RecommendSheet } from './RecommendSheet'
 
-function MapScreen() {
+export default function MapScreen() {
+  const { location, refreshLocation } = useLocation()
+
   const [activeCategory, setActiveCategory] = useState<string[]>([])
   const [eyeState, setEyeState] = useState(true)
-  const [location, setLocation] = useState<{ lng: number; lat: number }>({
-    lng: 126.56994,
-    lat: 33.450879,
-  })
   const [locationPressed, setLocationPressed] = useState(false)
   const [isBookMarked, setIsBookMarked] = useState(false)
   const [isTrafficPressed, setIsTrafficPressed] = useState(false)
@@ -27,36 +25,6 @@ function MapScreen() {
   const forceUpdate = useForceUpdate()
   const insets = useSafeAreaInsets()
   const navigation = useNavigation<NavigationProp<RootStackParamList, 'MainTab'>>()
-
-  const verifyLocation = (lng: number, lat: number) => {
-    if (lng < 124 || lng > 132) return false
-    if (lat < 33 || lng > 43) return false
-
-    return true
-  }
-
-  const getCurrentLocation = () => {
-    const currentLocation = location
-
-    Geolocation.getCurrentPosition(
-      position => {
-        if (verifyLocation(position.coords.longitude, position.coords.latitude)) {
-          currentLocation.lng = position.coords.longitude
-          currentLocation.lat = position.coords.latitude
-        }
-      },
-      error => {
-        console.log(error.code, error.message)
-      },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
-    )
-
-    return currentLocation
-  }
-
-  useEffect(() => {
-    setLocation(getCurrentLocation())
-  }, [])
 
   const handleCategoryChange = (catId: string[]) => {
     console.log('선택한 카테고리 id:', catId)
@@ -73,18 +41,8 @@ function MapScreen() {
   }
 
   const handleLocationPress = () => {
-    if (Platform.OS === 'android') {
-      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
-        .then(granted => {
-          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            setLocation(getCurrentLocation())
-            setLocationPressed(prev => !prev)
-          }
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    }
+    void refreshLocation()
+    setLocationPressed(prev => !prev)
   }
 
   return (
@@ -103,14 +61,14 @@ function MapScreen() {
             forceUpdate()
           }}
         >
-          <SearchBarView onPress={handleSearchBarPress} />
+          <SearchBarView placeholder="장소 검색" onPress={handleSearchBarPress} />
         </View>
 
         {/* 카테고리 */}
         <View
           className={`absolute left-0 right-0 z-[1px]`}
           style={{
-            top: searchBarHight.current + 10,
+            top: searchBarHight.current,
           }}
         >
           <Categories onCategoryChange={handleCategoryChange} />
@@ -196,16 +154,6 @@ function MapScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* 지도 웹뷰 */}
-      <MapView
-        activeCategory={activeCategory}
-        eyeState={eyeState}
-        location={location}
-        locationPressed={locationPressed}
-        isTrafficPressed={isTrafficPressed}
-        refresed={refreshed}
-      />
-
       <View className={`absolute bottom-32 left-0 right-0 z-[0px] flex items-center`}>
         {/* 버스 아이콘 */}
         <TouchableOpacity
@@ -226,10 +174,20 @@ function MapScreen() {
         </TouchableOpacity>
       </View>
 
+      {/* 지도 웹뷰 */}
+      <View className="absolute bottom-0 left-0 right-0 top-0 h-full w-full">
+        <MapView
+          activeCategory={activeCategory}
+          eyeState={eyeState}
+          location={location}
+          locationPressed={locationPressed}
+          isTrafficPressed={isTrafficPressed}
+          refresed={refreshed}
+        />
+      </View>
+
       {/* 하단 추천 시트 */}
       <RecommendSheet headerHeight={searchBarHight.current + insets.top} />
     </SafeScreen>
   )
 }
-
-export default MapScreen

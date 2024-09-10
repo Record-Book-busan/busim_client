@@ -417,15 +417,17 @@ function js() {
 }
 
 const map = `
+  <!DOCTYPE html>
   <html>
   <head>
-      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta charset="utf-8"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${
         process.env.KakaoJsApiKey
       }&libraries=services,clusterer,drawing"></script> 
   </head>
   <body style="margin: 0; padding: 0;">
-      <div id="map" style="width: 100%; height: 100%;"></div>
+      <div id="map" style="width:100%;height:100%;position:absolute;top:0;left:0;"></div>
       <script>
         let map
         let showingOverlays = []

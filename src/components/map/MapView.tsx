@@ -23,7 +23,7 @@ function MapView({
   isTrafficPressed,
   refresed,
 }: MapViewProps) {
-  const webViewRef = useRef(null)
+  const webViewRef = useRef<WebView>(null)
 
   useEffect(() => {
     if (webViewRef.current) {
@@ -39,21 +39,20 @@ function MapView({
         kakao.maps.event.addListener(map, 'bounds_changed', initOverlays())
       `
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      ;(webViewRef.current as any).injectJavaScript(script)
+      webViewRef.current.injectJavaScript(script)
     }
   }, [activeCategory, eyeState, location, refresed])
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    ;(webViewRef.current as any).injectJavaScript(`moveMap(${JSON.stringify(location)})`)
-  }, [locationPressed])
+    if (webViewRef.current) {
+      webViewRef.current.injectJavaScript(`moveMap(${JSON.stringify(location)})`)
+    }
+  }, [locationPressed, location])
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    ;(webViewRef.current as any).injectJavaScript(
-      `showTrfficInfo(${JSON.stringify(isTrafficPressed)})`,
-    )
+    if (webViewRef.current) {
+      webViewRef.current.injectJavaScript(`showTrfficInfo(${JSON.stringify(isTrafficPressed)})`)
+    }
   }, [isTrafficPressed])
 
   const testData = `
@@ -96,8 +95,18 @@ function MapView({
       ref={webViewRef}
       source={{ html: map }}
       injectedJavaScript={initFn}
+      onMessage={event => {
+        console.log('Message from WebView:', event.nativeEvent.data)
+      }}
       javaScriptEnabled={true}
       domStorageEnabled={true}
+      startInLoadingState={true}
+
+      // onError={syntheticEvent => {
+      //   const { nativeEvent } = syntheticEvent
+      //   console.warn('WebView error: ', nativeEvent)
+      // }}
+
       // onMessage={(event) => {
       // const response = JSON.parse(event.nativeEvent.data)
       // if(response.type === 'overlayClicked') {
