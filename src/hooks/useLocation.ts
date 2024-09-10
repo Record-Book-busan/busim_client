@@ -28,9 +28,7 @@ export const useLocation = () => {
   const getCurrentLocation = () => {
     Geolocation.getCurrentPosition(
       position => {
-        console.log('기기 위치:', position.coords.longitude, position.coords.latitude)
         if (verifyLocation(position.coords.longitude, position.coords.latitude)) {
-          console.log('통과!')
           setLocation({
             lat: position.coords.latitude,
             lng: position.coords.longitude,
