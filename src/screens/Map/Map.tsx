@@ -76,12 +76,22 @@ export default function MapScreen() {
 
         {/* 눈 아이콘 */}
         <View
-          className={`absolute right-0 z-[1px]`}
+          className={`absolute right-2 z-[1px]`}
           style={{
             top: searchBarHight.current + 10,
           }}
         >
-          <TouchableOpacity onPress={handleEyePress} className="px-2">
+          <TouchableOpacity
+            style={{
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
+            }}
+            onPress={handleEyePress}
+            className={`flex items-center justify-center rounded-full p-2 ${eyeState ? 'bg-black' : 'bg-white'}`}
+          >
             <SvgIcon name={eyeState ? 'eyeClose' : 'eyeOpen'} />
           </TouchableOpacity>
         </View>
