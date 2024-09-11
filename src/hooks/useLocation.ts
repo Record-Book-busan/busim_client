@@ -9,7 +9,7 @@ type Location = {
 }
 
 export const useLocation = () => {
-  const [location, setLocation] = useState<Location>({ lng: 126.570667, lat: 33.450701 })
+  const [location, setLocation] = useState<Location>({ lng: 128.8252, lat: 35.00564 })
   const { permissionStatus, requestLocationAccess } = useLocationPermission()
 
   const verifyLocation = (lng: number, lat: number) => {

@@ -192,7 +192,7 @@ export default function MapScreen() {
           location={location}
           locationPressed={locationPressed}
           isTrafficPressed={isTrafficPressed}
-          refresed={refreshed}
+          refreshed={refreshed}
         />
       </View>
 

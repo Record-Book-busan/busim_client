@@ -26,9 +26,9 @@ const moveMap = `
  */
 const showTrfficInfo = `
   if(isShow) {
-    map.addOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC);
+    map.addOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC)
   } else {
-    map.removeOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC);
+    map.removeOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC)
   }
 `
 
@@ -97,28 +97,6 @@ const getOverlayImage = `
 `
 
 /**
- * 장소 정보 불러오기
- */
-const fetchPlaces = () => {
-  return `
-    [
-      {
-          title: '카카오', 
-          type: 'TOURIST_SPOT',
-          lat: 33.450705,
-          lng: 126.570677
-      },
-      {
-          title: '생태연못', 
-          type: 'TOURIST_SPOT',
-          lat: 33.450936,
-          lng: 126.569477
-      },
-    ]
-  `
-}
-
-/**
  * 클러스터 키 가져오기
  */
 const getClusterKey = `
@@ -129,7 +107,7 @@ const getClusterKey = `
   if (zoomLevel < 5) {
     gridSize = 100
   } else if (zoomLevel >= 5 && zoomLevel < 10) {
-    gridSize = 75
+    gridSize = 50
   } else {
     gridSize = 50
   }
@@ -143,13 +121,30 @@ const getClusterKey = `
 `
 
 /**
+ * 오버레이 높이 조절
+ */
+const getAnchorY = `
+  return 0
+`
+
+/**
  * 장소 오버레이 생성 함수
  */
 const settingPlaceOverlays = `
-  const data = ${fetchPlaces()}
-  // const data = fetchData
-  const level = map.getLevel()
+  let data = []
   const clusters = {}
+  const level = map.getLevel()
+
+  response.map((r, i) => {
+    const d = {
+      title: r.id.toString(),
+      type: r.category,
+      lat: r.lat,
+      lng: r.lng
+    }
+
+    data.push(d)
+  })
 
   initOverlays()
 
@@ -183,7 +178,7 @@ const settingPlaceOverlays = `
       const overlay = new kakao.maps.CustomOverlay({
         position: new kakao.maps.LatLng(d.lat, d.lng),
         content: content,
-        yAnchor: 0,
+        yAnchor: getAnchorY(level),
         xAnchor: 0  
       })
 
@@ -230,7 +225,7 @@ const settingPlaceOverlays = `
       const overlay = new kakao.maps.CustomOverlay({
         position: position,
         content: content,
-        yAnchor: 0,
+        yAnchor: getAnchorY(level),
         xAnchor: 0
       })
 
@@ -282,7 +277,7 @@ const settingImageOverlays = `
   initOverlays()
 
   const data = ${fetchImages()}
-
+  const level = map.getLevel()
   const clusters = {}
 
   data.forEach((d) => {
@@ -309,7 +304,7 @@ const settingImageOverlays = `
       const overlay = new kakao.maps.CustomOverlay({
         position: new kakao.maps.LatLng(d.lat, d.lng),
         content: content,
-        yAnchor: 0,
+        yAnchor: getAnchorY(level),
         xAnchor: 0
       })
 
@@ -342,7 +337,7 @@ const settingImageOverlays = `
       const overlay = new kakao.maps.CustomOverlay({
         position: position,
         content: content,
-        yAnchor: 0,
+        yAnchor: getAnchorY(level),
         xAnchor: 0
       })
 
@@ -393,11 +388,15 @@ const RegistFn = [
     val: getClusterKey,
   },
   {
+    key: 'getAnchorY(level)',
+    val: getAnchorY,
+  },
+  {
     key: 'getOverlayImage(type)',
     val: getOverlayImage,
   },
   {
-    key: 'settingPlaceOverlays(type, fetchData)',
+    key: 'settingPlaceOverlays(type, response)',
     val: settingPlaceOverlays,
   },
   {
