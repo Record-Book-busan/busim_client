@@ -167,6 +167,14 @@ type getCategoryProps = {
   touristCategories: string
 }
 
+type getCategoryResponseType = {
+  id: number
+  lat: number
+  lng: number
+  imageUrl: string[]
+  category: string
+}
+
 /**
  * 카테고리 정보를 가져옵니다.
  * @param lat - 위도
@@ -176,10 +184,15 @@ type getCategoryProps = {
  * @param touristCategories - 관광지 카테고리
  * @returns
  */
-const getCategory = async (params: getCategoryProps) =>
+const getCategory = async (params: getCategoryProps): Promise<getCategoryResponseType> =>
   await instance('kkilogbu/').get('place', { searchParams: params }).json()
 
 type getCategoryDetailProps = {
+  type: string
+  placeId: number
+}
+
+type getCategoryDetailResponseType = {
   type: string
   placeId: number
 }
@@ -190,7 +203,9 @@ type getCategoryDetailProps = {
  * @param placeId - 장소 식별자
  * @returns
  */
-const getCategoryDetail = async (params: getCategoryDetailProps) =>
+const getCategoryDetail = async (
+  params: getCategoryDetailProps,
+): Promise<getCategoryDetailResponseType> =>
   await instance('kkilogbu/').get(`place/${params.type}/${params.placeId}`).json()
 
 const getUser = async () => await instance('kkilogbu/').get('user').json()

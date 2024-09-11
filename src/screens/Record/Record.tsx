@@ -19,9 +19,9 @@ const RecordScreen = () => {
   const [currentPhotoUri, setCurrentPhotoUri] = useState<string | null>(null)
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [activeCategory, setActiveCategory] = useState<number[]>([])
+  const [activeCategory, setActiveCategory] = useState<string[]>([])
 
-  const handleCategoryChange = (catId: number[]) => {
+  const handleCategoryChange = (catId: string[]) => {
     console.log('선택한 카테고리 id:', catId)
     setActiveCategory(catId)
   }

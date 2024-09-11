@@ -97,7 +97,7 @@ export default function MapScreen() {
         </View>
       </View>
 
-      <View className={`absolute bottom-32 right-4 z-[1px] flex gap-4`}>
+      <View className={`absolute bottom-32 right-4 z-[2px] flex gap-4`}>
         {/* 북마크 아이콘 */}
         <TouchableOpacity
           style={{
@@ -132,7 +132,7 @@ export default function MapScreen() {
         </TouchableOpacity>
       </View>
 
-      <View className={`absolute bottom-32 left-4 z-[1px] flex gap-4`}>
+      <View className={`absolute bottom-32 left-4 z-[2px] flex gap-4`}>
         {/* 버스 아이콘 */}
         <TouchableOpacity
           style={{
@@ -164,8 +164,8 @@ export default function MapScreen() {
         </TouchableOpacity>
       </View>
 
-      <View className={`absolute bottom-32 left-0 right-0 z-[0px] flex items-center`}>
-        {/* 버스 아이콘 */}
+      <View className={`absolute bottom-32 left-0 right-0 z-[1px] flex items-center`}>
+        {/* 재검색 */}
         <TouchableOpacity
           style={{
             shadowColor: '#000',
