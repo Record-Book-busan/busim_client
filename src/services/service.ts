@@ -184,7 +184,7 @@ type getCategoryResponseType = {
  * @param touristCategories - 관광지 카테고리
  * @returns
  */
-const getCategory = async (params: getCategoryProps): Promise<getCategoryResponseType> =>
+const getCategory = async (params: getCategoryProps): Promise<getCategoryResponseType[]> =>
   await instance('kkilogbu/').get('place', { searchParams: params }).json()
 
 type getCategoryDetailProps = {
@@ -324,6 +324,14 @@ type getToiletProps = {
   level: string
 }
 
+type getToiletResponseType = {
+  toiletName: string
+  latitude: number
+  longitude: number
+  phoneNumber: string
+  openingHours: string
+}
+
 /**
  * 화장실 데이터를 가져옵니다.
  * @param lat - 위도
@@ -331,13 +339,28 @@ type getToiletProps = {
  * @param level - 레벨
  * @returns
  */
-const getToilet = async (params: getToiletProps) =>
+const getToilet = async (params: getToiletProps): Promise<getToiletResponseType[]> =>
   await instance('api/').get('toiletData', { searchParams: params }).json()
 
 type getParkingProps = {
   lat: number
   lng: number
   level: string
+}
+
+type getParkingResponseType = {
+  id: number
+  lat: number
+  lng: number
+  jibunAddr: string
+  pkFm: string
+  pkCnt: 0
+  svcSrtTe: string
+  svcEndTe: string
+  tenMin: 0
+  ftDay: 0
+  ftMon: 0
+  pkGubun: string
 }
 
 /**
@@ -347,7 +370,7 @@ type getParkingProps = {
  * @param level - 레벨
  * @returns
  */
-const getParking = async (params: getParkingProps) =>
+const getParking = async (params: getParkingProps): Promise<getParkingResponseType[]> =>
   await instance('api/').get('parking', { searchParams: params }).json()
 
 type getImageProps = {

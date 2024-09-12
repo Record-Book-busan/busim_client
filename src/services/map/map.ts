@@ -6,14 +6,16 @@ const map = `
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${
         process.env.KakaoJsApiKey
-      }&libraries=services,clusterer,drawing"></script> 
+      }&libraries=services,clusterer,drawing"></script>
   </head>
   <body style="margin: 0; padding: 0;">
       <div id="map" style="width:100%;height:100%;position:absolute;top:0;left:0;"></div>
       <script>
-      let map
       let showingOverlays = []
+      let toiletOverlays = []
+      let parkingOverlays = []
       let markers = []
+      let infowindows = []
       let eyeState = true
 
       /**
@@ -27,6 +29,19 @@ const map = `
           }
 
           map = new kakao.maps.Map(container, options)
+
+          kakao.maps.event.addListener(map, 'zoom_changed', function(event) {
+             const data = 'LEVEL_' + map.getLevel()
+             window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'zoomChanged', data: { zoomLevel: data } }))
+         })
+
+         kakao.maps.event.addListener(map, 'dragend', function() {
+             const data = map.getCenter()
+             window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'dragend', data: { lat: data.getLat(), lng: data.getLng() } }))
+         })
+
+         kakao.maps.event.addListener(map, 'click', initInfowindows)
+         kakao.maps.event.addListener(map, 'bounds_changed', initInfowindows)
       }
 
       /**
@@ -37,17 +52,6 @@ const map = `
 
           map.setLevel(level)
           map.panTo(latlng)
-      }
-
-      /**
-       * 교통 정보 추가 함수
-       */
-      function showTrfficInfo(isShow) {
-          if(isShow) {
-              map.addOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC)
-          } else {
-              map.removeOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC)
-          }
       }
 
       /**
@@ -85,6 +89,40 @@ const map = `
       }
 
       /**
+       * 화장실 오버레이 초기화 함수
+       */
+      function initToiletOverlays() {
+          toiletOverlays.forEach(m => m.setMap(null))
+          toiletOverlays = []
+      }
+
+      /**
+       * 화장실 오버레이 추가 함수
+       */
+      function showToiletOverlays() {
+          toiletOverlays.forEach(m => {
+              m.setMap(map)
+          })
+      }
+
+      /**
+       * 주차장 오버레이 초기화 함수
+       */
+      function initParkingOverlays() {
+          parkingOverlays.forEach(m => m.setMap(null))
+          parkingOverlays = []
+      }
+
+      /**
+       * 주차장 오버레이 추가 함수
+       */
+      function showParkingOverlays() {
+          parkingOverlays.forEach(m => {
+              m.setMap(map)
+          })
+      }
+
+      /**
        * 클러스터 키 가져오기
        */
       function getClusterKey(position) {
@@ -111,7 +149,7 @@ const map = `
        * 오버레이 높이 조절
        */
       function getAnchorY(level) {
-          return 0
+          return 0.5
       }
       
       /**
@@ -125,6 +163,8 @@ const map = `
           const park = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjIiIGhlaWdodD0iMjIiIHZpZXdCb3g9IjAgMCAyMiAyMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxyZWN0IHdpZHRoPSIyMiIgaGVpZ2h0PSIyMiIgcng9IjExIiBmaWxsPSIjRUY4RkFBIi8+DQo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTEwLjk5OTMgNC41QzExLjI2NjYgNC40OTk5NiAxMS41MzA1IDQuNTU5ODUgMTEuNzcxNiA0LjY3NTI3QzEyLjAxMjcgNC43OTA2OSAxMi4yMjQ4IDQuOTU4NyAxMi4zOTI0IDUuMTY2OTNDMTIuNTYgNS4zNzUxNyAxMi42Nzg4IDUuNjE4MzQgMTIuNzQgNS44Nzg1M0MxMi44MDExIDYuMTM4NzMgMTIuODAzMiA2LjQwOTM0IDEyLjc0NiA2LjY3MDQ0QzEyLjk3OTIgNi43NzgxMSAxMy4xOTk3IDYuOTA1NDQgMTMuNDA3NSA3LjA1MjQ0QzEzLjYwNTEgNi44NzI2OCAxMy44NDA0IDYuNzM5NDggMTQuMDk2MyA2LjY2MjYyQzE0LjM1MjEgNi41ODU3NiAxNC42MjE5IDYuNTY3MjEgMTQuODg1OCA2LjYwODMxQzE1LjE0OTggNi42NDk0MiAxNS40MDExIDYuNzQ5MTUgMTUuNjIxNSA2LjkwMDE3QzE1Ljg0MTggNy4wNTExOCAxNi4wMjU1IDcuMjQ5NjUgMTYuMTU5IDcuNDgwOTlDMTYuMjkyNiA3LjcxMjMyIDE2LjM3MjYgNy45NzA2NCAxNi4zOTMyIDguMjM2OTZDMTYuNDEzOCA4LjUwMzI4IDE2LjM3NDUgOC43NzA4NCAxNi4yNzgxIDkuMDE5OTZDMTYuMTgxNyA5LjI2OTA4IDE2LjAzMDcgOS40OTM0NCAxNS44MzYyIDkuNjc2NTVDMTUuNjQxOCA5Ljg1OTY1IDE1LjQwODcgOS45OTY4NiAxNS4xNTQyIDEwLjA3ODFDMTUuMTc3NSAxMC4zMzE4IDE1LjE3NzUgMTAuNTg3MSAxNS4xNTQyIDEwLjg0MDlDMTUuNDA4OCAxMC45MjIgMTUuNjQyIDExLjA1OTEgMTUuODM2NiAxMS4yNDIyQzE2LjAzMTIgMTEuNDI1MiAxNi4xODIzIDExLjY0OTYgMTYuMjc4OCAxMS44OTg3QzE2LjM3NTMgMTIuMTQ3OSAxNi40MTQ3IDEyLjQxNTUgMTYuMzk0MSAxMi42ODE4QzE2LjM3MzYgMTIuOTQ4MiAxNi4yOTM2IDEzLjIwNjYgMTYuMTYwMSAxMy40MzhDMTYuMDI2NSAxMy42Njk0IDE1Ljg0MjggMTMuODY4IDE1LjYyMjQgMTQuMDE5QzE1LjQwMjEgMTQuMTcwMSAxNS4xNTA2IDE0LjI2OTggMTQuODg2NyAxNC4zMTA5QzE0LjYyMjcgMTQuMzUyIDE0LjM1MjggMTQuMzMzNSAxNC4wOTY5IDE0LjI1NjVDMTMuODQxMSAxNC4xNzk2IDEzLjYwNTcgMTQuMDQ2NCAxMy40MDgxIDEzLjg2NjVDMTMuMjkzNyAxMy45NDY4IDEzLjE3NjEgMTQuMDIxNSAxMy4wNTUzIDE0LjA5MDZMMTIuODcwNiAxNC4xODg5TDEzLjM1MjcgMTUuNjM0N0MxMy40MDAyIDE1Ljc3ODggMTMuMzkwOSAxNS45MzU2IDEzLjMyNjggMTYuMDczMUMxMy4yNjI3IDE2LjIxMDYgMTMuMTQ4NSAxNi4zMTg0IDEzLjAwNzYgMTYuMzc0N0MxMi44NjY3IDE2LjQzMDkgMTIuNzA5NiAxNi40MzEzIDEyLjU2ODUgMTYuMzc1N0MxMi40MjczIDE2LjMyMDIgMTIuMzEyNiAxNi4yMTI5IDEyLjI0NzggMTYuMDc1N0wxMi4yMjE2IDE2LjAxMTNMMTEuNzQwMSAxNC41NjU2QzExLjMxMSAxNC42NDMgMTAuODcyNCAxNC42NTI2IDEwLjQ0MDMgMTQuNTk0MkwxMC4yNTg1IDE0LjU2NTZMOS43NzcwMSAxNi4wMTEzQzkuNzI5MjEgMTYuMTU1OSA5LjYyNzg3IDE2LjI3NjggOS40OTM3NyAxNi4zNDlDOS4zNTk2OCAxNi40MjEyIDkuMjAzMDIgMTYuNDM5NCA5LjA1NTk3IDE2LjM5OTdDOC45MDg5MiAxNi4zNiA4Ljc4MjYzIDE2LjI2NTYgOC43MDMwNSAxNi4xMzU3QzguNjIzNDYgMTYuMDA1OSA4LjU5NjYxIDE1Ljg1MDUgOC42MjgwMiAxNS43MDE0TDguNjQ1OSAxNS42MzQ3TDkuMTI4MDIgMTQuMTg4OUM4Ljk0MTQzIDE0LjA5NTIgOC43NjIxNSAxMy45ODc2IDguNTkxNjcgMTMuODY3MUM4LjM5NDA5IDE0LjA0NyA4LjE1ODcxIDE0LjE4MDIgNy45MDI4NSAxNC4yNTcxQzcuNjQ2OTggMTQuMzM0MSA3LjM3NzEzIDE0LjM1MjYgNy4xMTMxMyAxNC4zMTE1QzYuODQ5MTQgMTQuMjcwNCA2LjU5NzcxIDE0LjE3MDcgNi4zNzczNCAxNC4wMTk2QzYuMTU2OTcgMTMuODY4NiA1Ljk3MzI1IDEzLjY3IDUuODM5NzEgMTMuNDM4NkM1LjcwNjE2IDEzLjIwNzIgNS42MjYxOCAxMi45NDg4IDUuNjA1NjMgMTIuNjgyNEM1LjU4NTA5IDEyLjQxNjEgNS42MjQ1MiAxMi4xNDg1IDUuNzIxIDExLjg5OTNDNS44MTc0OSAxMS42NTAyIDUuOTY4NiAxMS40MjU4IDYuMTYzMiAxMS4yNDI4QzYuMzU3ODEgMTEuMDU5NyA2LjU5MDk3IDEwLjkyMjYgNi44NDU1NCAxMC44NDE1QzYuODIyMDEgMTAuNTg3NiA2LjgyMTgxIDEwLjMzMiA2Ljg0NDk0IDEwLjA3ODFDNi41OTA0NyA5Ljk5Njg2IDYuMzU3NDMgOS44NTk2NSA2LjE2Mjk1IDkuNjc2NTVDNS45Njg0NyA5LjQ5MzQ0IDUuODE3NDkgOS4yNjkwOCA1LjcyMTEgOS4wMTk5NkM1LjYyNDcyIDguNzcwODQgNS41ODUzOSA4LjUwMzI4IDUuNjA1OTkgOC4yMzY5NkM1LjYyNjU5IDcuOTcwNjQgNS43MDY2MSA3LjcxMjMyIDUuODQwMTYgNy40ODA5OUM1Ljk3MzcxIDcuMjQ5NjUgNi4xNTc0IDcuMDUxMTggNi4zNzc3MyA2LjkwMDE3QzYuNTk4MDYgNi43NDkxNSA2Ljg0OTQzIDYuNjQ5NDIgNy4xMTMzNyA2LjYwODMxQzcuMzc3MzEgNi41NjcyMSA3LjY0NzEgNi41ODU3NiA3LjkwMjkyIDYuNjYyNjJDOC4xNTg3NCA2LjczOTQ4IDguMzk0MDkgNi44NzI2OCA4LjU5MTY3IDcuMDUyNDRDOC43OTk4MyA2LjkwNTE4IDkuMDIxMDYgNi43NzczMSA5LjI1MjU3IDYuNjcwNDRDOS4xOTUzNyA2LjQwOTM0IDkuMTk3NDQgNi4xMzg3MyA5LjI1ODY0IDUuODc4NTNDOS4zMTk4MyA1LjYxODM0IDkuNDM4NTkgNS4zNzUxNyA5LjYwNjE4IDUuMTY2OTNDOS43NzM3NiA0Ljk1ODcgOS45ODU5MSA0Ljc5MDY5IDEwLjIyNyA0LjY3NTI3QzEwLjQ2ODEgNC41NTk4NSAxMC43MzIgNC40OTk5NiAxMC45OTkzIDQuNVpNMTAuOTk5MyAxMi4zNDM5TDEwLjY0MTcgMTMuNDE4NEMxMC44NzkyIDEzLjQ0NzEgMTEuMTE5MyAxMy40NDcxIDExLjM1NjkgMTMuNDE4NEwxMC45OTkzIDEyLjM0MzlaTTcuOTAyNzUgMTIuMjQ3M0M3Ljg2MzkxIDEyLjE3OSA3LjgxMTkzIDEyLjExOSA3Ljc0OTgyIDEyLjA3MDlDNy42ODc3IDEyLjAyMjcgNy42MTY2OCAxMS45ODczIDcuNTQwODMgMTEuOTY2N0M3LjQ2NDk4IDExLjk0NjEgNy4zODU4MSAxMS45NDA4IDcuMzA3ODcgMTEuOTUwOUM3LjIyOTkzIDExLjk2MSA3LjE1NDc3IDExLjk4NjUgNy4wODY3IDEyLjAyNThDNy4wMTg2NCAxMi4wNjUxIDYuOTU5MDIgMTIuMTE3NCA2LjkxMTI4IDEyLjE3OTlDNi44NjM1NCAxMi4yNDIzIDYuODI4NjIgMTIuMzEzNiA2LjgwODUzIDEyLjM4OTVDNi43ODg0NCAxMi40NjU1IDYuNzgzNTggMTIuNTQ0NyA2Ljc5NDIzIDEyLjYyMjZDNi44MDQ4OCAxMi43MDA1IDYuODMwODIgMTIuNzc1NSA2Ljg3MDU3IDEyLjg0MzNDNi45NTAxNiAxMi45NzkgNy4wODAyMiAxMy4wNzc4IDcuMjMyMzYgMTMuMTE4QzcuMzg0NSAxMy4xNTgyIDcuNTQ2MzggMTMuMTM2NyA3LjY4MjY3IDEzLjA1OEM3LjgxODk1IDEyLjk3OTMgNy45MTg1OCAxMi44NDk5IDcuOTU5ODEgMTIuNjk4QzguMDAxMDUgMTIuNTQ2MSA3Ljk4MDUzIDEyLjM4NDEgNy45MDI3NSAxMi4yNDczWk0xNC4wOTU4IDEyLjI0NzNDMTQuMDU2MSAxMi4zMTUxIDE0LjAzMDEgMTIuMzkwMSAxNC4wMTk1IDEyLjQ2OEMxNC4wMDg5IDEyLjU0NTkgMTQuMDEzNyAxMi42MjUxIDE0LjAzMzggMTIuNzAxQzE0LjA1MzkgMTIuNzc3IDE0LjA4ODggMTIuODQ4MyAxNC4xMzY2IDEyLjkxMDdDMTQuMTg0MyAxMi45NzMxIDE0LjI0MzkgMTMuMDI1NSAxNC4zMTIgMTMuMDY0OEMxNC4zOCAxMy4xMDQxIDE0LjQ1NTIgMTMuMTI5NiAxNC41MzMxIDEzLjEzOTdDMTQuNjExMSAxMy4xNDk4IDE0LjY5MDIgMTMuMTQ0NCAxNC43NjYxIDEzLjEyMzhDMTQuODQxOSAxMy4xMDMzIDE0LjkxMyAxMy4wNjc5IDE0Ljk3NTEgMTMuMDE5N0MxNS4wMzcyIDEyLjk3MTYgMTUuMDg5MiAxMi45MTE2IDE1LjEyOCAxMi44NDMzQzE1LjIwNTggMTIuNzA2NSAxNS4yMjYzIDEyLjU0NDQgMTUuMTg1MSAxMi4zOTI2QzE1LjE0MzggMTIuMjQwNyAxNS4wNDQyIDEyLjExMTMgMTQuOTA3OSAxMi4wMzI2QzE0Ljc3MTYgMTEuOTUzOSAxNC42MDk4IDExLjkzMjMgMTQuNDU3NiAxMS45NzI2QzE0LjMwNTUgMTIuMDEyOCAxNC4xNzU0IDEyLjExMTYgMTQuMDk1OCAxMi4yNDczWk0xMi4xMDU0IDcuNjkxODlDMTEuNzkwMiA3Ljk0MDM0IDExLjQwMDYgOC4wNzU1MiAxMC45OTkzIDguMDc1NjlDMTAuNTgxNSA4LjA3NTY5IDEwLjE5NzEgNy45MzI2NiA5Ljg5MjYyIDcuNjkxODlDOS42MjYyMyA3Ljc5OTE3IDkuMzc4MzIgNy45NDI3OSA5LjE1NjAzIDguMTE4QzkuMjEzNDMgOC41MTUxNSA5LjEzNTU1IDguOTIwMDYgOC45MzQ5MyA5LjI2NzU4QzguNzM0MzEgOS42MTUxMiA4LjQyMjYgOS44ODUwNyA4LjA0OTk1IDEwLjAzNEM4LjAwOTIzIDEwLjMxNjIgOC4wMDkyMyAxMC42MDI4IDguMDQ5OTUgMTAuODg1QzguNDIzMDIgMTEuMDMzNSA4LjczNTEzIDExLjMwMzQgOC45MzU4NCAxMS42NTEyQzkuMTM2NTQgMTEuOTk4OSA5LjIxNDEyIDEyLjQwNDIgOS4xNTYwMyAxMi44MDE1QzkuMjY4NDYgMTIuODg5NCA5LjM4NjY2IDEyLjk2OTIgOS41MTA2MiAxMy4wNDExTDEwLjQzNDMgMTAuMjcxMkMxMC40NzM5IDEwLjE1MjYgMTAuNTQ5OCAxMC4wNDk1IDEwLjY1MTMgOS45NzYzOEMxMC43NTI3IDkuOTAzMzEgMTAuODc0NiA5Ljg2Mzk5IDEwLjk5OTYgOS44NjM5OUMxMS4xMjQ2IDkuODYzOTkgMTEuMjQ2NSA5LjkwMzMxIDExLjM0NzkgOS45NzYzOEMxMS40NDk0IDEwLjA0OTUgMTEuNTI1MiAxMC4xNTI2IDExLjU2NDggMTAuMjcxMkwxMi40ODg2IDEzLjA0MTFDMTIuNjEyMiAxMi45Njk2IDEyLjczMDUgMTIuODg5NCAxMi44NDI2IDEyLjgwMUMxMi43ODUgMTIuNDAzOSAxMi44NjI2IDExLjk5OSAxMy4wNjMxIDExLjY1MTRDMTMuMjY0IDExLjMwMzYgMTMuNTc2MSAxMS4wMzM3IDEzLjk0OTIgMTAuODg1QzEzLjk5IDEwLjYwMjggMTMuOTkgMTAuMzE2MiAxMy45NDkyIDEwLjAzNEMxMy41NzYxIDkuODg1MjkgMTMuMjY0IDkuNjE1MzMgMTMuMDYzMSA5LjI2NzU4QzEyLjg2MjQgOC45MjAwNiAxMi43ODQ2IDguNTE1MTUgMTIuODQyIDguMTE4QzEyLjYxODEgNy45NDE0NSAxMi4zNyA3Ljc5Nzk2IDEyLjEwNTQgNy42OTE4OVpNNi44NzExNyA4LjA3NTY5QzYuODMxNDIgOC4xNDM0OSA2LjgwNTQ3IDguMjE4NDggNi43OTQ4MyA4LjI5NjM1QzYuNzg0MTggOC4zNzQyMiA2Ljc4OTA0IDguNDUzNDIgNi44MDkxMyA4LjUyOTQxQzYuODI5MjIgOC42MDUzOSA2Ljg2NDE0IDguNjc2NjUgNi45MTE4OCA4LjczOTA4QzYuOTU5NjIgOC44MDE1MSA3LjAxOTI0IDguODUzODkgNy4wODczIDguODkzMThDNy4xNTUzNiA4LjkzMjQ4IDcuMjMwNTMgOC45NTc5MyA3LjMwODQ3IDguOTY4MDZDNy4zODY0IDguOTc4MTkgNy40NjU1OCA4Ljk3MjggNy41NDE0MiA4Ljk1MjIxQzcuNjE3MjcgOC45MzE2MiA3LjY4ODMgOC44OTYyMyA3Ljc1MDQxIDguODQ4MDdDNy44MTI1MyA4Ljc5OTkyIDcuODY0NSA4LjczOTk2IDcuOTAzMzUgOC42NzE2M0M3Ljk4MTEzIDguNTM0ODMgOC4wMDE2NCA4LjM3MjgxIDcuOTYwNDEgOC4yMjA5NEM3LjkxOTE4IDguMDY5MDcgNy44MTk1NSA3LjkzOTY3IDcuNjgzMjYgNy44NjA5OEM3LjU0Njk4IDcuNzgyMjkgNy4zODUxIDcuNzYwNzEgNy4yMzI5NiA3LjgwMDkzQzcuMDgwODEgNy44NDExNSA2Ljk1MDc2IDcuOTM5OTIgNi44NzExNyA4LjA3NTY5Wk0xNC4zMTQ2IDcuODU3NTdDMTQuMjQ2MiA3Ljg5NjQxIDE0LjE4NjMgNy45NDgzOSAxNC4xMzgxIDguMDEwNUMxNC4wOSA4LjA3MjYyIDE0LjA1NDYgOC4xNDM2NCAxNC4wMzQgOC4yMTk0OUMxNC4wMTM0IDguMjk1MzQgMTQuMDA4IDguMzc0NTEgMTQuMDE4MSA4LjQ1MjQ1QzE0LjAyODMgOC41MzAzOSAxNC4wNTM3IDguNjA1NTUgMTQuMDkzIDguNjczNjJDMTQuMTMyMyA4Ljc0MTY4IDE0LjE4NDcgOC44MDEzIDE0LjI0NzEgOC44NDkwNEMxNC4zMDk1IDguODk2NzggMTQuMzgwOCA4LjkzMTcgMTQuNDU2OCA4Ljk1MTc5QzE0LjUzMjggOC45NzE4OCAxNC42MTIgOC45NzY3NCAxNC42ODk4IDguOTY2MDlDMTQuNzY3NyA4Ljk1NTQ0IDE0Ljg0MjcgOC45Mjk1IDE0LjkxMDUgOC44ODk3NUMxNS4wNDYzIDguODEwMTYgMTUuMTQ1IDguNjgwMSAxNS4xODUzIDguNTI3OTZDMTUuMjI1NSA4LjM3NTgyIDE1LjIwMzkgOC4yMTM5NCAxNS4xMjUyIDguMDc3NjVDMTUuMDQ2NSA3Ljk0MTM3IDE0LjkxNzEgNy44NDE3NCAxNC43NjUyIDcuODAwNTFDMTQuNjEzNCA3Ljc1OTI3IDE0LjQ1MTQgNy43Nzk3OSAxNC4zMTQ2IDcuODU3NTdaTTEwLjk5OTMgNS42OTE5QzEwLjg0MTIgNS42OTE5IDEwLjY4OTcgNS43NTQ2OCAxMC41Nzc5IDUuODY2NDRDMTAuNDY2MSA1Ljk3ODIxIDEwLjQwMzMgNi4xMjk3OSAxMC40MDMzIDYuMjg3ODRDMTAuNDAzMyA2LjQ0NTkgMTAuNDY2MSA2LjU5NzQ4IDEwLjU3NzkgNi43MDkyNEMxMC42ODk3IDYuODIxIDEwLjg0MTIgNi44ODM3OSAxMC45OTkzIDYuODgzNzlDMTEuMTU3NCA2Ljg4Mzc5IDExLjMwODkgNi44MjEgMTEuNDIwNyA2LjcwOTI0QzExLjUzMjUgNi41OTc0OCAxMS41OTUyIDYuNDQ1OSAxMS41OTUyIDYuMjg3ODRDMTEuNTk1MiA2LjEyOTc5IDExLjUzMjUgNS45NzgyMSAxMS40MjA3IDUuODY2NDRDMTEuMzA4OSA1Ljc1NDY4IDExLjE1NzQgNS42OTE5IDEwLjk5OTMgNS42OTE5WiIgZmlsbD0id2hpdGUiLz4NCjwvc3ZnPg0K'
           const star = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjIiIGhlaWdodD0iMjIiIHZpZXdCb3g9IjAgMCAyMiAyMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxyZWN0IHdpZHRoPSIyMiIgaGVpZ2h0PSIyMiIgcng9IjExIiBmaWxsPSIjRkZDMDNGIi8+DQo8cGF0aCBkPSJNMTAuOTk5OCAxNS4wNDk2TDE0LjA0NDYgMTYuODkxMkMxNC42MDIyIDE3LjIyODcgMTUuMjg0NSAxNi43Mjk4IDE1LjEzNzggMTYuMDk4OEwxNC4zMzA3IDEyLjYzNThMMTcuMDIzMyAxMC4zMDI3QzE3LjUxNDkgOS44NzcxNyAxNy4yNTA4IDkuMDcwMTEgMTYuNjA1MSA5LjAxODc1TDEzLjA2MTQgOC43MTc5NEwxMS42NzQ4IDUuNDQ1NzFDMTEuNDI1MyA0Ljg1MTQzIDEwLjU3NDIgNC44NTE0MyAxMC4zMjQ4IDUuNDQ1NzFMOC45MzgxMyA4LjcxMDYxTDUuMzk0NDQgOS4wMTE0MkM0Ljc0ODc5IDkuMDYyNzggNC40ODQ2NyA5Ljg2OTgzIDQuOTc2MjQgMTAuMjk1NEw3LjY2ODg2IDEyLjYyODVMNi44NjE4IDE2LjA5MTVDNi43MTUwNyAxNi43MjI0IDcuMzk3MzkgMTcuMjIxMyA3Ljk1NDk5IDE2Ljg4MzhMMTAuOTk5OCAxNS4wNDk2WiIgZmlsbD0id2hpdGUiLz4NCjwvc3ZnPg'
           const tour = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjIiIGhlaWdodD0iMjIiIHZpZXdCb3g9IjAgMCAyMiAyMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxyZWN0IHdpZHRoPSIyMiIgaGVpZ2h0PSIyMiIgcng9IjExIiBmaWxsPSIjNzlBNzEwIi8+DQo8cGF0aCBkPSJNNi43ODk0NSA4LjEwNTI2QzcuMzcwOCA4LjEwNTI2IDcuODQyMDggNy42MzM5OCA3Ljg0MjA4IDcuMDUyNjNDNy44NDIwOCA2LjQ3MTI4IDcuMzcwOCA2IDYuNzg5NDUgNkM2LjIwODEgNiA1LjczNjgyIDYuNDcxMjggNS43MzY4MiA3LjA1MjYzQzUuNzM2ODIgNy42MzM5OCA2LjIwODEgOC4xMDUyNiA2Ljc4OTQ1IDguMTA1MjZaIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEuMDUyNjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTEzLjEwNTMgMTIuMzE1OEMxMy4xMDUzIDEyLjMxNTggMTMuNjMxNiAxMC43MzY4IDEzLjYzMTYgOC4xMDUyNlY3LjA1MjYzQzEzLjYzMTYgNy4wNTI2MyAxMy4xMDUzIDYgMTIuMDUyNiA2QzExLjUyNjMgNiAxMSA2LjI2MzE2IDExIDYuMjYzMTYiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMS4wNTI2MyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTEuNTI2NCA5LjE1OEMxMS41MjY0IDguNTk5NjUgMTEuNzQ4MiA4LjA2NDE3IDEyLjE0MyA3LjY2OTM1QzEyLjUzNzggNy4yNzQ1NCAxMy4wNzMzIDcuMDUyNzMgMTMuNjMxNiA3LjA1MjczQzE0LjE5IDcuMDUyNzMgMTQuNzI1NSA3LjI3NDU0IDE1LjEyMDMgNy42NjkzNUMxNS41MTUxIDguMDY0MTcgMTUuNzM2OSA4LjU5OTY1IDE1LjczNjkgOS4xNTgiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMS4wNTI2MyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTMuNjMxNiA3LjA1MjYzQzEzLjYzMTYgNy4wNTI2MyAxNC4xNTc5IDYgMTUuMjEwNiA2QzE1LjczNjkgNiAxNi4yNjMyIDYuMjYzMTYgMTYuMjYzMiA2LjI2MzE2TTguODk0NzYgMTEuNzg5NUw5Ljk0NzM5IDE2TTYuMjYzMTggMTZMNi42MzE2IDE0Ljg5NDdDNi43MzY4NyAxNC42MzE2IDcuMDAwMDMgMTQuNDIxMSA3LjMxNTgyIDE0LjQyMTFIMTMuNjMxNkMxMy44OTQ4IDE0LjQyMTEgMTQuMzE1OCAxNC4yMTA1IDE0LjQ3MzcgMTRMMTYuMjYzMiAxMS43ODk1TTE1LjczNjkgMTZMMTQuMTU3OSAxNC40MjExTTYuNzg5NSAxMi4zMTU4TDguMzY4NDUgOS42ODQyMUwxMSAxMS4yNjMyTDYuNzg5NSAxMi4zMTU4WiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjA1MjYzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjwvc3ZnPg0K'
+          const toilet = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjIiIGhlaWdodD0iMjIiIHZpZXdCb3g9IjAgMCAyMiAyMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxyZWN0IHdpZHRoPSIyMiIgaGVpZ2h0PSIyMiIgcng9IjExIiBmaWxsPSIjOTY5NzlFIi8+DQo8cGF0aCBkPSJNMTIuNjU5OCAxN1YxNC4xOTEySDEwLjg3MjRWMTQuMDYzNkwxMC45MDkyIDEzLjk4N0MxMS43MjU3IDEyLjI3MjEgMTIuMTQ5MyAxMC4zOTY1IDEyLjE0OTEgOC40OTcxNVY4LjMyOTY0QzEyLjYzOTggOC4xNTAxOSAxMy4xNTg3IDguMDU5NzQgMTMuNjgxMiA4LjA2MjU2QzE0LjMzODkgOC4wNjI1NiAxNC44NjEzIDguMTk4NCAxNS4yMTMyIDguMzI5NjRWOC40OTcxNUMxNS4yMTMyIDEwLjM5NjkgMTUuNjM3MSAxMi4yNzE2IDE2LjQ1MzEgMTMuOTg2NUwxNi40ODk5IDE0LjA2MzFWMTQuMTkwN0gxNC43MDI1VjE3TTguNTc0MzQgMTdWMTMuNjgwNkM4LjU3NDM0IDEzLjQwOTcgOC42ODE5NSAxMy4xNDk5IDguODczNSAxMi45NTg0QzkuMDY1MDQgMTIuNzY2OCA5LjMyNDgzIDEyLjY1OTIgOS41OTU3MSAxMi42NTkyVjguNTczNzVDOS41OTU3MSA4LjU3Mzc1IDguODI5NjkgOC4wNjMwNyA3LjU1Mjk4IDguMDYzMDdDNi4yNzYyOCA4LjA2MzA3IDUuNTEwMjUgOC41NzM3NSA1LjUxMDI1IDguNTczNzVWMTIuNjU5MkM1Ljc4MTE0IDEyLjY1OTIgNi4wNDA5MiAxMi43NjY4IDYuMjMyNDcgMTIuOTU4NEM2LjQyNDAxIDEzLjE0OTkgNi41MzE2MiAxMy40MDk3IDYuNTMxNjIgMTMuNjgwNlYxN00xMy42MDQ2IDcuMDQxNzFDMTMuNjA0NiA3LjA0MTcxIDEyLjc4NzUgNi41MzEwMiAxMi43ODc1IDUuODkyNjdDMTIuNzg3NSA1LjY1NTkyIDEyLjg4MTUgNS40Mjg4NyAxMy4wNDg5IDUuMjYxNDZDMTMuMjE2MyA1LjA5NDA1IDEzLjQ0MzQgNSAxMy42ODAxIDVDMTMuOTE2OSA1IDE0LjE0MzkgNS4wOTQwNSAxNC4zMTE0IDUuMjYxNDZDMTQuNDc4OCA1LjQyODg3IDE0LjU3MjggNS42NTU5MiAxNC41NzI4IDUuODkyNjdDMTQuNTcyOCA2LjUzMTAyIDEzLjc1NzggNy4wNDE3MSAxMy43NTc4IDcuMDQxNzFIMTMuNjA0NlpNNy40NzYzOCA3LjA0MTcxQzcuNDc2MzggNy4wNDE3MSA2LjY1OTI5IDYuNTMxMDIgNi42NTkyOSA1Ljg5MjY3QzYuNjU5MjkgNS43NzU0NCA2LjY4MjM4IDUuNjU5MzYgNi43MjcyNCA1LjU1MTA2QzYuNzcyMSA1LjQ0Mjc2IDYuODM3ODUgNS4zNDQzNSA2LjkyMDc1IDUuMjYxNDZDNy4wMDM2NCA1LjE3ODU3IDcuMTAyMDQgNS4xMTI4MSA3LjIxMDM1IDUuMDY3OTVDNy4zMTg2NSA1LjAyMzA5IDcuNDM0NzMgNSA3LjU1MTk2IDVDNy42NjkxOSA1IDcuNzg1MjcgNS4wMjMwOSA3Ljg5MzU3IDUuMDY3OTVDOC4wMDE4NyA1LjExMjgxIDguMTAwMjggNS4xNzg1NyA4LjE4MzE3IDUuMjYxNDZDOC4yNjYwNyA1LjM0NDM1IDguMzMxODIgNS40NDI3NiA4LjM3NjY4IDUuNTUxMDZDOC40MjE1NCA1LjY1OTM2IDguNDQ0NjMgNS43NzU0NCA4LjQ0NDYzIDUuODkyNjdDOC40NDQ2MyA2LjUzMTAyIDcuNjI5NTggNy4wNDE3MSA3LjYyOTU4IDcuMDQxNzFINy40NzYzOFoiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMC44NSIvPg0KPC9zdmc+DQo'
+          const parking = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjIiIGhlaWdodD0iMjIiIHZpZXdCb3g9IjAgMCAyMiAyMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxyZWN0IHdpZHRoPSIyMiIgaGVpZ2h0PSIyMiIgcng9IjExIiBmaWxsPSIjRkY3NTEyIi8+DQo8cGF0aCBkPSJNNy40NTY0MyAxNy4wNzE2QzcuMzU1IDE3LjA3MTYgNy4yNyAxNy4wMzczIDcuMjAxNDMgMTYuOTY4N0M3LjEzMjg2IDE2LjkwMDEgNy4wOTkwNSAxNi44MTU0IDcuMSAxNi43MTQ0VjE1LjM2MDFDNi44NjcxNCAxNS4yNTkyIDYuNjI1NzEgMTUuMDQ0NyA2LjM3NTcxIDE0LjcxNjZDNi4xMjU3MSAxNC4zODg1IDYuMDAwNDggMTQuMDEwNCA2IDEzLjU4MjNWNy4wNzE1N0M2IDYuMzMwNjIgNi40MDA5NSA1Ljc4ODIzIDcuMjAyODYgNS40NDQ0M0M4LjAwNTcxIDUuMTAwNjIgOS4yNzE0MyA0LjkyODcxIDExIDQuOTI4NzFDMTIuNzkxOSA0LjkyODcxIDE0LjA3MzMgNS4wOTM5NSAxNC44NDQzIDUuNDI0NDNDMTUuNjE1MiA1Ljc1NDkgMTYuMDAwNSA2LjMwMzk1IDE2IDcuMDcxNTdWMTMuNTgzQzE2IDE0LjAxMDYgMTUuODc1IDE0LjM4ODUgMTUuNjI1IDE0LjcxNjZDMTUuMzc1IDE1LjA0NTEgMTUuMTMzNiAxNS4yNTk0IDE0LjkwMDcgMTUuMzU5NFYxNi43MTQ0QzE0LjkwMDcgMTYuODE1OSAxNC44NjY3IDE2LjkwMDYgMTQuNzk4NiAxNi45Njg3QzE0LjczMDUgMTcuMDM2OCAxNC42NDUyIDE3LjA3MTEgMTQuNTQyOSAxNy4wNzE2SDE0LjM3ODZDMTQuMjc3MSAxNy4wNzE2IDE0LjE5MjEgMTcuMDM3MyAxNC4xMjM2IDE2Ljk2ODdDMTQuMDU1IDE2LjkwMDEgMTQuMDIxIDE2LjgxNTQgMTQuMDIxNCAxNi43MTQ0VjE1LjY0M0g3Ljk3Nzg2VjE2LjcxNDRDNy45Nzc4NiAxNi44MTU5IDcuOTQzNTcgMTYuOTAwNiA3Ljg3NSAxNi45Njg3QzcuODA2NDMgMTcuMDM2OCA3LjcyMTkgMTcuMDcxMSA3LjYyMTQzIDE3LjA3MTZINy40NTY0M1pNMTEuMDA4NiA2Ljc0MjI4SDE1LjIyNzlINi43ODg1N0gxMS4wMDg2Wk0xMy44NTcxIDExLjM1NzNINi43MTQyOUgxNS4yODU3SDEzLjg1NzFaTTYuNzE0MjkgMTAuNjQzSDE1LjI4NTdWNy40NTY1N0g2LjcxNDI5VjEwLjY0M1pNOC41MDM1NyAxMy45NDAxQzguNzI1NDggMTMuOTQwMSA4LjkxMzEgMTMuODYyMyA5LjA2NjQzIDEzLjcwNjZDOS4yMjAyNCAxMy41NTA5IDkuMjk3MTQgMTMuMzYyIDkuMjk3MTQgMTMuMTQwMUM5LjI5NzE0IDEyLjkxNzggOS4yMTkyOSAxMi43Mjk3IDkuMDYzNTcgMTIuNTc1OUM4LjkwNzg2IDEyLjQyMyA4LjcxOTA1IDEyLjM0NjYgOC40OTcxNCAxMi4zNDY2QzguMjc0NzYgMTIuMzQ2NiA4LjA4NjY3IDEyLjQyNDIgNy45MzI4NiAxMi41Nzk0QzcuNzc5NTIgMTIuNzM1MSA3LjcwMjg2IDEyLjkyMzkgNy43MDI4NiAxMy4xNDU5QzcuNzAyODYgMTMuMzY4MiA3Ljc4MDcxIDEzLjU1NjMgNy45MzY0MyAxMy43MTAxQzguMDkyMTQgMTMuODYzNSA4LjI4MDk1IDEzLjk0MDEgOC41MDI4NiAxMy45NDAxTTEzLjUwMjkgMTMuOTQwMUMxMy43MjUyIDEzLjk0MDEgMTMuOTEzMyAxMy44NjIzIDE0LjA2NzEgMTMuNzA2NkMxNC4yMiAxMy41NTA5IDE0LjI5NjQgMTMuMzYyIDE0LjI5NjQgMTMuMTQwMUMxNC4yOTY0IDEyLjkxNzggMTQuMjE4OCAxMi43Mjk3IDE0LjA2MzYgMTIuNTc1OUMxMy45MDc5IDEyLjQyMyAxMy43MTg4IDEyLjM0NjYgMTMuNDk2NCAxMi4zNDY2QzEzLjI3NDUgMTIuMzQ2NiAxMy4wODY5IDEyLjQyNDIgMTIuOTMzNiAxMi41Nzk0QzEyLjc3OTggMTIuNzM1MSAxMi43MDI5IDEyLjkyMzkgMTIuNzAyOSAxMy4xNDU5QzEyLjcwMjkgMTMuMzY4MiAxMi43ODA3IDEzLjU1NjMgMTIuOTM2NCAxMy43MTAxQzEzLjA5MjEgMTMuODYzNSAxMy4yODEgMTMuOTQwMSAxMy41MDI5IDEzLjk0MDFaTTYuNzg4NTcgNi43NDIyOEgxNS4yMjc5QzE1LjEwNCA2LjM3NDY2IDE0LjcyMjQgNi4wOTk2NiAxNC4wODI5IDUuOTE3MjhDMTMuNDQzMyA1LjczNDQyIDEyLjQxODYgNS42NDMgMTEuMDA4NiA1LjY0M0M5LjYwNjE5IDUuNjQzIDguNTg1MjQgNS43MzU4NSA3Ljk0NTcxIDUuOTIxNTdDNy4zMDYxOSA2LjEwNjgxIDYuOTIwNDggNi4zODAzOCA2Ljc4ODU3IDYuNzQyMjhaTTguMTQyODYgMTQuOTI4N0gxMy44NTcxQzE0LjI1IDE0LjkyODcgMTQuNTg2NCAxNC43ODg5IDE0Ljg2NjQgMTQuNTA5NEMxNS4xNDY0IDE0LjIyOTkgMTUuMjg2MiAxMy44OTM1IDE1LjI4NTcgMTMuNTAwMVYxMS4zNTczSDYuNzE0MjlWMTMuNTAwMUM2LjcxNDI5IDEzLjg5MyA2Ljg1NDI5IDE0LjIyOTQgNy4xMzQyOSAxNC41MDk0QzcuNDE0MjkgMTQuNzg5NCA3Ljc1MDQ4IDE0LjkyOTIgOC4xNDI4NiAxNC45Mjg3WiIgZmlsbD0id2hpdGUiLz4NCjwvc3ZnPg0K'
 
           switch(type) {
               case 'NORMAL_RESTAURANT':
@@ -141,31 +181,119 @@ const map = `
                   return star
               case 'TOURIST_SPOT':
                   return tour
+              case 'TOILET':
+                  return toilet
+              case 'PARKING':
+                  return parking
           }
+      }
+
+      /**
+       * 인포 윈도우 초기화 함수
+       */
+      function initInfowindows() {
+          infowindows.forEach(m => m.setMap(null))
+          infowindows = []
+      }
+
+      /**
+       * 인포 윈도우 추가 함수
+       */
+      function showInfowindows() {
+          infowindows.forEach(m => {
+              m.setMap(map)
+          })
+      }
+
+      /**
+       * 인포윈도우 클릭 함수
+       */
+      function handleInfowindowClick(id) {
+        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'overlayClick', data: { id: id } }));
+      }
+
+      /**
+       * 카테고리 코드를 카테고리 명으로 변경
+       */
+      function codeToName(code) {
+        switch (code) {
+            case 'NORMAL_RESTAURANT':
+                return '일반 맛집'
+            case 'SPECIAL_RESTAURANT':
+                return '특별 맛집'
+            case 'TOURIST_SPOT':
+                return '관광지'
+            case 'THEME':
+                return '테마'
+            case 'HOT_PLACE':
+                return '핫플'
+            case 'NATURE':
+                return '자연'
+            case 'LEISURE_SPORTS':
+                return '레포츠'
+            default:
+                return code
+        }
+    }
+
+      /**
+       * 오버레이 클릭 함수
+       */
+       function handleOverlayClick({ lng, lat, level, type, id }) {
+        if(level > 3) {
+            moveMap({ lng: lng, lat: lat, level: level-1 })
+        } else {
+            if(type !== 'TOILET' && type !== 'PARKING') {
+                if(type.indexOf(",") === -1) {
+                    window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'overlayClick', data: { type: type, id: id } }))
+                } else {
+                    let items = ''
+                    const types = type.split(",")
+                    const ids = id.split(",")
+
+                    for (let i = 0; i < types.length; i++) {
+                        items += '<div onclick="handleInfowindowClick(' + id[i] + ')" style="padding: 5px 10px;"><a href="javascript:void(0);">' + codeToName(types[i]) + '(' + id[i] + ')</a></div>'
+                    }
+
+                    const iwContent = '<div>' 
+                        + items
+                        + '</div>'
+
+                    if(level === 3) {
+                        lat += 0.0006
+                        lng += 0.0005
+                    } else if(level === 2) {
+                        lat += 0.0003
+                        lng += 0.00025
+                    } else {
+                        lat += 0.00015
+                        lng += 0.000125
+                    }
+
+                    const infowindow = new kakao.maps.InfoWindow({
+                        position : new kakao.maps.LatLng(lat, lng), 
+                        content : iwContent,
+                    })
+
+                    infowindows.push(infowindow)
+
+                    showInfowindows()
+                }
+            } 
+        }
       }
 
       /**
       * 장소 오버레이 생성 함수
       */
-      function settingPlaceOverlays(isShow, type, response) {
-          initOverlays()
+      function settingPlaceOverlays(type, response) {
+          if(type[0] === 'TOILET') initToiletOverlays()
+          else if(type[0] === 'PARKING') initParkingOverlays()
+          else initOverlays()
 
-          if(!isShow) return
-
-          let data = []
+          const data = response
           const clusters = {}
           const level = map.getLevel()
-
-          response.map((r, i) => {
-              const d = {
-              title: r.id.toString(),
-              type: r.category,
-              lat: r.lat,
-              lng: r.lng
-              }
-
-              data.push(d)
-          })
 
           data.forEach((d) => {
               type.forEach((t) => {
@@ -187,12 +315,13 @@ const map = `
               if (items.length === 1) {
                   const d = items[0]
                   const imageUrl = getOverlayImage(d.type)
-                  const content = '<div class="customoverlay" data-key="' + d.title + '" style="position:relative;bottom:40px;background:#00339D;border-radius:20px 20px 20px 0;padding:10px;box-shadow:0 2px 6px rgba(0,0,0,0.3);">' +
-                      '  <div style="position:relative;display:flex;align-items:center;pointer-events: none;">' +
-                      '    <img src="' + imageUrl + '" style="width:30px;height:30px;">' +
-                      '  </div>' +
-                      '  <div style="position:absolute;bottom:-10px;left:0;width:0;height:0;border-top:10px solid #00339D;border-right:10px solid transparent;"></div>' +
-                      '</div>'
+                  const content = '<div class="customoverlay" onClick="handleOverlayClick({ lng: ' 
+                    + d.lng + ', lat: ' + d.lat + ', level: ' + level + ', type: \\'' + d.type + '\\', id: \\'' + d.title + '\\' })" style="position:relative;bottom:40px;background:#00339D;border-radius:20px 20px 20px 0;padding:10px;box-shadow:0 2px 6px rgba(0,0,0,0.3);pointer-events: auto;">'
+                    + '  <div style="position:relative;display:flex;align-items:center;">'
+                    + '    <img src="' + imageUrl + '" style="width:30px;height:30px;">'
+                    + '  </div>'
+                    + '  <div style="position:absolute;bottom:-10px;left:0;width:0;height:0;border-top:10px solid #00339D;border-right:10px solid transparent;"></div>'
+                    + '</div>'
 
                   const overlay = new kakao.maps.CustomOverlay({
                       position: new kakao.maps.LatLng(d.lat, d.lng),
@@ -201,20 +330,25 @@ const map = `
                       xAnchor: 0  
                   })
 
-                  showingOverlays.push(overlay);
+                  if (type === 'TOILET') toiletOverlays.push(overlay);
+                  else if (type === 'PARKING') parkingOverlays.push(overlay);
+                  else showingOverlays.push(overlay);
               } else {
                   let sumLat = 0
                   let sumLng = 0
                   let keys = ''
+                  let types = []
                   const uniqueTypes = new Set()
                   
                   for (const item of items) {
                       keys += item.title + ','
+                      types += item.type + ','
                       sumLat += item.lat
                       sumLng += item.lng
                       uniqueTypes.add(item.type)
                   }
                   keys = keys.substring(0, keys.length - 1)
+                  types = types.substring(0, types.length - 1)
                   
                   const position = new kakao.maps.LatLng(sumLat / items.length, sumLng / items.length)
                   
@@ -234,12 +368,14 @@ const map = `
                   let countHtml = ''
                   countHtml = '<div style="background-color: white;border-radius: 50px;padding:8px;color:black;font-size:12px;text-align:center;margin-left:' + ((typeArray.length - 1) * 15 + 35) + 'px;">+' + items.length + '</div>'
 
-                  const content = '<div class="customoverlay" data-key="' + keys + '" data-lat="' + position.getLat() + '" data-lng="' + position.getLng() + '" style="position:relative;bottom:40px;background:#00339D;border-radius:20px 20px 20px 0;padding:10px;box-shadow:0 2px 6px rgba(0,0,0,0.3);">' +
-                      '  <div style="position:relative;display:flex;align-items:center;pointer-events: none;">' +
-                      imagesHtml + countHtml +
-                      '  </div>' +
-                      '  <div style="position:absolute;bottom:-10px;left:0;width:0;height:0;border-top:10px solid #00339D;border-right:10px solid transparent;"></div>' +
-                      '</div>'
+                  const content = '<div class="customoverlay" onClick="handleOverlayClick({ lng: ' 
+                    + position.getLng() + ', lat: ' + position.getLat() + ', level: ' + level + ', type: \\'' + types + '\\', id: \\'' + keys
+                    + '\\' })" style="position:relative;bottom:40px;background:#00339D;border-radius:20px 20px 20px 0;padding:10px;box-shadow:0 2px 6px rgba(0,0,0,0.3);">'
+                    + '  <div style="position:relative;display:flex;align-items:center;pointer-events: none;">'
+                    + imagesHtml + countHtml
+                    + '  </div>'
+                    + '  <div style="position:absolute;bottom:-10px;left:0;width:0;height:0;border-top:10px solid #00339D;border-right:10px solid transparent;"></div>'
+                    + '</div>'
 
                   const overlay = new kakao.maps.CustomOverlay({
                       position: position,
@@ -248,11 +384,15 @@ const map = `
                       xAnchor: 0
                   })
 
-                  showingOverlays.push(overlay)
+                  if(type === 'TOILET') toiletOverlays.push(overlay)
+                  else if(type === 'PARKING') parkingOverlays.push(overlay)
+                  else showingOverlays.push(overlay)
               }
           }
 
-          showOverlays()
+          if(type === 'TOILET') showToiletOverlays()
+          else if(type === 'PARKING') showParkingOverlays()
+          else showOverlays()
       }
 
       /**

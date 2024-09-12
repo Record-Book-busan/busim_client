@@ -16,14 +16,14 @@ export type OnboardingStackParamList = {
 }
 
 export type MainTabParamList = {
-  Map: undefined
+  Map: NavigatorScreenParams<MapStackParamList>
   Search: undefined
   Record: undefined
   MyPage: undefined
 }
 
 export type MapStackParamList = {
-  MapHome: undefined
+  MapHome: { categories: string[] }
   MapRecommend: undefined
 }
 

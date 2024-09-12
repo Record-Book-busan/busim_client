@@ -18,7 +18,7 @@ import type { RootStackParamList } from '@/types/navigation'
 const SCREEN_WIDTH = window.width
 
 type Selection = {
-  id: number
+  id: string
   title: string
   icon: string
   isSelected: boolean
@@ -34,23 +34,23 @@ export default function OnBoardingScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList, 'MainTab'>>()
 
   const [tourSelections, setTourSelections] = useState<Selection[]>([
-    { id: 1, title: '관광지', icon: '🏖', isSelected: false },
-    { id: 2, title: '테마', icon: '🎡', isSelected: false },
-    { id: 3, title: '핫플', icon: '🔥', isSelected: false },
-    { id: 4, title: '자연', icon: '🌴', isSelected: false },
-    { id: 5, title: '레포츠', icon: '🤿', isSelected: false },
+    { id: 'TOURIST_SPOT', title: '관광지', icon: '🏖', isSelected: false },
+    { id: 'THEME', title: '테마', icon: '🎡', isSelected: false },
+    { id: 'HOT_PLACE', title: '핫플', icon: '🔥', isSelected: false },
+    { id: 'NATURE', title: '자연', icon: '🌴', isSelected: false },
+    { id: 'LEISURE_SPORTS', title: '레포츠', icon: '🤿', isSelected: false },
   ])
 
   const [foodSelections, setFoodSelections] = useState<Selection[]>([
     {
-      id: 10,
+      id: 'SPECIAL_RESTAURANT',
       title: '특별한 맛집',
       icon: '🍽',
       isSelected: false,
       description: '공무원 맛집, 블루 리본 맛집, 오션뷰 맛집 등 특별한 맛집에 대해서 추천드려요.',
     },
     {
-      id: 11,
+      id: 'NORMAL_RESTAURANT',
       title: '일반 맛집',
       icon: '☕',
       isSelected: false,
@@ -58,7 +58,7 @@ export default function OnBoardingScreen() {
     },
   ])
 
-  const toggleSelection = (id: number, screenType: 'tour' | 'food') => {
+  const toggleSelection = (id: string, screenType: 'tour' | 'food') => {
     console.log(screenType, '클릭된 id:', id)
     if (screenType === 'tour') {
       setTourSelections(prev =>
@@ -72,7 +72,10 @@ export default function OnBoardingScreen() {
   }
 
   const handleSkip = () => {
-    navigation.navigate('MainTab', { screen: 'Map' })
+    navigation.navigate('MainTab', {
+      screen: 'Map',
+      params: { screen: 'MapHome', params: { categories: [] } },
+    })
   }
 
   const animatedStyleTour = useAnimatedStyle(() => ({
@@ -101,6 +104,22 @@ export default function OnBoardingScreen() {
     zIndex: progress.value === 1 ? 1 : 0,
   }))
 
+  const getCheckedCategories = (): string[] => {
+    const categories: string[] = []
+
+    tourSelections.map(t => {
+      if (t.isSelected) categories.push(t.id)
+    })
+
+    foodSelections.map(f => {
+      if (f.isSelected) categories.push(f.id)
+    })
+
+    console.log(categories)
+
+    return categories
+  }
+
   const handleNext = () => {
     if (currentScreen === 'tour' && !isAnimating) {
       setIsAnimating(true)
@@ -109,7 +128,10 @@ export default function OnBoardingScreen() {
         runOnJS(setIsAnimating)(false)
       })
     } else {
-      navigation.navigate('MainTab', { screen: 'Map' })
+      navigation.navigate('MainTab', {
+        screen: 'Map',
+        params: { screen: 'MapHome', params: { categories: getCheckedCategories() } },
+      })
     }
   }
 

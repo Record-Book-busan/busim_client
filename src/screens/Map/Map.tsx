@@ -1,5 +1,5 @@
-import { type NavigationProp, useNavigation } from '@react-navigation/native'
-import { useRef, useState } from 'react'
+import { type NavigationProp, type RouteProp, useNavigation } from '@react-navigation/native'
+import { useEffect, useRef, useState } from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -8,23 +8,50 @@ import { MapView } from '@/components/map'
 import { useForceUpdate } from '@/hooks/useForceUpdate'
 import { useLocation } from '@/hooks/useLocation'
 import { SvgIcon } from '@/shared'
-import { RootStackParamList } from '@/types/navigation'
+import { MapStackParamList, RootStackParamList } from '@/types/navigation'
 
 import { RecommendSheet } from './RecommendSheet'
 
-export default function MapScreen() {
+interface MapScreenProps {
+  route: RouteProp<MapStackParamList, 'MapHome'>
+}
+
+export default function MapScreen({ route }: MapScreenProps) {
   const { location, refreshLocation } = useLocation()
 
   const [activeCategory, setActiveCategory] = useState<string[]>([])
   const [eyeState, setEyeState] = useState(true)
   const [locationPressed, setLocationPressed] = useState(false)
   const [isBookMarked, setIsBookMarked] = useState(false)
+  const [isToiletPressed, setIsToiletPressed] = useState(false)
   const [isTrafficPressed, setIsTrafficPressed] = useState(false)
   const [refreshed, setRefreshed] = useState(false)
   const searchBarHight = useRef(0)
   const forceUpdate = useForceUpdate()
   const insets = useSafeAreaInsets()
   const navigation = useNavigation<NavigationProp<RootStackParamList, 'MainTab'>>()
+
+  useEffect(() => {
+    const categories: string[] = route.params.categories
+
+    if (
+      categories.some(
+        category => category === 'NORMAL_RESTAURANT' || category === 'SPECIAL_RESTAURANT',
+      )
+    ) {
+      handleCategoryChange(
+        categories.filter(
+          category => category === 'NORMAL_RESTAURANT' || category === 'SPECIAL_RESTAURANT',
+        ),
+      )
+    } else {
+      handleCategoryChange(
+        categories.filter(
+          category => category !== 'NORMAL_RESTAURANT' && category !== 'SPECIAL_RESTAURANT',
+        ),
+      )
+    }
+  }, [])
 
   const handleCategoryChange = (catId: string[]) => {
     console.log('선택한 카테고리 id:', catId)
@@ -71,7 +98,10 @@ export default function MapScreen() {
             top: searchBarHight.current,
           }}
         >
-          <Categories onCategoryChange={handleCategoryChange} />
+          <Categories
+            initCategories={route.params.categories}
+            onCategoryChange={handleCategoryChange}
+          />
         </View>
 
         {/* 눈 아이콘 */}
@@ -108,7 +138,7 @@ export default function MapScreen() {
             elevation: 5,
           }}
           onPress={() => setIsBookMarked(prev => !prev)}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-white"
+          className={`flex h-11 w-11 items-center justify-center rounded-full bg-white`}
         >
           <SvgIcon
             name="bookmark"
@@ -143,9 +173,9 @@ export default function MapScreen() {
             elevation: 5,
           }}
           onPress={() => setIsTrafficPressed(prev => !prev)}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-white"
+          className={`flex h-11 w-11 items-center justify-center rounded-full ${isTrafficPressed ? 'bg-BUSIM-blue' : 'bg-white'}`}
         >
-          <SvgIcon name="bus" />
+          <SvgIcon name="bus" className={`${isTrafficPressed ? 'text-white' : 'text-black'}`} />
         </TouchableOpacity>
 
         {/* 화장실 아이콘 */}
@@ -157,10 +187,10 @@ export default function MapScreen() {
             shadowRadius: 3.84,
             elevation: 5,
           }}
-          onPress={() => console.log('화장실 아이콘 필요하네,,,')}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-white"
+          onPress={() => setIsToiletPressed(prev => !prev)}
+          className={`flex h-11 w-11 items-center justify-center rounded-full ${isToiletPressed ? 'bg-BUSIM-blue' : 'bg-white'}`}
         >
-          <SvgIcon name="toilet" />
+          <SvgIcon name="toilet" className={`${isToiletPressed ? 'text-white' : 'text-black'}`} />
         </TouchableOpacity>
       </View>
 
@@ -191,6 +221,7 @@ export default function MapScreen() {
           eyeState={eyeState}
           location={location}
           locationPressed={locationPressed}
+          isToiletPressed={isToiletPressed}
           isTrafficPressed={isTrafficPressed}
           refreshed={refreshed}
         />

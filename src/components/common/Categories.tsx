@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { View } from 'react-native'
 
 import { Chip } from '@/shared'
@@ -32,12 +32,35 @@ const CATEGORIES = {
 } as const
 
 interface CategoriesProps {
+  initCategories: string[]
   onCategoryChange: (categories: string[]) => void
 }
 
-export function Categories({ onCategoryChange }: CategoriesProps) {
+export function Categories({ initCategories, onCategoryChange }: CategoriesProps) {
   const [activeMapType, setActiveMapType] = useState<MapType | null>(null)
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+
+  useEffect(() => {
+    if (
+      initCategories.some(
+        category => category === 'NORMAL_RESTAURANT' || category === 'SPECIAL_RESTAURANT',
+      )
+    ) {
+      setActiveMapType('food')
+      setSelectedCategories(
+        initCategories.filter(
+          category => category === 'NORMAL_RESTAURANT' || category === 'SPECIAL_RESTAURANT',
+        ),
+      )
+    } else {
+      setActiveMapType('tourist')
+      setSelectedCategories(
+        initCategories.filter(
+          category => category !== 'NORMAL_RESTAURANT' && category !== 'SPECIAL_RESTAURANT',
+        ),
+      )
+    }
+  }, [])
 
   const handleMapTypeChange = (type: MapType) => {
     setActiveMapType(prevType => (prevType === type ? null : type))

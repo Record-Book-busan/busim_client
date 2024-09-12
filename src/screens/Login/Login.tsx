@@ -23,7 +23,10 @@ export default function LoginScreen() {
 
   const handleWrapUnAuthorizedLogin = useCallback(async () => {
     if (await unAuthorizedLogin(setNotice)) {
-      navigation.navigate('MainTab', { screen: 'Map' })
+      navigation.navigate('MainTab', {
+        screen: 'Map',
+        params: { screen: 'MapHome', params: { categories: [] } },
+      })
     } else {
       console.log('비회원 로그인에 실패하였습니다.')
     }
