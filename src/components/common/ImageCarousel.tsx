@@ -1,5 +1,6 @@
 import { useRef } from 'react'
-import { Pressable, View } from 'react-native'
+import { Image, View } from 'react-native'
+import Lightbox from 'react-native-lightbox-v2'
 import Animated, {
   useAnimatedReaction,
   useAnimatedStyle,
@@ -17,8 +18,8 @@ interface ImageCarouselProps {
   /** 이미지 배열 */
   images: string[]
   /** 캐로셀 너비 */
-  /** 캐로셀 높이 */
   width?: number
+  /** 캐로셀 높이 */
   height?: number
 }
 
@@ -54,11 +55,26 @@ interface ItemProps {
   item: string
 }
 
-function ImageItem({ index, item }: ItemProps) {
+function ImageItem({ item }: ItemProps) {
   return (
-    <Pressable onPress={() => console.log('이미지 클릭!:', index)}>
+    <Lightbox
+      activeProps={{
+        style: {
+          width: SCREEN_WIDTH,
+          height: SCREEN_WIDTH,
+        },
+        resizeMode: 'contain',
+      }}
+      springConfig={{ tension: 15, friction: 7 }}
+      renderContent={() => (
+        <Image
+          source={{ uri: item }}
+          style={{ width: SCREEN_WIDTH, height: SCREEN_WIDTH, resizeMode: 'contain' }}
+        />
+      )}
+    >
       <ImageVariant className="h-full w-full" source={{ uri: item }} resizeMode="cover" />
-    </Pressable>
+    </Lightbox>
   )
 }
 

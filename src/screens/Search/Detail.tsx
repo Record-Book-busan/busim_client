@@ -4,6 +4,7 @@ import { ScrollView, Text, View } from 'react-native'
 
 import { BookmarkButton, ImageCarousel, SafeScreen, Tag } from '@/components/common'
 import { MapDetail } from '@/components/map'
+import { CATEGORY } from '@/constants'
 import { FAB, SvgIcon, type IconName } from '@/shared'
 
 import type { SearchStackParamList, RootStackParamList } from '@/types/navigation'
@@ -40,7 +41,6 @@ export default function DetailScreen({ route }: DetailScreenProps) {
       <ScrollView className="flex-1 bg-gray-100">
         <View className="bg-white px-4 pt-4">
           <ImageCarousel images={mockData.imageUrl} />
-          {/* <ImageVariant className="h-72 w-full rounded-xl" source={{ uri: mockData.imageUrl[0] }} /> */}
         </View>
 
         <View className="bg-white px-5 pb-6">
@@ -51,7 +51,7 @@ export default function DetailScreen({ route }: DetailScreenProps) {
 
           <View className="mb-8 flex-row flex-wrap" style={{ columnGap: 6 }}>
             {mockData.cat2.map((item, index) => (
-              <Tag key={index} catId={item} />
+              <Tag key={index} category={item} />
             ))}
           </View>
 
@@ -127,7 +127,7 @@ const mockData = {
   lat: 36.1587,
   lng: 128.1603,
   cat1: 'PLACE',
-  cat2: [1, 4],
+  cat2: [CATEGORY.관광지, CATEGORY.특별한_맛집],
   operatingTime: '09:00 - 18:00 (여름 시즌)',
   phone: '051-123-4567',
   isBookMarked: true,

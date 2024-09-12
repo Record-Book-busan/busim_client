@@ -1,10 +1,12 @@
 import { useRef, useState } from 'react'
 import { View, Text, Image, TextInput } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import Lightbox from 'react-native-lightbox-v2'
 
 import { Categories, KeyboardAvoidingView, SafeScreen } from '@/components/common'
 import { MapDetail } from '@/components/map'
 import { ImagePickerSheet } from '@/components/record'
+import { CategoryType, window } from '@/constants'
 import { useCamera } from '@/hooks/useCamera'
 import { useGallery } from '@/hooks/useGallery'
 import { TextArea, SvgIcon, Button, Header } from '@/shared'
@@ -20,11 +22,11 @@ const RecordScreen = () => {
   const [currentPhotoUri, setCurrentPhotoUri] = useState<string | null>(null)
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [activeCategory, setActiveCategory] = useState<string[]>([])
+  const [activeCategory, setActiveCategory] = useState<CategoryType[]>([])
 
-  const handleCategoryChange = (catId: string[]) => {
-    console.log('선택한 카테고리 id:', catId)
-    setActiveCategory(catId)
+  const handleCategoryChange = (cat: CategoryType[]) => {
+    setActiveCategory(cat)
+    console.log('선택한 카테고리 id:', cat)
   }
 
   const handleTakePhoto = async () => {
@@ -79,18 +81,28 @@ const RecordScreen = () => {
             {/* 사진 영역 */}
             <View className="relative mb-4 items-center justify-center overflow-hidden rounded-xl border border-gray-300">
               {currentPhotoUri ? (
-                <>
-                  <Image
-                    source={{ uri: currentPhotoUri }}
-                    className="h-48 w-full"
-                    resizeMode="cover"
-                  />
+                <View className="w-full">
+                  <Lightbox
+                    activeProps={{
+                      style: {
+                        width: window.width,
+                        height: window.width,
+                      },
+                      resizeMode: 'contain',
+                    }}
+                  >
+                    <Image
+                      source={{ uri: currentPhotoUri }}
+                      className="h-48 w-full"
+                      resizeMode="cover"
+                    />
+                  </Lightbox>
                   <View className="absolute right-3 top-2">
                     <ButtonPrimitive onPress={() => setCurrentPhotoUri(null)}>
                       <SvgIcon name="trash" size={24} className="text-BUSIM-blue" />
                     </ButtonPrimitive>
                   </View>
-                </>
+                </View>
               ) : (
                 <View className="z- h-48 w-full items-center justify-center rounded-xl">
                   <ButtonPrimitive onPress={() => setIsImagePickerOpen(true)}>
