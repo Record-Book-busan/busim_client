@@ -48,11 +48,11 @@ export default function Test() {
           </Button>
         </View>
         <FAB position="bottomLeft" onPress={() => console.log('FAB pressed')}>
-          <SvgIcon name="camera" />
+          <SvgIcon name="cameraRoll" />
         </FAB>
         <FAB
           size="small"
-          rightAddon={<SvgIcon name="camera" size={28} />}
+          rightAddon={<SvgIcon name="cameraRoll" size={28} />}
           onPress={() => console.log('FAB pressed')}
         >
           여행 기록 보러가기

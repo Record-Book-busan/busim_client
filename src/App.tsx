@@ -1,8 +1,10 @@
 import 'react-native-gesture-handler'
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import { initializeKakaoSDK } from '@react-native-kakao/core'
 import { NavigationContainer } from '@react-navigation/native'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useEffect } from 'react'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { MMKV } from 'react-native-mmkv'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
@@ -36,12 +38,16 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SafeAreaProvider>
-        <NavigationContainer>
-          <ApplicationNavigator />
-        </NavigationContainer>
-        <Toast config={toastConfig} />
-      </SafeAreaProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <BottomSheetModalProvider>
+          <NavigationContainer>
+            <SafeAreaProvider>
+              <ApplicationNavigator />
+            </SafeAreaProvider>
+          </NavigationContainer>
+          <Toast config={toastConfig} />
+        </BottomSheetModalProvider>
+      </GestureHandlerRootView>
     </QueryClientProvider>
   )
 }

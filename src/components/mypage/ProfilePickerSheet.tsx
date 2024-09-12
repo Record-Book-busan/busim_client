@@ -4,19 +4,19 @@ import { SvgIcon } from '@/shared/SvgIcon'
 
 import { BottomSheet } from '../common'
 
-interface ImagePickerSheetProps {
+interface ProfilePickerSheetProps {
   isOpen: boolean
   onClose: () => void
   onSelectGallery: () => void
-  onSelectCamera: () => void
+  onSelectDefault: () => void
 }
 
-export const ImagePickerSheet = ({
+export const ProfilePickerSheet = ({
   isOpen,
   onClose,
   onSelectGallery,
-  onSelectCamera,
-}: ImagePickerSheetProps) => {
+  onSelectDefault,
+}: ProfilePickerSheetProps) => {
   return (
     <BottomSheet
       isOpen={isOpen}
@@ -34,9 +34,9 @@ export const ImagePickerSheet = ({
           <SvgIcon name="gallery" size={24} className="mr-4 text-gray-600" />
           <Text className="text-base text-gray-800">앨범에서 사진 선택</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={onSelectCamera} className="flex-row items-center py-3">
+        <TouchableOpacity onPress={onSelectDefault} className="flex-row items-center py-3">
           <SvgIcon name="camera" size={24} className="mr-4 text-gray-600" />
-          <Text className="text-base text-gray-800">카메라로 찍기</Text>
+          <Text className="text-base text-gray-800">기본 이미지로 변경</Text>
         </TouchableOpacity>
       </View>
     </BottomSheet>
