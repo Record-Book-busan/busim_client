@@ -4514,6 +4514,7 @@ __metadata:
     react: "npm:18.3.1"
     react-i18next: "npm:^15.0.1"
     react-native: "npm:0.75.2"
+    react-native-device-info: "npm:^13.0.0"
     react-native-geolocation-service: "npm:^5.3.1"
     react-native-gesture-handler: "npm:^2.18.1"
     react-native-image-picker: "npm:^7.1.2"
@@ -4527,6 +4528,7 @@ __metadata:
     react-native-screens: "npm:3.35.0-rc.1"
     react-native-svg: "npm:^15.6.0"
     react-native-svg-transformer: "npm:^1.5.0"
+    react-native-toast-message: "npm:^2.2.0"
     react-native-webview: "npm:^13.12.1"
     react-test-renderer: "npm:18.3.1"
     tailwind-merge: "npm:^2.5.2"
@@ -10900,6 +10902,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-device-info@npm:^13.0.0":
+  version: 13.0.0
+  resolution: "react-native-device-info@npm:13.0.0"
+  peerDependencies:
+    react-native: "*"
+  checksum: 10c0/4ca9fa36c2f578c993cbf2c5bb22f30d0b05e5d1fd74b6d0f65b6a922ef0ce0f3be7d2816f9a860c7a4b2da6e16474fb80c8ed56428dec391d811c23b2287f89
+  languageName: node
+  linkType: hard
+
 "react-native-geolocation-service@npm:^5.3.1":
   version: 5.3.1
   resolution: "react-native-geolocation-service@npm:5.3.1"
@@ -11071,6 +11082,16 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10c0/213b6ee33651bb7d2dd17a51c62981264fc519283dc14493361e7816005e2a7b5f2784af11076129bd7402ae2dc0104478f5bd8f894d55f8d4c82c65060bbac6
+  languageName: node
+  linkType: hard
+
+"react-native-toast-message@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "react-native-toast-message@npm:2.2.0"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/02c2507efba0875a85cecde616e60144daea4ea6b9e7f153f23b3f513a8f3c6c90181ee2d10aeb8093605957ba5bd415c4fa3ae8ed06691810c2f4b9599ea0c8
   languageName: node
   linkType: hard
 

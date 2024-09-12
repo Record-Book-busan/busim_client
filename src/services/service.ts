@@ -1,4 +1,24 @@
+import { AuthSchema } from '@/types/schemas/auth'
+
 import { instance } from './instance'
+
+/**
+ * 애플 계정으로 로그인 요청을 합니다.
+ * @param identityToken
+ * @param authorizationCode
+ * @returns
+ */
+const post_signin_apple = async (params: { identityToken: string; authorizationCode: string }) => {
+  try {
+    const response = await instance('kkilogbu/')
+      .post('user/signin/apple', { json: { params } })
+      .json()
+    return AuthSchema.parse(response)
+  } catch (error) {
+    console.error('애플 로그인 에러:', error)
+    throw error
+  }
+}
 
 type searchPlaceProps = {
   query?: string
@@ -13,7 +33,7 @@ type searchPlaceProps = {
  * @param limit - 한 번에 가져올 데이터 크기
  * @returns
  */
-const searchPlace = async (params: searchPlaceProps) =>
+const getSearchPlace = async (params: searchPlaceProps) =>
   await instance('kkilogbu/').get('search', { searchParams: params }).json()
 
 type getRecordProps = {
@@ -413,7 +433,8 @@ const delImage = async (params: delImageProps) =>
   await instance('api/').delete('image', { json: params }).json()
 
 export {
-  searchPlace,
+  post_signin_apple,
+  getSearchPlace,
   getRecord,
   postRecord,
   postBlockUser,

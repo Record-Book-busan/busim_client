@@ -5,7 +5,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { MMKV } from 'react-native-mmkv'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+import Toast from 'react-native-toast-message'
 
+import { toastConfig } from './components/common'
 import ApplicationNavigator from './navigators/Application'
 
 import './translations'
@@ -38,6 +40,7 @@ function App() {
         <NavigationContainer>
           <ApplicationNavigator />
         </NavigationContainer>
+        <Toast config={toastConfig} />
       </SafeAreaProvider>
     </QueryClientProvider>
   )
