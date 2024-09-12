@@ -4,18 +4,11 @@ import {
   useRoute,
   type RouteProp,
 } from '@react-navigation/native'
-import { useState } from 'react'
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  TouchableOpacity,
-  Dimensions,
-  ImageURISource,
-} from 'react-native'
+import { View, Text, Image, ScrollView, TouchableOpacity, Dimensions } from 'react-native'
+import Lightbox from 'react-native-lightbox-v2'
 
 import { SafeScreen, Tag } from '@/components/common'
+import { CATEGORY } from '@/constants'
 import { SvgIcon, Header } from '@/shared'
 
 import type { RecordStackParamList } from '@/types/navigation'
@@ -24,26 +17,12 @@ type RecordDetailRouteProp = RouteProp<RecordStackParamList, 'ReadRecord'>
 type RecordDetailNavigationProps = NavigationProp<RecordStackParamList, 'ReadRecord'>
 
 const { width } = Dimensions.get('window')
-const IMAGE_SIZE = width
 
 export default function RecordDetailScreen() {
   const route = useRoute<RecordDetailRouteProp>()
   const navigation = useNavigation<RecordDetailNavigationProps>()
 
   const { id } = route.params
-
-  const [imageHeight, setImageHeight] = useState(IMAGE_SIZE)
-
-  const onImageLoad = (event: { nativeEvent: { source: ImageURISource } }) => {
-    const { width: imageWidth, height: imageHeight } = event.nativeEvent.source
-    if (imageWidth && imageHeight) {
-      const aspectRatio = imageWidth / imageHeight
-      if (aspectRatio > 1) {
-        // 가로가 긴 이미지의 경우에만 높이 조정
-        setImageHeight(IMAGE_SIZE * 0.8)
-      }
-    }
-  }
 
   return (
     <SafeScreen>
@@ -62,12 +41,19 @@ export default function RecordDetailScreen() {
 
       <ScrollView className="flex-1">
         {/* 이미지 */}
-        <Image
-          source={{ uri: mockData.imageUrl }}
-          style={{ width: IMAGE_SIZE, height: imageHeight }}
-          resizeMode="cover"
-          onLoad={onImageLoad}
-        />
+        <View style={{ width: width, height: width }}>
+          <Lightbox
+            activeProps={{
+              style: {
+                width: '100%',
+                height: '100%',
+              },
+              resizeMode: 'contain',
+            }}
+          >
+            <Image source={{ uri: mockData.imageUrl }} className="h-full w-full" />
+          </Lightbox>
+        </View>
 
         <View className="p-4">
           {/* 위치 정보 */}
@@ -83,7 +69,7 @@ export default function RecordDetailScreen() {
           {/* 태그 */}
           <View className="mb-4 flex-row flex-wrap" style={{ columnGap: 8, rowGap: 8 }}>
             {mockData.cat2.map((item, index) => (
-              <Tag key={index} catId={item} />
+              <Tag key={index} category={item} />
             ))}
           </View>
 
@@ -108,7 +94,7 @@ const mockData = {
   lat: 39.123123,
   lng: 123.123123,
   cat1: 'RECORD',
-  cat2: [2, 4, 8],
+  cat2: [CATEGORY.관광지, CATEGORY.레포츠, CATEGORY.맛집],
   nickName: '신나는 여행자',
   createdAt: '20240813154033',
 }
