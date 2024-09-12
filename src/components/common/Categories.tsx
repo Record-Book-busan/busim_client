@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { View } from 'react-native'
 
 import { Chip } from '@/shared'
 
-import { CATEGORY } from '../../constants/data'
+import { CATEGORY, CategoryType } from '../../constants/data'
 
 export const MAP_TYPE = {
   TOUR_LIST: 'tourist',
@@ -32,46 +32,34 @@ const CATEGORIES = {
 } as const
 
 interface CategoriesProps {
-  initCategories: string[]
-  onCategoryChange: (categories: string[]) => void
+  initCategories?: CategoryType[]
+  onCategoryChange: (categories: CategoryType[]) => void
 }
 
-export function Categories({ initCategories, onCategoryChange }: CategoriesProps) {
-  const [activeMapType, setActiveMapType] = useState<MapType | null>(null)
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+export function Categories({ initCategories = [], onCategoryChange }: CategoriesProps) {
+  const initialMapType =
+    initCategories.length > 0
+      ? initCategories.some(
+          category => category === CATEGORY.맛집 || category === CATEGORY.특별한_맛집,
+        )
+        ? MAP_TYPE.FOOD
+        : MAP_TYPE.TOUR_LIST
+      : null
 
-  useEffect(() => {
-    if (
-      initCategories.some(
-        category => category === 'NORMAL_RESTAURANT' || category === 'SPECIAL_RESTAURANT',
-      )
-    ) {
-      setActiveMapType('food')
-      setSelectedCategories(
-        initCategories.filter(
-          category => category === 'NORMAL_RESTAURANT' || category === 'SPECIAL_RESTAURANT',
-        ),
-      )
-    } else {
-      setActiveMapType('tourist')
-      setSelectedCategories(
-        initCategories.filter(
-          category => category !== 'NORMAL_RESTAURANT' && category !== 'SPECIAL_RESTAURANT',
-        ),
-      )
-    }
-  }, [])
+  const [activeMapType, setActiveMapType] = useState<MapType | null>(initialMapType)
+  const [selectedCategories, setSelectedCategories] = useState<CategoryType[]>(initCategories)
 
   const handleMapTypeChange = (type: MapType) => {
     setActiveMapType(prevType => (prevType === type ? null : type))
     setSelectedCategories([])
+    onCategoryChange([])
   }
 
-  const handleCategoryChange = (id: string) => {
+  const handleCategoryChange = (cat: CategoryType) => {
     setSelectedCategories(prev => {
-      const newCategories = prev.includes(id)
-        ? prev.filter(categoryId => categoryId !== id)
-        : [...prev, id]
+      const newCategories = prev.includes(cat)
+        ? prev.filter(category => category !== cat)
+        : [...prev, cat]
       onCategoryChange(newCategories)
       return newCategories
     })
