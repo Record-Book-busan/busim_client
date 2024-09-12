@@ -70,7 +70,7 @@ function MainTabNavigator() {
         options={{
           headerShown: false,
           tabBarLabel: '기록',
-          tabBarIcon: props => <TabBarIcon name="camera" {...props} />,
+          tabBarIcon: props => <TabBarIcon name="cameraRoll" {...props} />,
         }}
       />
       <Tab.Screen
