@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { View, Text, TouchableOpacity, Alert, Image } from 'react-native'
 
 import { KeyboardDismissPressable, SafeScreen } from '@/components/common'
+import { ProfilePickerSheet } from '@/components/mypage'
 import { useGallery } from '@/hooks/useGallery'
 import { SvgIcon } from '@/shared'
 import { TextField } from '@/shared/TextField'
@@ -9,34 +10,49 @@ import { TextField } from '@/shared/TextField'
 function ProfileEditScreen() {
   const [nickname, setNickname] = useState('')
   const [profileImage, setProfileImage] = useState<string | undefined>()
+  const [isOpenProfilePicker, setIsOpenProfilePicker] = useState(false)
   const { getPhoto } = useGallery()
 
   const handleGetPhoto = async () => {
     const image = await getPhoto()
     if (image && image.uri) {
       setProfileImage(image.uri)
+      setIsOpenProfilePicker(false)
     }
   }
 
+  const handleResetPhoto = () => {
+    setProfileImage('')
+    setIsOpenProfilePicker(false)
+  }
+
   return (
-    <SafeScreen>
+    <SafeScreen excludeEdges={['top']}>
       <KeyboardDismissPressable>
         <View className="flex-1 bg-white">
-          <View className="mt-12 items-center">
-            <Text className="mb-2 text-base text-gray-900">프로필 사진</Text>
-            <TouchableOpacity className="relative" onPress={handleGetPhoto}>
-              <View className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border border-gray-300 bg-neutral-100">
+          {/* 프로필 사진 */}
+          <View className="mt-11 items-center">
+            <TouchableOpacity className="relative" onPress={() => setIsOpenProfilePicker(true)}>
+              <View className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-neutral-100 bg-blue-100">
                 {profileImage ? (
                   <Image source={{ uri: profileImage }} style={{ width: '100%', height: '100%' }} />
                 ) : (
-                  <SvgIcon name="person" fill="#D0D0D0" />
+                  <SvgIcon name="person" className="text-white" size={40} />
                 )}
               </View>
-              <View className="absolute bottom-0 right-0 rounded-full border border-gray-300 bg-white p-1">
+              <View className="absolute bottom-0 right-0 rounded-full border border-neutral-100 bg-white p-1">
                 <SvgIcon name="pencil" fill="#FF9278" />
               </View>
             </TouchableOpacity>
           </View>
+
+          {/* 프로필 이미지 선택 바텀 시트 */}
+          <ProfilePickerSheet
+            isOpen={isOpenProfilePicker}
+            onClose={() => setIsOpenProfilePicker(false)}
+            onSelectGallery={handleGetPhoto}
+            onSelectDefault={handleResetPhoto}
+          />
 
           <View className="mt-8 px-5">
             <Text className="mb-2 text-sm text-gray-900">닉네임</Text>
