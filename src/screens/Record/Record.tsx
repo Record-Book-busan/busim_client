@@ -1,12 +1,13 @@
 import { useRef, useState } from 'react'
-import { View, Text, TouchableOpacity, Image, TextInput } from 'react-native'
+import { View, Text, Image, TextInput } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { Categories, KeyboardAvoidingView, SafeScreen } from '@/components/common'
 import { MapDetail } from '@/components/map'
+import { ImagePickerSheet } from '@/components/record'
 import { useCamera } from '@/hooks/useCamera'
 import { useGallery } from '@/hooks/useGallery'
-import { TextArea, ImagePickerModal, SvgIcon, Button, Header } from '@/shared'
+import { TextArea, SvgIcon, Button, Header } from '@/shared'
 import { ButtonPrimitive } from '@/shared/Button'
 
 const RecordScreen = () => {
@@ -15,7 +16,7 @@ const RecordScreen = () => {
   const { takePhoto } = useCamera()
   const { getPhoto } = useGallery()
   const [content, setContent] = useState('')
-  const [isImagePickerModalVisible, setIsImagePickerModalVisible] = useState(false)
+  const [isImagePickerOpen, setIsImagePickerOpen] = useState(false)
   const [currentPhotoUri, setCurrentPhotoUri] = useState<string | null>(null)
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -30,7 +31,7 @@ const RecordScreen = () => {
     const photo = await takePhoto()
     if (photo && photo.uri) {
       setCurrentPhotoUri(photo.uri)
-      setIsImagePickerModalVisible(false)
+      setIsImagePickerOpen(false)
     }
   }
 
@@ -38,7 +39,7 @@ const RecordScreen = () => {
     const photo = await getPhoto()
     if (photo && photo.uri) {
       setCurrentPhotoUri(photo.uri)
-      setIsImagePickerModalVisible(false)
+      setIsImagePickerOpen(false)
     }
   }
 
@@ -91,13 +92,12 @@ const RecordScreen = () => {
                   </View>
                 </>
               ) : (
-                <TouchableOpacity
-                  className="z- h-48 w-full items-center justify-center rounded-xl bg-neutral-50"
-                  onPress={() => setIsImagePickerModalVisible(true)}
-                >
-                  <Text className="mb-2 text-neutral-500">사진을 추가해주세요.</Text>
-                  <SvgIcon name="add" />
-                </TouchableOpacity>
+                <View className="z- h-48 w-full items-center justify-center rounded-xl">
+                  <ButtonPrimitive onPress={() => setIsImagePickerOpen(true)}>
+                    <SvgIcon name="add" className="text-BUSIM-blue" />
+                  </ButtonPrimitive>
+                  <Text className="mt-2 text-sm text-gray-800">사진 추가하기</Text>
+                </View>
               )}
             </View>
 
@@ -128,12 +128,12 @@ const RecordScreen = () => {
           </View>
         </KeyboardAwareScrollView>
 
-        {/* 이미지 선택 액션 시트 */}
-        <ImagePickerModal
-          isVisible={isImagePickerModalVisible}
-          onClose={() => setIsImagePickerModalVisible(false)}
-          onGalleryPress={handleGetPhoto}
-          onCameraPress={handleTakePhoto}
+        {/* 이미지 선택 바텀 시트 */}
+        <ImagePickerSheet
+          isOpen={isImagePickerOpen}
+          onClose={() => setIsImagePickerOpen(false)}
+          onSelectGallery={handleGetPhoto}
+          onSelectCamera={handleTakePhoto}
         />
 
         {/* 키보드가 올라올 때 보이는 버튼 */}
