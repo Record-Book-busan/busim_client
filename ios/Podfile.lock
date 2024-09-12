@@ -7,9 +7,9 @@ PODS:
   - FBLazyVector (0.75.2)
   - fmt (9.1.0)
   - glog (0.3.5)
-  - hermes-engine (0.75.1):
-    - hermes-engine/Pre-built (= 0.75.1)
-  - hermes-engine/Pre-built (0.75.1)
+  - hermes-engine (0.75.2):
+    - hermes-engine/Pre-built (= 0.75.2)
+  - hermes-engine/Pre-built (0.75.2)
   - KakaoSDKAuth (2.22.0):
     - KakaoSDKCommon (= 2.22.0)
   - KakaoSDKCommon (2.22.0):
@@ -1712,6 +1712,8 @@ PODS:
     - Yoga
   - RNCMaskedView (0.3.1):
     - React-Core
+  - RNDeviceInfo (13.0.0):
+    - React-Core
   - RNGestureHandler (2.19.0):
     - DoubleConversion
     - glog
@@ -1985,6 +1987,7 @@ DEPENDENCIES:
   - "RNCKakaoCore (from `../node_modules/@react-native-kakao/core`)"
   - "RNCKakaoUser (from `../node_modules/@react-native-kakao/user`)"
   - "RNCMaskedView (from `../node_modules/@react-native-masked-view/masked-view`)"
+  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
@@ -2146,6 +2149,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-kakao/user"
   RNCMaskedView:
     :path: "../node_modules/@react-native-masked-view/masked-view"
+  RNDeviceInfo:
+    :path: "../node_modules/react-native-device-info"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNPermissions:
@@ -2167,7 +2172,7 @@ SPEC CHECKSUMS:
   FBLazyVector: 38bb611218305c3bc61803e287b8a81c6f63b619
   fmt: 4c2741a687cc09f0634a2e2c72a838b99f1ff120
   glog: 69ef571f3de08433d766d614c73a9838a06bf7eb
-  hermes-engine: e949b1da40409c52aa7bd79ff32cec045f5b4650
+  hermes-engine: 3b6e0717ca847e2fc90a201e59db36caf04dee88
   KakaoSDKAuth: 569b377eda622d93d4575240b8031cd658163eef
   KakaoSDKCommon: d57127c339fc79e73aa8b236a4c77211c29924f1
   KakaoSDKUser: 043bcd7e91454ebf3bf64f150c430e6f65f0a08d
@@ -2236,14 +2241,15 @@ SPEC CHECKSUMS:
   RNCKakaoCore: ef771d1e776134c2bb61a4fd6d031d745f9c4d56
   RNCKakaoUser: 1ff746bd5cb5051afaf28c57db5b05f794d0c340
   RNCMaskedView: 090213d32d8b3bb83a4dcb7d12c18f0152591906
+  RNDeviceInfo: 55264dd7cc939dad6e9c231a7621311f5277f1dc
   RNGestureHandler: d87ddf84d6c46a0cb44a19da7f841a3d7aea693f
-  RNPermissions: 54f8ace7f3f48ae00531a2b73e1cd6f22874430f
+  RNPermissions: 6b3ceba08fb834522b56b5de0bae361434d7d211
   RNReanimated: 76901886830e1032f16bbf820153f7dc3f02d51d
   RNScreens: 672e79111218a09700414b803be8c7647d2cd307
   RNSVG: 1079f96b39a35753d481a20e30603fd6fc4f6fa9
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   Yoga: a1d7895431387402a674fd0d1c04ec85e87909b8
 
-PODFILE CHECKSUM: 0ea7fb1eab061a2ce65086032d8843c35cbd4c88
+PODFILE CHECKSUM: 4e64f17ff5e3c4a8a08cdf9912edf96b9375b5c8
 
 COCOAPODS: 1.14.3

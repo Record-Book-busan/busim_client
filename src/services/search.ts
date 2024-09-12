@@ -30,7 +30,7 @@ export const get_place_search = async ({
       limit: limit.toString(),
     }
 
-    const response = await service.searchPlace(params)
+    const response = await service.getSearchPlace(params)
     return PlaceArraySchema.parse(response)
   } catch (error) {
     if (error instanceof ZodError) {

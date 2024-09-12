@@ -3,7 +3,7 @@ import { type StackNavigationProp } from '@react-navigation/stack'
 import { Text, TouchableOpacity, View, ScrollView, Linking } from 'react-native'
 
 import { SafeScreen } from '@/components/common'
-import { logoutAll, showLoginInfo } from '@/services/login/login'
+import { logoutAll, showLoginInfo } from '@/services/auth'
 import { Button, ImageVariant, SvgIcon } from '@/shared'
 import { type RootStackParamList } from '@/types/navigation'
 
