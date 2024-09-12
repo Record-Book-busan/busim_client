@@ -4519,6 +4519,7 @@ __metadata:
     react-native-gesture-handler: "npm:^2.18.1"
     react-native-image-picker: "npm:^7.1.2"
     react-native-keyboard-aware-scroll-view: "npm:^0.9.5"
+    react-native-lightbox-v2: "npm:^0.9.0"
     react-native-linear-gradient: "npm:^2.8.3"
     react-native-mmkv: "npm:^3.0.2"
     react-native-permissions: "npm:^4.1.5"
@@ -10961,6 +10962,16 @@ __metadata:
   peerDependencies:
     react-native: ">=0.48.4"
   checksum: 10c0/932c724f86ba355f1a1db938123eef67844550dd6e2d117222eff0012a47c6a293ad79c965e16930e5eb14adb58a5c340c00e03eeabbe3d78229236125b8a6aa
+  languageName: node
+  linkType: hard
+
+"react-native-lightbox-v2@npm:^0.9.0":
+  version: 0.9.0
+  resolution: "react-native-lightbox-v2@npm:0.9.0"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-native: ">=0.61.0"
+  checksum: 10c0/86125911f78c8292f84851dcdcca06fc606afcc3d4e9a0dd84dee94edc665aa3d519ebb6c64014320d5855e4a77a83b129ac511059ed32e55f6082b11c46a69b
   languageName: node
   linkType: hard
 
