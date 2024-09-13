@@ -1,16 +1,30 @@
-import { z } from 'zod'
+import { useMutation } from '@tanstack/react-query'
 
-export const RecordListSchema = z.object({
-  id: z.number(),
-  imageUrl: z.string(),
-  title: z.string(),
-  content: z.string(),
-  cat2: z.string(),
-  lat: z.number(),
-  lng: z.number(),
-})
+import { PostRecordSchema, type RecordList, type PostRecord } from '@/types/schemas/record'
 
-export type RecordList = z.infer<typeof RecordListSchema>
+import { instance } from './instance'
+
+/**
+ * 새로운 기록을 생성합니다.
+ * @param lat - 위도
+ * @param lng - 경도
+ * @param title - 제목
+ * @param content - 내용
+ * @param imageUrl - 이미지 URL
+ * @returns
+ */
+export const post_record = async (params: PostRecord) => {
+  const data = PostRecordSchema.parse(params)
+  return await instance('kkilogbu/').post('record', { json: data }).json()
+}
+
+/** 새로운 기록을 생성하는 훅입니다. */
+export const useCreateRecord = () => {
+  const { mutate } = useMutation({
+    mutationFn: post_record,
+  })
+  return { mutateRecord: mutate }
+}
 
 export interface RecordListResponse {
   content: RecordList[]

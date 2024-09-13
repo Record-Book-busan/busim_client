@@ -4,9 +4,9 @@ import { type ToastConfig } from 'react-native-toast-message'
 import { SvgIcon } from '@/shared'
 
 export const toastConfig: ToastConfig = {
-  default: ({ text1 }) => (
-    <View className="w-5/6 flex-1 flex-row items-center rounded-full bg-neutral-950 bg-opacity-70 p-4">
-      <Text className="flex-1 text-center text-sm font-semibold text-white">{text1}</Text>
+  info: ({ text1 }) => (
+    <View className="w-5/6 flex-1 flex-row items-center justify-center rounded-full bg-neutral-950 bg-opacity-70 px-4 py-3">
+      <Text className="text-center text-sm font-semibold text-white">{text1}</Text>
     </View>
   ),
   notice: ({ text1 }) => (

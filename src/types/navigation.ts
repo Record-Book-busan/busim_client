@@ -1,5 +1,4 @@
-import { CategoryType } from '@/constants'
-
+import type { CategoryType } from '@/constants'
 import type { NavigatorScreenParams } from '@react-navigation/native'
 import type { StackScreenProps } from '@react-navigation/stack'
 
