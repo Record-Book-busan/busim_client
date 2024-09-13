@@ -7,10 +7,10 @@ import { cn } from '@/utils/cn'
 import { SvgIcon } from './SvgIcon'
 
 // Input variants
-const inputVariants = cva('w-full rounded-xl border px-3 text-base leading-[normal]', {
+const inputVariants = cva('w-full rounded-lg border h-[50px] px-3.5 text-base font-medium', {
   variants: {
     variant: {
-      default: 'h-12 border-gray-300 bg-neutral-100 text-gray-900',
+      default: 'border-gray-200 text-gray-700',
       error: 'border-red-500 bg-red-50 text-red-900',
     },
   },
@@ -71,7 +71,7 @@ const TextField = forwardRef(
           ref={ref}
           className={cn(
             inputVariants({ variant: error ? 'error' : 'default' }),
-            isFocused && 'border-slate-300 bg-slate-100',
+            isFocused && 'border-BUSIM-blue transition ease-in',
             additionalClass,
             Platform.OS === 'ios' && 'leading-[0px]',
           )}
