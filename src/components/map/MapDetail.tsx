@@ -1,50 +1,77 @@
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import WebView from 'react-native-webview'
 
+import { useLocation } from '@/hooks/useLocation'
 import map from '@/services/map/map'
 
 type MapDetailProps = {
-  geometry: {
+  geometry?: {
     lon: number
     lat: number
   }
 }
 
 function MapDetail(props: MapDetailProps) {
-  const webViewRef = useRef(null)
+  const webViewRef = useRef<WebView>(null)
 
-  const initFn = `
-    kakao.maps.load(function(){ 
-      let map;
+  const [position, setPosition] = useState<MapDetailProps>()
+  const { location, refreshLocation } = useLocation()
 
-      const container = document.getElementById('map');
-      const options = {
-          center: new kakao.maps.LatLng(${props.geometry.lat}, ${props.geometry.lon}),
-          level: 3
-      };
-      
-      map = new kakao.maps.Map(container, options)
+  useEffect(() => {
+    const setMap = async () => {
+      if (!props.geometry) {
+        await refreshLocation()
 
-      const marker = new kakao.maps.Marker({
-          position: new kakao.maps.LatLng(${props.geometry.lat}, ${props.geometry.lon})
-      });
+        setPosition({
+          geometry: {
+            lat: location.lat,
+            lon: location.lng,
+          },
+        })
+      } else {
+        setPosition({
+          geometry: {
+            lat: props.geometry.lat,
+            lon: props.geometry.lon,
+          },
+        })
+      }
+    }
 
-      marker.setMap(map);
-      map.setDraggable(false);
-    })
-  `
+    void setMap()
+  }, [])
+
+  useEffect(() => {
+    if (position && webViewRef.current) {
+      const initFn = `
+        kakao.maps.load(function(){ 
+          const container = document.getElementById('map');
+          const options = {
+              center: new kakao.maps.LatLng(${position.geometry?.lat}, ${position.geometry?.lon}),
+              level: 3
+          };
+          
+          const map = new kakao.maps.Map(container, options)
+
+          const marker = new kakao.maps.Marker({
+              position: new kakao.maps.LatLng(${position.geometry?.lat}, ${position.geometry?.lon})
+          });
+
+          marker.setMap(map);
+          map.setDraggable(false);
+        });
+      `
+
+      webViewRef.current.injectJavaScript(initFn)
+    }
+  }, [position])
 
   return (
     <WebView
       ref={webViewRef}
       source={{ html: map }}
-      injectedJavaScript={initFn}
-      onLoad={() => {
-        if (webViewRef.current) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-          ;(webViewRef.current as any).injectJavaScript(initFn)
-        }
-      }}
+      javaScriptEnabled={true}
+      domStorageEnabled={true}
     />
   )
 }

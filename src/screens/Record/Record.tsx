@@ -69,7 +69,7 @@ const RecordScreen = () => {
 
             {/* 지도 영역*/}
             <View className="my-4 h-48">
-              <MapDetail geometry={{ lon: 128.1603, lat: 36.1587 }} />
+              <MapDetail />
             </View>
             <View className="mb-4 flex-row items-center">
               <View className="flex-row items-center">
