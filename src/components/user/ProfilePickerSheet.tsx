@@ -5,19 +5,19 @@ import { SvgIcon } from '@/shared/SvgIcon'
 
 import { BottomSheet } from '../common'
 
-interface ImagePickerSheetProps {
+interface ProfilePickerSheetProps {
   isOpen: boolean
   onClose: () => void
   onSelectGallery: () => void
-  onSelectCamera: () => void
+  onSelectDefault: () => void
 }
 
-export const ImagePickerSheet = ({
+export const ProfilePickerSheet = ({
   isOpen,
   onClose,
   onSelectGallery,
-  onSelectCamera,
-}: ImagePickerSheetProps) => {
+  onSelectDefault,
+}: ProfilePickerSheetProps) => {
   return (
     <BottomSheet
       isOpen={isOpen}
@@ -29,13 +29,9 @@ export const ImagePickerSheet = ({
       <View className="px-5 pb-2 pt-5">
         <Text className="mb-4 text-lg font-bold text-gray-900">사진 등록</Text>
         <View className="gap-y-2">
-          <Button
-            type="text"
-            buttonStyle="rounded-lg flex-row items-center py-3"
-            onPress={onSelectCamera}
-          >
-            <SvgIcon name="camera" size={24} className="mr-4 text-gray-600" />
-            <Text className="flex-1 text-base text-gray-800">카메라로 촬영하기</Text>
+          <Button type="text" buttonStyle="flex-row items-center py-3" onPress={onSelectDefault}>
+            <SvgIcon name="user" size={24} className="mr-4 text-gray-600" />
+            <Text className="flex-1 text-base text-gray-800">기본 이미지로 변경하기</Text>
           </Button>
           <Button
             type="text"
