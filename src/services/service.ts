@@ -59,26 +59,6 @@ type getRecordResponseType = {
 const getRecord = async (params: getRecordProps): Promise<getRecordResponseType[]> =>
   await instance('kkilogbu/').get('record', { searchParams: params }).json()
 
-type postRecordProps = {
-  lat: number
-  lng: number
-  title: string
-  content: string
-  imageUrl: string
-}
-
-/**
- * 새로운 기록을 생성합니다.
- * @param lat - 위도
- * @param lng - 경도
- * @param title - 제목
- * @param content - 내용
- * @param imageUrl - 이미지 URL
- * @returns
- */
-const postRecord = async (params: postRecordProps) =>
-  await instance('kkilogbu/').post('record', { json: params }).json()
-
 type postBlockUserProps = {
   markId: string
 }
@@ -400,50 +380,10 @@ type getParkingResponseType = {
 const getParking = async (params: getParkingProps): Promise<getParkingResponseType[]> =>
   await instance('api/').get('parking', { searchParams: params }).json()
 
-type getImageProps = {
-  name: string
-}
-
-/**
- * 이미지를 가져옵니다.
- * @param name - 이름
- * @returns
- */
-const getImage = async (params: getImageProps) =>
-  await instance('api/').get('image', { searchParams: params }).json()
-
-type postImageProps = {
-  type: string
-  name: string
-}
-
-/**
- * 이미지를 가져옵니다.
- * @param type - 유형
- * @param name - 이름
- * @returns
- */
-const postImage = async (params: postImageProps) =>
-  await instance('api/').post('image', { searchParams: params.type, json: params.name }).json()
-
-type delImageProps = {
-  name: string
-}
-
-/**
- * 이미지를 삭제합니다.
- * @param type - 유형
- * @param name - 이름
- * @returns
- */
-const delImage = async (params: delImageProps) =>
-  await instance('api/').delete('image', { json: params }).json()
-
 export {
   post_signin_apple,
   getSearchPlace,
   getRecord,
-  postRecord,
   postBlockUser,
   postBookmarkRecord,
   delBookmarkRecord,
@@ -464,7 +404,4 @@ export {
   delUser,
   getToilet,
   getParking,
-  getImage,
-  postImage,
-  delImage,
 }
