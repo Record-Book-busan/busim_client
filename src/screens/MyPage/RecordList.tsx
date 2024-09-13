@@ -3,7 +3,8 @@ import { useSuspenseInfiniteQuery } from '@tanstack/react-query'
 import { ActivityIndicator, FlatList, Text, View } from 'react-native'
 
 import { ImagePlaceItem } from '@/components/search'
-import { RecordListSchema, type RecordList, type RecordListResponse } from '@/services/record'
+import { type RecordListResponse } from '@/services/record'
+import { type RecordList, RecordListSchema } from '@/types/schemas/record'
 
 import type { MyPageStackParamList, RootStackParamList } from '@/types/navigation'
 import type { StackNavigationProp } from '@react-navigation/stack'
