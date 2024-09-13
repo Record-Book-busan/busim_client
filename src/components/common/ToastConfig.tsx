@@ -5,8 +5,8 @@ import { SvgIcon } from '@/shared'
 
 export const toastConfig: ToastConfig = {
   info: ({ text1 }) => (
-    <View className="w-5/6 flex-1 flex-row items-center justify-center rounded-full bg-neutral-950 bg-opacity-70 px-4 py-3">
-      <Text className="text-center text-sm font-semibold text-white">{text1}</Text>
+    <View className="min-w-[65%] flex-1 flex-row items-center justify-center rounded-full bg-neutral-900 bg-opacity-70 px-4 py-4">
+      <Text className="text-center text-sm font-bold text-white">{text1}</Text>
     </View>
   ),
   notice: ({ text1 }) => (
