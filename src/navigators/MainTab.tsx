@@ -26,6 +26,7 @@ function MainTabNavigator() {
   return (
     <Tab.Navigator
       initialRouteName="Map"
+      detachInactiveScreens={false}
       screenOptions={{
         tabBarStyle: {
           position: 'absolute',

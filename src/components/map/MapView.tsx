@@ -1,15 +1,16 @@
 import { useNavigation } from '@react-navigation/native'
-import React, { useEffect, useRef, useState, useCallback } from 'react'
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { View, Text, ActivityIndicator } from 'react-native'
 import { WebView } from 'react-native-webview'
 
 import map from '@/services/map/map'
-import { getCategory, getParking, getToilet } from '@/services/service'
+import { getCategory, getParking, getRecord, getToilet } from '@/services/service'
 import { RootStackParamList } from '@/types/navigation'
 
 import type { StackNavigationProp } from '@react-navigation/stack'
 
 type MapViewProps = {
+  mapType: 'place' | 'record'
   activeCategory: string[]
   eyeState: boolean
   location: {
@@ -17,9 +18,9 @@ type MapViewProps = {
     lat: number
   }
   locationPressed: boolean
-  isToiletPressed: boolean
-  isTrafficPressed: boolean
-  refreshed: boolean
+  isToiletPressed?: boolean
+  isTrafficPressed?: boolean
+  refreshed?: boolean
 }
 
 type returnProps = {
@@ -64,14 +65,23 @@ type getParkingResponseType = {
   pkGubun: string
 }
 
+type getRecordResponseType = {
+  id: number
+  imageUrl: string
+  lat: number
+  lng: number
+}
+
 type responseType = {
   title: string
   type: string
   lat: number
   lng: number
+  url?: string
 }
 
-const MapView = React.memo(function MapView({
+function MapView({
+  mapType,
   activeCategory,
   eyeState,
   location,
@@ -86,11 +96,13 @@ const MapView = React.memo(function MapView({
   const [nowLng, setNowLng] = useState<number>(location.lng)
   const [zoomLevel, setZoomLevel] = useState<string>('LEVEL_3')
 
-  const initFn = `
-    kakao.maps.load(function(){
-      const map = createMap(${JSON.stringify(location)})
-    })
-  `
+  const initFn = useMemo(() => {
+    return `
+      kakao.maps.load(function(){
+        const map = createMap(${JSON.stringify(location)})
+      })
+    `
+  }, [location])
 
   const fetchCategory = async (): Promise<responseType[]> => {
     try {
@@ -187,25 +199,82 @@ const MapView = React.memo(function MapView({
     }
   }
 
+  const fetchRecordData = async (): Promise<responseType[]> => {
+    try {
+      setLoading(true)
+
+      const response: getRecordResponseType[] = await getRecord({
+        lat: nowLat || location.lat,
+        lng: nowLng || location.lng,
+        level: zoomLevel,
+      })
+
+      const data: responseType[] = []
+
+      response.map(r => {
+        const d = {
+          title: r.id.toString(),
+          type: 'RECORD',
+          lat: r.lat,
+          lng: r.lng,
+          url: `${process.env.IMAGE_URL}/postImage/${r.imageUrl}`,
+        }
+
+        data.push(d)
+      })
+
+      return data
+    } catch (err: any) {
+      console.log(`error: ${err}`)
+
+      return []
+    }
+  }
+
   const fetchData = useCallback(async () => {
     if (webViewRef.current) {
       try {
-        if (!eyeState || (activeCategory.length === 0 && !isToiletPressed && !isTrafficPressed)) {
+        if (
+          !eyeState ||
+          (mapType === 'place' &&
+            activeCategory.length === 0 &&
+            !isToiletPressed &&
+            !isTrafficPressed)
+        ) {
           webViewRef.current.injectJavaScript('initOverlays()')
         } else {
           setLoading(true)
 
           const data: responseType[] = []
 
-          if (activeCategory.length !== 0) (await fetchCategory()).map(item => data.push(item))
-          if (isToiletPressed) (await fetchToiletData()).map(item => data.push(item))
-          if (isTrafficPressed) (await fetchParkingData()).map(item => data.push(item))
+          if (mapType === 'place') {
+            const categoryPromise =
+              activeCategory.length !== 0 ? fetchCategory() : Promise.resolve([])
+            const toiletPromise = isToiletPressed ? fetchToiletData() : Promise.resolve([])
+            const parkingPromise = isTrafficPressed ? fetchParkingData() : Promise.resolve([])
 
-          console.log(data)
+            const [categoryData, toiletData, parkingData] = await Promise.all([
+              categoryPromise,
+              toiletPromise,
+              parkingPromise,
+            ])
 
-          webViewRef.current.injectJavaScript(
-            `settingPlaceOverlays(${JSON.stringify(activeCategory)}, ${JSON.stringify(data)})`,
-          )
+            data.push(...categoryData, ...toiletData, ...parkingData)
+
+            webViewRef.current.injectJavaScript(
+              `settingPlaceOverlays(${JSON.stringify(activeCategory)}, ${JSON.stringify(data)})`,
+            )
+          }
+
+          if (mapType === 'record') {
+            const recordPromise = await fetchRecordData()
+
+            data.push(...recordPromise)
+
+            webViewRef.current.injectJavaScript(
+              `settingImageOverlays(${JSON.stringify(activeCategory)}, ${JSON.stringify(data)})`,
+            )
+          }
         }
       } catch (err: any) {
         console.log(`error: ${err}`)
@@ -236,8 +305,10 @@ const MapView = React.memo(function MapView({
 
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'SearchStack'>>()
 
-  const navigateToDetail = (id: number) => {
-    navigation.navigate('SearchStack', { screen: 'Detail', params: { id: id } })
+  const navigateToDetail = (type: string, id: number) => {
+    if (type === 'RECORD')
+      navigation.navigate('RecordStack', { screen: 'ReadRecord', params: { id: id } })
+    else navigation.navigate('SearchStack', { screen: 'Detail', params: { id: id } })
   }
 
   const handleMessage = useCallback((event: any) => {
@@ -254,7 +325,7 @@ const MapView = React.memo(function MapView({
     }
 
     if (eventData.type === 'overlayClick') {
-      navigateToDetail(parseInt(eventData.data.id))
+      navigateToDetail(eventData.data.type, parseInt(eventData.data.id))
     }
   }, [])
 
@@ -285,9 +356,10 @@ const MapView = React.memo(function MapView({
         onMessage={handleMessage}
         javaScriptEnabled={true}
         domStorageEnabled={true}
+        cacheEnabled={false}
       />
     </>
   )
-})
+}
 
 export default MapView

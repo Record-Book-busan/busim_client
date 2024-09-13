@@ -1,5 +1,5 @@
 import { type NavigationProp, type RouteProp, useNavigation } from '@react-navigation/native'
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -17,9 +17,59 @@ interface MapScreenProps {
   route: RouteProp<MapStackParamList, 'MapHome'>
 }
 
+type MapViewProps = {
+  mapType: 'place' | 'record'
+  activeCategory: string[]
+  eyeState: boolean
+  location: {
+    lng: number
+    lat: number
+  }
+  locationPressed: boolean
+  isToiletPressed: boolean
+  isTrafficPressed: boolean
+  refreshed: boolean
+}
+
+const MomorizedMapView = React.memo(
+  ({
+    mapType,
+    activeCategory,
+    eyeState,
+    location,
+    locationPressed,
+    isToiletPressed,
+    isTrafficPressed,
+    refreshed,
+  }: MapViewProps) => {
+    return (
+      <MapView
+        mapType={mapType}
+        activeCategory={activeCategory}
+        eyeState={eyeState}
+        location={location}
+        locationPressed={locationPressed}
+        isToiletPressed={isToiletPressed}
+        isTrafficPressed={isTrafficPressed}
+        refreshed={refreshed}
+      />
+    )
+  },
+  (prevProps, nextProps) => {
+    return (
+      prevProps.activeCategory === nextProps.activeCategory &&
+      prevProps.eyeState === nextProps.eyeState &&
+      prevProps.locationPressed === nextProps.locationPressed &&
+      prevProps.isToiletPressed === nextProps.isToiletPressed &&
+      prevProps.isTrafficPressed === nextProps.isTrafficPressed &&
+      prevProps.refreshed === nextProps.refreshed &&
+      prevProps.mapType === nextProps.mapType
+    )
+  },
+)
+
 export default function MapScreen({ route }: MapScreenProps) {
   const { location, refreshLocation } = useLocation()
-
   const [activeCategory, setActiveCategory] = useState<string[]>([])
   const [eyeState, setEyeState] = useState(true)
   const [locationPressed, setLocationPressed] = useState(false)
@@ -33,7 +83,7 @@ export default function MapScreen({ route }: MapScreenProps) {
   const navigation = useNavigation<NavigationProp<RootStackParamList, 'MainTab'>>()
 
   useEffect(() => {
-    const categories: CategoryType[] = route.params.categories
+    const categories: CategoryType[] = route.params?.categories || []
 
     if (
       categories.some(
@@ -55,7 +105,6 @@ export default function MapScreen({ route }: MapScreenProps) {
   }, [])
 
   const handleCategoryChange = (catId: string[]) => {
-    console.log('선택한 카테고리 id:', catId)
     setActiveCategory(catId)
   }
 
@@ -100,7 +149,7 @@ export default function MapScreen({ route }: MapScreenProps) {
           }}
         >
           <Categories
-            initCategories={route.params.categories}
+            initCategories={route.params?.categories || []}
             onCategoryChange={handleCategoryChange}
           />
         </View>
@@ -217,7 +266,8 @@ export default function MapScreen({ route }: MapScreenProps) {
 
       {/* 지도 웹뷰 */}
       <View className="absolute bottom-0 left-0 right-0 top-0 h-full w-full">
-        <MapView
+        <MomorizedMapView
+          mapType={'place'}
           activeCategory={activeCategory}
           eyeState={eyeState}
           location={location}

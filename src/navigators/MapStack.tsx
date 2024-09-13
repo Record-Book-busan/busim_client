@@ -10,14 +10,6 @@ function MapStackNavigator() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="MapHome" component={MapScreen} options={{ headerShown: false }} />
-      {/* <Stack.Screen
-        name="MapMapDetail"
-        component={MapDetailScreen}
-        options={{
-          header: () => <AppBar />,
-          presentation: 'transparentModal',
-        }}
-      /> */}
     </Stack.Navigator>
   )
 }

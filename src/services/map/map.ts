@@ -143,10 +143,10 @@ const map = `
       }
 
       /**
-       * 인포윈도우 클릭 함수
+       * 인포 윈도우 클릭 함수
        */
-      function handleInfowindowClick(id) {
-        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'overlayClick', data: { id: id } }));
+      function handleInfowindowClick(id, type) {
+        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'overlayClick', data: { type: type, id: id } }));
       }
 
       /**
@@ -168,6 +168,8 @@ const map = `
                 return '자연'
             case 'LEISURE_SPORTS':
                 return '레포츠'
+            case 'RECORD':
+                return '기록'
             default:
                 return code
         }
@@ -189,10 +191,10 @@ const map = `
                     const ids = id.split(",")
 
                     for (let i = 0; i < types.length; i++) {
-                        if(types[i] !== 'TOILET' && types[i] !== 'PARKING') items += '<div onclick="handleInfowindowClick(' + id[i] + ')" style="padding: 5px 10px;"><a href="javascript:void(0);">' + codeToName(types[i]) + '(' + id[i] + ')</a></div>'
+                        if(types[i] !== 'TOILET' && types[i] !== 'PARKING') items += '<div onclick="handleInfowindowClick(\\'' + ids[i] + '\\', \\'' + types[i] + '\\')" style="padding: 5px 10px;"><a href="javascript:void(0);">' + codeToName(types[i]) + '(' + ids[i] + ')</a></div>'
                     }
 
-                    const iwContent = '<div>' + items + '</div>'
+                    const iwContent = '<div style="max-height: 100px; overflow-y: scroll;">' + items + '</div>'
 
                     if(level === 3) {
                         lat += 0.0006
@@ -360,37 +362,12 @@ const map = `
       /**
        * 이미지 오버레이 생성 함수
        */
-      function settingImageOverlays(isShow) {
+      function settingImageOverlays(type, response) {
           initOverlays()
 
-          const data = [
-              {
-                  id: 1,
-                  url: 'https://img.freepik.com/premium-photo/beautiful-landscape_849761-6949.jpg', 
-                  lat: 33.450705,
-                  lng: 126.570677
-              },
-              {
-                  id: 2,
-                  url: 'https://cdn.dgtimes.co.kr/news/photo/202308/507969_26787_1530.jpg', 
-                  lat: 33.450936,
-                  lng: 126.569477
-              },
-              {
-                  id: 3,
-                  url: 'https://image.dongascience.com/Photo/2017/03/14885035562557.jpg', 
-                  lat: 33.450879,
-                  lng: 126.569940
-              },
-              {
-                  id: 4,
-                  url: 'https://blog.kakaocdn.net/dn/d1e6IL/btr41J8GWEF/YyPzwHfiDY5jOyAZWr6G7K/img.jpg',
-                  lat: 33.451393,
-                  lng: 126.570738
-              }
-          ]
-          const level = map.getLevel()
+          const data = response
           const clusters = {}
+          const level = map.getLevel()
 
           data.forEach((d) => {
               const key = getClusterKey(new kakao.maps.LatLng(d.lat, d.lng))
@@ -400,18 +377,20 @@ const map = `
               }
 
               clusters[key].push(d)
-          });
+          })
 
           for (const key in clusters) {
               const items = clusters[key]
 
               if (items.length === 1) {
               const d = items[0]
-              const content = '<div class="customoverlay" data-key="' + d.id + '" style="position:relative;bottom:40px;background:#00339D;border-radius:20px 20px 20px 0;padding:10px;box-shadow:0 2px 6px rgba(0,0,0,0.3);">' +
-                  '  <div style="position:relative;display:flex;align-items:center;pointer-events: none;">' +
-                  '    <img src="' + d.url + '" style="width:30px;height:30px;">' +
-                  '  </div>' +
-                  '</div>'
+              const content = '<div class="customoverlay" onClick="handleOverlayClick({ lng: ' 
+                    + d.lng + ', lat: ' + d.lat + ', level: ' + level + ', type: \\'' + d.type + '\\', id: \\'' + d.title + '\\' })" style="position:relative;bottom:40px;background:#00339D;border-radius:20px 20px 20px 0;padding:10px;box-shadow:0 2px 6px rgba(0,0,0,0.3);pointer-events: auto;">'
+                    + '  <div style="position:relative;display:flex;align-items:center;">'
+                    + '    <img src="' + d.url + '" style="width:30px;height:30px;">'
+                    + '  </div>'
+                    + '  <div style="position:absolute;bottom:-10px;left:0;width:0;height:0;border-top:10px solid #00339D;border-right:10px solid transparent;"></div>'
+                    + '</div>'
 
               const overlay = new kakao.maps.CustomOverlay({
                   position: new kakao.maps.LatLng(d.lat, d.lng),
@@ -423,6 +402,7 @@ const map = `
               showingOverlays.push(overlay)
               } else {
               let keys = ''
+              let types = ''
               let sumLat = 0
               let sumLng = 0
               let imagesHtml = ''
@@ -433,18 +413,24 @@ const map = `
                   imagesHtml += '<img src="' + items[i].url + '" style="width:30px;height:30px;position:absolute;left:' + (i * 15) + 'px;z-index:' + (items.length - i) + ';">'
               }
 
-              items.map(item => keys += item.id + ',')
+              items.map(item => {
+                keys += item.title + ','
+                types += item.type + ','
+              })
               keys = keys.substring(0, keys.length - 1)
+              types = types.substring(0, types.length - 1)
 
               const position = new kakao.maps.LatLng(sumLat / items.length, sumLng / items.length)
               const countHtml = '<div style="background-color: white;border-radius: 50px;padding:8px;color:black;font-size:12px;text-align:center;margin-left:' + ((items.length - 1) * 15 + 35) + 'px;">+' + items.length + '</div>'
 
-              const content = '<div class="customoverlay" data-key="' + keys + '" style="position:relative;bottom:40px;background:#00339D;border-radius:20px 20px 20px 0;padding:10px;box-shadow:0 2px 6px rgba(0,0,0,0.3);">' +
-                  '  <div style="position:relative;display:flex;align-items:center;pointer-events: none;">' +
-                  imagesHtml + countHtml +
-                  '  </div>' +
-                  '  <div style="position:absolute;bottom:-10px;left:0;width:0;height:0;border-top:10px solid #00339D;border-right:10px solid transparent;"></div>' +
-                  '</div>'
+              const content = '<div class="customoverlay" onClick="handleOverlayClick({ lng: ' 
+                    + position.getLng() + ', lat: ' + position.getLat() + ', level: ' + level + ', type: \\'' + types + '\\', id: \\'' + keys
+                    + '\\' })" style="position:relative;bottom:40px;background:#00339D;border-radius:20px 20px 20px 0;padding:10px;box-shadow:0 2px 6px rgba(0,0,0,0.3);">'
+                    + '  <div style="position:relative;display:flex;align-items:center;pointer-events: none;">'
+                    + imagesHtml + countHtml
+                    + '  </div>'
+                    + '  <div style="position:absolute;bottom:-10px;left:0;width:0;height:0;border-top:10px solid #00339D;border-right:10px solid transparent;"></div>'
+                    + '</div>'
 
               const overlay = new kakao.maps.CustomOverlay({
                   position: position,

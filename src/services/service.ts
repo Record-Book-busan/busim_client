@@ -42,6 +42,13 @@ type getRecordProps = {
   level: string
 }
 
+type getRecordResponseType = {
+  id: number
+  imageUrl: string
+  lat: number
+  lng: number
+}
+
 /**
  * 사용자가 지정한 줌 레벨에 따라 기록을 조회합니다. 줌 레벨이 낮을수록 더 넓은 범위에서 데이터를 조회하고, 줌 레벨이 높을수록 좁은 범위에서 데이터를 조회합니다.
  * @param lat - 위도
@@ -49,7 +56,7 @@ type getRecordProps = {
  * @level level - 줌 레벨
  * @returns
  */
-const getRecord = async (params: getRecordProps) =>
+const getRecord = async (params: getRecordProps): Promise<getRecordResponseType[]> =>
   await instance('kkilogbu/').get('record', { searchParams: params }).json()
 
 type postRecordProps = {

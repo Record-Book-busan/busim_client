@@ -18,7 +18,7 @@ const CustomHandle = () => {
         flexDirection: 'row',
       }}
     >
-      <SvgIcon name="handle" />
+      <SvgIcon name="handle" className="text-white" />
     </View>
   )
 }

@@ -14,10 +14,19 @@ export function SearchBar({ placeholder, containerStyle, onPress, ...props }: Se
   return (
     <View>
       <View className={cn('flex-row items-center px-4 pb-4 pt-2', containerStyle)}>
-        <View className="flex-1 flex-row items-center rounded-full bg-white">
+        <View
+          style={{
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+          }}
+          className="flex-1 flex-row items-center rounded-full bg-white px-4"
+        >
           <TextInput
             className={cn(
-              'h-9 flex-1 items-center text-base',
+              'h-11 flex-1 items-center text-base',
               Platform.OS === 'ios' && 'leading-[0px]',
             )}
             placeholder={placeholder}
