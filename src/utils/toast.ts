@@ -12,7 +12,7 @@ export const showToast = ({ text, type, ...props }: showToastProps) => {
     type: type ?? 'info',
     text1: text,
     position: props.position ?? 'bottom',
-    visibilityTime: props.visibilityTime ?? 2000,
+    visibilityTime: props.visibilityTime ?? 1750,
     topOffset: props.topOffset ?? 50,
     bottomOffset: props.bottomOffset ?? 50,
     ...props,

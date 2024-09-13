@@ -36,12 +36,7 @@ export function Header({
   }
 
   return (
-    <View
-      className={cn(
-        'flex-row items-center border-b border-b-gray-100 bg-white px-4 pb-2.5 pt-2',
-        containerStyle,
-      )}
-    >
+    <View className={cn('flex-row items-center bg-white px-4 pb-2.5 pt-2', containerStyle)}>
       <TouchableOpacity onPress={handleBackPress} className="w-10">
         <SvgIcon name="chevronLeft" width={18} height={18} className="text-gray-800" />
       </TouchableOpacity>

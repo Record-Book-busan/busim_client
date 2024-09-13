@@ -36,8 +36,8 @@ export type RecordStackParamList = {
 }
 
 export type MyPageStackParamList = {
-  MyPageProfile: undefined
   MyPageSettings: undefined
+  MyPageNickName: undefined
   BookMarkList: undefined
   RecordList: undefined
   Test: undefined
