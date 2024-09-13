@@ -1,75 +1,57 @@
-import { useRef, useState } from 'react'
-import { View, Text, Image, TextInput } from 'react-native'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import Lightbox from 'react-native-lightbox-v2'
+import React, { useRef, useReducer } from 'react'
+import { View, Text, TextInput, ScrollView } from 'react-native'
 
-import { Categories, KeyboardAvoidingView, SafeScreen } from '@/components/common'
+import { KeyboardAvoidingView, SafeScreen } from '@/components/common'
 import { MapDetail } from '@/components/map'
-import { ImagePickerSheet } from '@/components/record'
-import { CategoryType, window } from '@/constants'
-import { useCamera } from '@/hooks/useCamera'
-import { useGallery } from '@/hooks/useGallery'
+import { ImageUploader, initialState, recordFormReducer, useRecordForm } from '@/components/record'
+import { useAutoFocus } from '@/hooks/useAutoFocus'
+import { useLocation } from '@/hooks/useLocation'
+import { useUploadImage } from '@/services/image'
+import { useCreateRecord } from '@/services/record'
 import { TextArea, SvgIcon, Button, Header } from '@/shared'
-import { ButtonPrimitive } from '@/shared/Button'
 
-const RecordScreen = () => {
-  const scrollViewRef = useRef<KeyboardAwareScrollView>(null)
-
-  const { takePhoto } = useCamera()
-  const { getPhoto } = useGallery()
-  const [content, setContent] = useState('')
-  const [isImagePickerOpen, setIsImagePickerOpen] = useState(false)
-  const [currentPhotoUri, setCurrentPhotoUri] = useState<string | null>(null)
-
+export default function RecordScreen() {
+  const scrollViewRef = useRef<ScrollView>(null)
+  const { inputRefs, focusNextInput } = useAutoFocus(4)
+  const { mutateRecord } = useCreateRecord()
+  const { mutateUpload } = useUploadImage()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [activeCategory, setActiveCategory] = useState<CategoryType[]>([])
+  const { location, refreshLocation } = useLocation()
+  const [state, dispatch] = useReducer(recordFormReducer, initialState)
 
-  const handleCategoryChange = (cat: CategoryType[]) => {
-    setActiveCategory(cat)
-    console.log('선택한 카테고리 id:', cat)
-  }
-
-  const handleTakePhoto = async () => {
-    const photo = await takePhoto()
-    if (photo && photo.uri) {
-      setCurrentPhotoUri(photo.uri)
-      setIsImagePickerOpen(false)
-    }
-  }
-
-  const handleGetPhoto = async () => {
-    const photo = await getPhoto()
-    if (photo && photo.uri) {
-      setCurrentPhotoUri(photo.uri)
-      setIsImagePickerOpen(false)
-    }
-  }
+  const { handleSubmit, updateRecordData } = useRecordForm(
+    state,
+    dispatch,
+    mutateRecord,
+    mutateUpload,
+    scrollViewRef,
+    inputRefs,
+  )
 
   return (
     <SafeScreen>
-      {/* 헤더 */}
       <Header />
-
       <KeyboardAvoidingView edge="top">
-        <KeyboardAwareScrollView
+        <ScrollView
           ref={scrollViewRef}
-          enableOnAndroid
-          enableAutomaticScroll={false}
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{ flexGrow: 1, backgroundColor: 'white' }}
           scrollEventThrottle={16}
         >
           <View className="px-3 pt-4">
             <View className="mb-4 items-center justify-center">
-              <TextInput className="text-xl font-bold" placeholder="여행 기록 제목" />
+              <TextInput
+                ref={inputRefs.current[0]}
+                className={`text-xl font-bold`}
+                placeholder="여행 기록 제목"
+                value={state.title}
+                onChangeText={text => updateRecordData('title', text)}
+                onSubmitEditing={() => focusNextInput(0)}
+              />
             </View>
 
-            {/* 카테고리 */}
-            <Categories onCategoryChange={handleCategoryChange} />
-
-            {/* 지도 영역*/}
-            <View className="my-4 h-48">
-              <MapDetail />
+            <View className="my-4 h-32">
+              <MapDetail geometry={{ lon: state.location.lng, lat: state.location.lat }} />
             </View>
             <View className="mb-4 flex-row items-center">
               <View className="flex-row items-center">
@@ -78,85 +60,41 @@ const RecordScreen = () => {
               </View>
             </View>
 
-            {/* 사진 영역 */}
-            <View className="relative mb-4 items-center justify-center overflow-hidden rounded-xl border border-gray-300">
-              {currentPhotoUri ? (
-                <View className="w-full">
-                  <Lightbox
-                    activeProps={{
-                      style: {
-                        width: window.width,
-                        height: window.width,
-                      },
-                      resizeMode: 'contain',
-                    }}
-                  >
-                    <Image
-                      source={{ uri: currentPhotoUri }}
-                      className="h-48 w-full"
-                      resizeMode="cover"
-                    />
-                  </Lightbox>
-                  <View className="absolute right-3 top-2">
-                    <ButtonPrimitive onPress={() => setCurrentPhotoUri(null)}>
-                      <SvgIcon name="trash" size={24} className="text-BUSIM-blue" />
-                    </ButtonPrimitive>
-                  </View>
-                </View>
-              ) : (
-                <View className="z- h-48 w-full items-center justify-center rounded-xl">
-                  <ButtonPrimitive onPress={() => setIsImagePickerOpen(true)}>
-                    <SvgIcon name="add" className="text-BUSIM-blue" />
-                  </ButtonPrimitive>
-                  <Text className="mt-2 text-sm text-gray-800">사진 추가하기</Text>
-                </View>
-              )}
+            <View ref={inputRefs.current[1]}>
+              <ImageUploader
+                uri={state.image?.uri}
+                onImageSelected={uri => updateRecordData('image', uri)}
+              />
             </View>
 
             <View className="mb-5">
               <TextArea
+                ref={inputRefs.current[2]}
                 size="lg"
                 showCount
                 maxLength={500}
-                value={content}
-                onChangeText={setContent}
+                value={state.content}
+                onChangeText={text => updateRecordData('content', text)}
                 placeholder="여행 기록을 작성해주세요."
                 multiline
                 scrollEnabled={false}
                 className="mb-4"
                 onFocus={() => {
                   setTimeout(() => {
-                    scrollViewRef?.current?.scrollToEnd()
+                    scrollViewRef.current?.scrollToEnd({ animated: true })
                   }, 100)
                 }}
               />
             </View>
           </View>
-          {/* 하단 버튼 영역 */}
+
           <View className="px-3 pb-2 pt-2">
-            <Button variant="primary" type="button" size="full">
-              완료
+            <Button variant="primary" type="button" size="full" onPress={handleSubmit}>
+              기록하기
             </Button>
           </View>
-        </KeyboardAwareScrollView>
-
-        {/* 이미지 선택 바텀 시트 */}
-        <ImagePickerSheet
-          isOpen={isImagePickerOpen}
-          onClose={() => setIsImagePickerOpen(false)}
-          onSelectGallery={handleGetPhoto}
-          onSelectCamera={handleTakePhoto}
-        />
-
-        {/* 키보드가 올라올 때 보이는 버튼 */}
-        {/* <View className={`relative bottom-0 left-0 right-0 px-3 pb-2 pt-2`}>
-          <Button variant="primary" type="button" size="full">
-            완료
-          </Button>
-        </View> */}
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeScreen>
   )
 }
-
-export default RecordScreen
