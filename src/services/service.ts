@@ -1,24 +1,4 @@
-import { AuthSchema } from '@/types/schemas/auth'
-
 import { instance } from './instance'
-
-/**
- * 애플 계정으로 로그인 요청을 합니다.
- * @param identityToken
- * @param authorizationCode
- * @returns
- */
-const post_signin_apple = async (params: { identityToken: string; authorizationCode: string }) => {
-  try {
-    const response = await instance('kkilogbu/')
-      .post('user/signin/apple', { json: { params } })
-      .json()
-    return AuthSchema.parse(response)
-  } catch (error) {
-    console.error('애플 로그인 에러:', error)
-    throw error
-  }
-}
 
 type searchPlaceProps = {
   query?: string
@@ -381,7 +361,6 @@ const getParking = async (params: getParkingProps): Promise<getParkingResponseTy
   await instance('api/').get('parking', { searchParams: params }).json()
 
 export {
-  post_signin_apple,
   getSearchPlace,
   getRecord,
   postBlockUser,
