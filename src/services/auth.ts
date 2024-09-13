@@ -2,132 +2,137 @@ import appleAuth from '@invertase/react-native-apple-authentication'
 import { login, logout, isLogined, me } from '@react-native-kakao/user'
 import { getUniqueId } from 'react-native-device-info'
 
+import { AuthSchema } from '@/types/schemas/auth'
 import { storage } from '@/utils/storage'
 import { showToast } from '@/utils/toast'
 
-// import { post_signin_apple } from './service'
+import { instance } from './instance'
+
+export const ROLE = {
+  /** 회원 */
+  MEMBER: 'MEMBER',
+  /** 가입처리가 되지 않은 사용자 */
+  PENDING_MEMBER: 'PENDING_MEMBER',
+  /** 게스트 */
+  GUEST: 'GUEST',
+} as const
+
+export type Role = (typeof ROLE)[keyof typeof ROLE]
+
+export type LoginProvider = 'kakao' | 'apple' | 'guest'
 
 /**
- * 모든 로그인 로그아웃 처리
+ * 이용약관 동의 여부를 확인합니다.
+ * @todo 백엔드 로그인 로직 변경 시 제거하시면 됩니다.
  */
-const logoutAll = async () => {
-  storage.delete('kakaoUserInfo')
-  storage.delete('appleUserInfo')
+const checkTermsAgreement = (): boolean => {
+  return storage.getBoolean('hasAgreedToTerms') ?? false
+}
 
+/**
+ * 사용자 역할을 결정합니다.
+ * @todo 백엔드 로그인 로직 변경 시 제거하시면 됩니다.
+ */
+const getUserRole = (isGuest: boolean): Role => {
+  if (isGuest) return ROLE.GUEST
+  return checkTermsAgreement() ? ROLE.MEMBER : ROLE.PENDING_MEMBER
+}
+
+/**
+ * 모든 로그인 세션을 로그아웃합니다.
+ */
+export const logoutAll = async (): Promise<void> => {
+  const tasks = [
+    storage.delete('userInfo'),
+    isLogined().then(logged => (logged ? logout() : Promise.resolve())),
+  ]
+  await Promise.all(tasks)
+}
+
+/**
+ * 카카오 로그인을 수행합니다.
+ */
+const kakaoSignIn = async (): Promise<Role> => {
+  await login()
   if (await isLogined()) {
-    await logout() // 카카오 로그아웃
+    const userInfo = await me()
+    storage.set('userInfo', JSON.stringify(userInfo))
+    return getUserRole(false)
   }
-
-  return true
+  throw new Error('카카오 로그인 실패')
 }
 
 /**
- * 카카오 로그인(https://rnkakao.dev/docs/intro)
- * @param navigation
- * @param setNotice
+ * 애플 로그인을 수행합니다.
  */
-const kakaoLogin = async () => {
-  if (await logoutAll()) {
-    const data = await login()
-    console.log(JSON.stringify(data))
+const appleSignIn = async (): Promise<Role> => {
+  const auth = await appleAuth.performRequest({
+    requestedOperation: appleAuth.Operation.LOGIN,
+  })
+  const credentialState = await appleAuth.getCredentialStateForUser(auth.user)
 
-    if (await isLogined()) {
-      storage.set('kakaoUserInfo', JSON.stringify(await me()))
-      return true
-    } else {
-      showToast({
-        text: '카카오 로그인에 실패하였습니다.',
-        type: 'notice',
-        position: 'top',
-      })
-      return false
-    }
-  } else {
-    return false
-  }
-}
-
-interface AppleSignInProps {
-  onSuccess?: () => void
-  onError?: (error: unknown) => void
-}
-
-/**
- * 애플 로그인(https://github.com/invertase/react-native-apple-authentication)
- */
-const appleSignIn = async ({ onSuccess, onError }: AppleSignInProps) => {
-  try {
-    // 애플 로그인 요청
-    const auth = await appleAuth.performRequest({
-      requestedOperation: appleAuth.Operation.LOGIN,
+  if (
+    credentialState === appleAuth.State.AUTHORIZED &&
+    auth.identityToken &&
+    auth.authorizationCode
+  ) {
+    const deviceId = await getUniqueId()
+    const response = await post_signin_apple({
+      identityToken: auth.identityToken,
+      authorizationCode: auth.authorizationCode,
+      phoneIdentificationNumber: deviceId,
     })
-    // 사용자 인증 상태 확인
-    const credentialState = await appleAuth.getCredentialStateForUser(auth.user)
 
-    if (credentialState === appleAuth.State.AUTHORIZED) {
-      if (auth.identityToken && auth.authorizationCode) {
-        // FIXME: 로그인 요청 api 수정 후 주석 해제해주시면 됩니다.
-        // 서버에 로그인 요청
-        // const response = await post_signin_apple({
-        //   identityToken: auth.identityToken,
-        //   authorizationCode: auth.authorizationCode,
-        // })
-        const deviceId = await getUniqueId()
-        console.log(deviceId)
-        console.log(auth.identityToken)
-        console.log(auth.authorizationCode)
+    await Promise.all([
+      storage.set('accessToken', response?.accessToken),
+      storage.set('refreshToken', response?.refreshToken),
+      storage.set('userId', response.userId.toString()),
+      storage.set('isLoggedIn', 'true'),
+    ])
 
-        // storage.set('accessToken', response?.accessToken)
-        // storage.set('refreshToken', response?.refreshToken)
-        // storage.set('userId', response.id.toString())
+    return getUserRole(false)
+  }
+  throw new Error('애플 로그인 실패')
+}
 
-        onSuccess?.()
-      } else {
-        throw new Error('[ERROR Apple Auth]: 애플 토큰이 없습니다.')
-      }
-    } else {
-      throw new Error('[ERROR Apple Auth]: 사용자 권한이 없습니다.')
-    }
-  } catch (error) {
-    console.error('[ERROR application]:', error)
-    onError?.(error)
+/**
+ * 비회원 로그인을 수행합니다.
+ */
+const guestSignIn = (): Role => {
+  showToast({
+    text: '비회원 로그인 시, 일부 기능들이 제한됩니다.',
+    type: 'notice',
+    position: 'top',
+  })
+  return ROLE.GUEST
+}
+
+/**
+ * 지정된 제공자를 사용하여 로그인을 수행합니다.
+ */
+export const loginWithProvider = async (provider: LoginProvider): Promise<Role> => {
+  await logoutAll()
+
+  switch (provider) {
+    case 'kakao':
+      return kakaoSignIn()
+    case 'apple':
+      return appleSignIn()
+    case 'guest':
+      return guestSignIn()
+    default:
+      throw new Error('지원되지 않는 로그인 방식')
   }
 }
 
 /**
- * 비회원 로그인
- * @param setNotice
+ * 애플 계정으로 로그인 요청을 합니다.
  */
-const unAuthorizedLogin = async () => {
-  if (await logoutAll()) {
-    showToast({
-      text: '비회원 로그인 시, 일부 기능들이 제한됩니다.',
-      type: 'notice',
-      position: 'top',
-    })
-    return true
-  } else {
-    return false
-  }
+const post_signin_apple = async (params: {
+  identityToken: string
+  authorizationCode: string
+  phoneIdentificationNumber: string
+}) => {
+  const response = await instance('kkilogbu/').post('user/signin/apple', { json: params }).json()
+  return AuthSchema.parse(response)
 }
-
-/**
- * 로그인 정보 표출
- */
-const showLoginInfo = () => {
-  const kakaoUserInfo = storage.getString('kakaoUserInfo')
-  const appleUserInfo = storage.getString('appleUserInfo')
-
-  if (kakaoUserInfo) {
-    console.log(`카카오 로그인: ${JSON.stringify(JSON.parse(kakaoUserInfo))}`)
-  } else {
-    console.log('카카오 로그아웃 상태입니다.')
-  }
-  if (appleUserInfo) {
-    console.log(`애플 로그인: ${JSON.stringify(JSON.parse(appleUserInfo))}`)
-  } else {
-    console.log('애플 로그아웃 상태입니다.')
-  }
-}
-
-export { kakaoLogin, appleSignIn, unAuthorizedLogin, showLoginInfo, logoutAll }
