@@ -10,7 +10,7 @@ import Animated, {
 } from 'react-native-reanimated'
 
 import { SafeScreen } from '@/components/common'
-import { window } from '@/constants'
+import { CATEGORY, CategoryType, window } from '@/constants'
 import { Button, SvgIcon } from '@/shared'
 
 import type { RootStackParamList } from '@/types/navigation'
@@ -18,7 +18,7 @@ import type { RootStackParamList } from '@/types/navigation'
 const SCREEN_WIDTH = window.width
 
 type Selection = {
-  id: string
+  id: CategoryType
   title: string
   icon: string
   isSelected: boolean
@@ -34,23 +34,23 @@ export default function OnBoardingScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList, 'MainTab'>>()
 
   const [tourSelections, setTourSelections] = useState<Selection[]>([
-    { id: 'TOURIST_SPOT', title: '관광지', icon: '🏖', isSelected: false },
-    { id: 'THEME', title: '테마', icon: '🎡', isSelected: false },
-    { id: 'HOT_PLACE', title: '핫플', icon: '🔥', isSelected: false },
-    { id: 'NATURE', title: '자연', icon: '🌴', isSelected: false },
-    { id: 'LEISURE_SPORTS', title: '레포츠', icon: '🤿', isSelected: false },
+    { id: CATEGORY.관광지, title: '관광지', icon: '🏖', isSelected: false },
+    { id: CATEGORY.테마, title: '테마', icon: '🎡', isSelected: false },
+    { id: CATEGORY.핫플, title: '핫플', icon: '🔥', isSelected: false },
+    { id: CATEGORY.자연, title: '자연', icon: '🌴', isSelected: false },
+    { id: CATEGORY.레포츠, title: '레포츠', icon: '🤿', isSelected: false },
   ])
 
   const [foodSelections, setFoodSelections] = useState<Selection[]>([
     {
-      id: 'SPECIAL_RESTAURANT',
+      id: CATEGORY.특별한_맛집,
       title: '특별한 맛집',
       icon: '🍽',
       isSelected: false,
       description: '공무원 맛집, 블루 리본 맛집, 오션뷰 맛집 등 특별한 맛집에 대해서 추천드려요.',
     },
     {
-      id: 'NORMAL_RESTAURANT',
+      id: CATEGORY.맛집,
       title: '일반 맛집',
       icon: '☕',
       isSelected: false,
@@ -104,8 +104,8 @@ export default function OnBoardingScreen() {
     zIndex: progress.value === 1 ? 1 : 0,
   }))
 
-  const getCheckedCategories = (): string[] => {
-    const categories: string[] = []
+  const getCheckedCategories = (): CategoryType[] => {
+    const categories: CategoryType[] = []
 
     tourSelections.map(t => {
       if (t.isSelected) categories.push(t.id)

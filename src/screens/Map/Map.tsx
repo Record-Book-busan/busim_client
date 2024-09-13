@@ -11,6 +11,7 @@ import { SvgIcon } from '@/shared'
 import { MapStackParamList, RootStackParamList } from '@/types/navigation'
 
 import { RecommendSheet } from './RecommendSheet'
+import { CategoryType } from '../../constants/data'
 
 interface MapScreenProps {
   route: RouteProp<MapStackParamList, 'MapHome'>
@@ -32,7 +33,7 @@ export default function MapScreen({ route }: MapScreenProps) {
   const navigation = useNavigation<NavigationProp<RootStackParamList, 'MainTab'>>()
 
   useEffect(() => {
-    const categories: string[] = route.params.categories
+    const categories: CategoryType[] = route.params.categories
 
     if (
       categories.some(
