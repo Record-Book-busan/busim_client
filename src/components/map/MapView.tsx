@@ -22,14 +22,6 @@ type MapViewProps = {
   refreshed: boolean
 }
 
-type responseType = {
-  id: number
-  lat: number
-  lng: number
-  imageUrl: string[]
-  category: string
-}
-
 type returnProps = {
   type: string
   data: {
@@ -39,6 +31,14 @@ type returnProps = {
     type: string
     id: string
   }
+}
+
+type getCategoryResponseType = {
+  id: number
+  lat: number
+  lng: number
+  imageUrl: string[]
+  category: string
 }
 
 type getToiletResponseType = {
@@ -64,6 +64,13 @@ type getParkingResponseType = {
   pkGubun: string
 }
 
+type responseType = {
+  title: string
+  type: string
+  lat: number
+  lng: number
+}
+
 const MapView = React.memo(function MapView({
   activeCategory,
   eyeState,
@@ -74,10 +81,10 @@ const MapView = React.memo(function MapView({
   refreshed,
 }: MapViewProps) {
   const webViewRef = useRef<WebView>(null)
-  const [zoomLevel, setZoomLevel] = useState<string>('LEVEL_3')
+  const [loading, setLoading] = useState<boolean>(false)
   const [nowLat, setNowLat] = useState<number>(location.lat)
   const [nowLng, setNowLng] = useState<number>(location.lng)
-  const [loading, setLoading] = useState<boolean>(false)
+  const [zoomLevel, setZoomLevel] = useState<string>('LEVEL_3')
 
   const initFn = `
     kakao.maps.load(function(){
@@ -85,43 +92,116 @@ const MapView = React.memo(function MapView({
     })
   `
 
+  const fetchCategory = async (): Promise<responseType[]> => {
+    try {
+      const response: getCategoryResponseType[] = await getCategory({
+        lat: nowLat || location.lat,
+        lng: nowLng || location.lng,
+        level: zoomLevel,
+        restaurantCategories: activeCategory
+          .filter(a => a === 'NORMAL_RESTAURANT' || a === 'SPECIAL_RESTAURANT')
+          .toString(),
+        touristCategories: activeCategory
+          .filter(a => a !== 'NORMAL_RESTAURANT' && a !== 'SPECIAL_RESTAURANT')
+          .toString(),
+      })
+
+      const data: responseType[] = []
+
+      response.map(r => {
+        const d = {
+          title: r.id.toString(),
+          type: r.category,
+          lat: r.lat,
+          lng: r.lng,
+        }
+
+        data.push(d)
+      })
+
+      return data
+    } catch (err: any) {
+      console.log(`error: ${err}`)
+
+      return []
+    }
+  }
+
+  const fetchToiletData = async (): Promise<responseType[]> => {
+    try {
+      const response: getToiletResponseType[] = await getToilet({
+        lat: nowLat || location.lat,
+        lng: nowLng || location.lng,
+        level: zoomLevel,
+      })
+
+      const data: responseType[] = []
+
+      response.map(r => {
+        const d = {
+          title: r.toiletName,
+          type: 'TOILET',
+          lat: r.latitude,
+          lng: r.longitude,
+        }
+
+        data.push(d)
+      })
+
+      return data
+    } catch (err: any) {
+      console.log(`error: ${err}`)
+
+      return []
+    }
+  }
+
+  const fetchParkingData = async (): Promise<responseType[]> => {
+    try {
+      setLoading(true)
+
+      const response: getParkingResponseType[] = await getParking({
+        lat: nowLat || location.lat,
+        lng: nowLng || location.lng,
+        level: zoomLevel,
+      })
+
+      const data: responseType[] = []
+
+      response.map(r => {
+        const d = {
+          title: r.id.toString(),
+          type: 'PARKING',
+          lat: r.lat,
+          lng: r.lng,
+        }
+
+        data.push(d)
+      })
+
+      return data
+    } catch (err: any) {
+      console.log(`error: ${err}`)
+
+      return []
+    }
+  }
+
   const fetchData = useCallback(async () => {
     if (webViewRef.current) {
       try {
-        if (activeCategory.length === 0 || !eyeState) {
+        if (!eyeState || (activeCategory.length === 0 && !isToiletPressed && !isTrafficPressed)) {
           webViewRef.current.injectJavaScript('initOverlays()')
         } else {
           setLoading(true)
 
-          const response: responseType[] = await getCategory({
-            lat: nowLat || location.lat,
-            lng: nowLng || location.lng,
-            level: zoomLevel,
-            restaurantCategories: activeCategory
-              .filter(a => a === 'NORMAL_RESTAURANT' || a === 'SPECIAL_RESTAURANT')
-              .toString(),
-            touristCategories: activeCategory
-              .filter(a => a !== 'NORMAL_RESTAURANT' && a !== 'SPECIAL_RESTAURANT')
-              .toString(),
-          })
+          const data: responseType[] = []
 
-          const data: {
-            title: string
-            type: string
-            lat: number
-            lng: number
-          }[] = []
+          if (activeCategory.length !== 0) (await fetchCategory()).map(item => data.push(item))
+          if (isToiletPressed) (await fetchToiletData()).map(item => data.push(item))
+          if (isTrafficPressed) (await fetchParkingData()).map(item => data.push(item))
 
-          response.map(r => {
-            const d = {
-              title: r.id.toString(),
-              type: r.category,
-              lat: r.lat,
-              lng: r.lng,
-            }
-
-            data.push(d)
-          })
+          console.log(data)
 
           webViewRef.current.injectJavaScript(
             `settingPlaceOverlays(${JSON.stringify(activeCategory)}, ${JSON.stringify(data)})`,
@@ -133,87 +213,16 @@ const MapView = React.memo(function MapView({
         setLoading(false)
       }
     }
-  }, [activeCategory, eyeState, location, zoomLevel, nowLat, nowLng])
-
-  const fetchToiletData = async () => {
-    if (webViewRef.current) {
-      try {
-        setLoading(true)
-
-        const response: getToiletResponseType[] = await getToilet({
-          lat: nowLat || location.lat,
-          lng: nowLng || location.lng,
-          level: zoomLevel,
-        })
-
-        const data: {
-          title: string
-          type: string
-          lat: number
-          lng: number
-        }[] = []
-
-        response.map(r => {
-          const d = {
-            title: r.toiletName,
-            type: 'TOILET',
-            lat: r.latitude,
-            lng: r.longitude,
-          }
-
-          data.push(d)
-        })
-
-        webViewRef.current.injectJavaScript(
-          `settingPlaceOverlays(['TOILET'], ${JSON.stringify(response)})`,
-        )
-      } catch (err: any) {
-        console.log(`error: ${err}`)
-      } finally {
-        setLoading(false)
-      }
-    }
-  }
-
-  const fetchParkingData = async () => {
-    if (webViewRef.current) {
-      try {
-        setLoading(true)
-
-        const response: getParkingResponseType[] = await getParking({
-          lat: nowLat || location.lat,
-          lng: nowLng || location.lng,
-          level: zoomLevel,
-        })
-
-        const data: {
-          title: string
-          type: string
-          lat: number
-          lng: number
-        }[] = []
-
-        response.map(r => {
-          const d = {
-            title: r.id.toString(),
-            type: 'PARKING',
-            lat: r.lat,
-            lng: r.lng,
-          }
-
-          data.push(d)
-        })
-
-        webViewRef.current.injectJavaScript(
-          `settingPlaceOverlays(['Parking'], ${JSON.stringify(response)})`,
-        )
-      } catch (err: any) {
-        console.log(`error: ${err}`)
-      } finally {
-        setLoading(false)
-      }
-    }
-  }
+  }, [
+    activeCategory,
+    eyeState,
+    isToiletPressed,
+    isTrafficPressed,
+    location,
+    zoomLevel,
+    nowLat,
+    nowLng,
+  ])
 
   useEffect(() => {
     void fetchData()
@@ -224,16 +233,6 @@ const MapView = React.memo(function MapView({
       webViewRef.current.injectJavaScript(`moveMap(${JSON.stringify(location)})`)
     }
   }, [locationPressed, location])
-
-  useEffect(() => {
-    if (isToiletPressed && eyeState) void fetchToiletData()
-    else webViewRef.current?.injectJavaScript('initToiletOverlays()')
-  }, [isToiletPressed, zoomLevel, nowLat, nowLng])
-
-  useEffect(() => {
-    if (isTrafficPressed && eyeState) void fetchParkingData()
-    else webViewRef.current?.injectJavaScript('initParkingOverlays()')
-  }, [isTrafficPressed, zoomLevel, nowLat, nowLng])
 
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'SearchStack'>>()
 
@@ -255,7 +254,6 @@ const MapView = React.memo(function MapView({
     }
 
     if (eventData.type === 'overlayClick') {
-      console.log(eventData.data.id)
       navigateToDetail(parseInt(eventData.data.id))
     }
   }, [])
@@ -287,7 +285,6 @@ const MapView = React.memo(function MapView({
         onMessage={handleMessage}
         javaScriptEnabled={true}
         domStorageEnabled={true}
-        startInLoadingState={true}
       />
     </>
   )
