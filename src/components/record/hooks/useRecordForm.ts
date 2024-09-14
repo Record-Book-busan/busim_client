@@ -10,6 +10,7 @@ import type { UseMutateAsyncFunction, UseMutateFunction } from '@tanstack/react-
 export interface RecordFormState {
   title: string
   location: {
+    name: string
     lat: number
     lng: number
   }
@@ -19,7 +20,7 @@ export interface RecordFormState {
 
 export type RecordFormAction =
   | { type: 'UPDATE_TITLE'; value: string }
-  | { type: 'UPDATE_LOCATION'; value: { lat: number; lng: number } }
+  | { type: 'UPDATE_LOCATION'; value: { name: string; lat: number; lng: number } }
   | { type: 'UPDATE_CONTENT'; value: string }
   | { type: 'UPDATE_IMAGE'; value: ImageAsset | null }
   | { type: 'RESET_FORM' }
@@ -27,6 +28,7 @@ export type RecordFormAction =
 export const initialState: RecordFormState = {
   title: '',
   location: {
+    name: '현재 위치',
     lat: 0,
     lng: 0,
   },

@@ -146,7 +146,7 @@ export function Place() {
         />
       </View>
 
-      <View className={`absolute bottom-32 left-4 z-[2px] flex w-2/3 gap-4`}>
+      <View className={`absolute bottom-32 left-4 z-[2px] flex w-3/4 gap-4`}>
         <TouchableOpacity
           style={{
             shadowColor: '#000',
@@ -155,12 +155,15 @@ export function Place() {
             shadowRadius: 3.84,
             elevation: 5,
           }}
-          className="flex h-12 items-center justify-center rounded-xl bg-white"
+          className="flex h-14 items-start justify-center rounded-xl bg-white px-4"
           onPress={() => {
             navigation.navigate('RecordStack', { screen: 'CreateRecord' })
           }}
         >
-          <Text className="items-center font-bold text-black">여행 기록 작성하기</Text>
+          <View className="">
+            <Text className="text-base font-bold text-black">여행 기록 작성하기</Text>
+            <Text className="text-xs text-[#ECA39D]">현위치로 기록이 남겨집니다.</Text>
+          </View>
           <SvgIcon name="doubleChevronRight" className="absolute right-2 text-black" />
         </TouchableOpacity>
       </View>

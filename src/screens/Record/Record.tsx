@@ -1,4 +1,4 @@
-import React, { useRef, useReducer, useEffect } from 'react'
+import { useRef, useReducer, useEffect } from 'react'
 import { View, Text, TextInput, ScrollView } from 'react-native'
 
 import { KeyboardAvoidingView, SafeScreen } from '@/components/common'
@@ -8,7 +8,44 @@ import { useAutoFocus } from '@/hooks/useAutoFocus'
 import { useLocation } from '@/hooks/useLocation'
 import { useUploadImage } from '@/services/image'
 import { useCreateRecord } from '@/services/record'
+import { getLocationToAddr } from '@/services/service'
 import { TextArea, SvgIcon, Button, Header } from '@/shared'
+
+type RoadAddress = {
+  address_name: string
+  region_1depth_name: string
+  region_2depth_name: string
+  region_3depth_name: string
+  road_name: string
+  underground_yn: string
+  main_building_no: string
+  sub_building_no: string
+  building_name: string
+  zone_no: string
+}
+
+type Address = {
+  address_name: string
+  region_1depth_name: string
+  region_2depth_name: string
+  region_3depth_name: string
+  mountain_yn: string
+  main_address_no: string
+  sub_address_no: string
+  zip_code: string
+}
+
+type Document = {
+  road_address: RoadAddress
+  address: Address
+}
+
+type getLocationToAddrResponseType = {
+  meta: {
+    total_count: number
+  }
+  documents: Document[]
+}
 
 export default function RecordScreen() {
   const scrollViewRef = useRef<ScrollView>(null)
@@ -31,10 +68,17 @@ export default function RecordScreen() {
   useEffect(() => {
     const getCurrentPosition = async () => {
       await refreshLocation()
+      const response: getLocationToAddrResponseType = await getLocationToAddr({
+        x: location.lng,
+        y: location.lat,
+      })
 
       dispatch({
         type: 'UPDATE_LOCATION',
         value: {
+          name:
+            response.documents[0].address.address_name ||
+            response.documents[0].road_address.address_name,
           lat: location.lat,
           lng: location.lng,
         },
@@ -42,7 +86,7 @@ export default function RecordScreen() {
     }
 
     void getCurrentPosition()
-  }, [location])
+  }, [])
 
   return (
     <SafeScreen>
@@ -72,7 +116,7 @@ export default function RecordScreen() {
             <View className="mb-4 flex-row items-center">
               <View className="flex-row items-center">
                 <SvgIcon name="marker" size={16} className="mr-3 text-neutral-400" />
-                <Text className="text-sm text-gray-500">현재 위치</Text>
+                <Text className="text-sm text-gray-500">{state.location.name}</Text>
               </View>
             </View>
 
