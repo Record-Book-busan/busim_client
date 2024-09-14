@@ -3,7 +3,8 @@ export { default as PrivacyPolicyScreen } from './Login/PrivacyPolicy'
 
 export { default as OnBoardingScreen } from './OnBoarding/OnBoarding'
 
-export { default as RecordScreen } from './Record/Record'
+export { default as RecordCreateScreen } from './Record/Create'
+export { default as RecordEditScreen } from './Record/Edit'
 export { default as RecordMainScreen } from './Record/Main'
 export { default as RecordDetailScreen } from './Record/Detail'
 
