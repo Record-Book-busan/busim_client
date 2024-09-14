@@ -22,11 +22,11 @@ export function SearchBar({ placeholder, containerStyle, onPress, ...props }: Se
             shadowRadius: 3.84,
             elevation: 5,
           }}
-          className="flex-1 flex-row items-center rounded-full bg-white px-4"
+          className="my-2 flex-1 flex-row items-center rounded-full bg-white px-4"
         >
           <TextInput
             className={cn(
-              'h-11 flex-1 items-center text-base',
+              'h-10 flex-1 items-center text-base',
               Platform.OS === 'ios' && 'leading-[0px]',
             )}
             placeholder={placeholder}

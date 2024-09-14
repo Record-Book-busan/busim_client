@@ -1,11 +1,11 @@
-import { View, TextInput, Platform, Pressable, type PressableProps } from 'react-native'
+import { View, TextInput, Platform, Pressable, type TextInputProps } from 'react-native'
 
 import { theme } from '@/theme'
 import { cn } from '@/utils/cn'
 
 import { SvgIcon } from '../../shared/SvgIcon'
 
-interface SearchBarProps extends PressableProps {
+interface SearchBarProps extends TextInputProps {
   placeholder?: string
   containerStyle?: string
 }
@@ -20,7 +20,6 @@ export function SearchBarView({ placeholder, containerStyle, ...props }: SearchB
       <Pressable
         className={cn('flex-row items-center px-4 pb-3 pt-2', containerStyle)}
         onPress={props.onPress}
-        {...props}
       >
         <View
           style={{
@@ -42,6 +41,7 @@ export function SearchBarView({ placeholder, containerStyle, ...props }: SearchB
             textAlignVertical="center"
             editable={false}
             pointerEvents="none"
+            {...props}
           />
           <Pressable className="ml-2" pointerEvents="none">
             <SvgIcon name="search" className="text-BUSIM-blue" />
