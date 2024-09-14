@@ -1,7 +1,12 @@
 import { createStackNavigator } from '@react-navigation/stack'
 
 import { SafeScreen } from '@/components/common'
-import { BookmarkListScreen, ProfileEditScreen, RecordListScreen } from '@/screens'
+import {
+  BookmarkListScreen,
+  NickNameSettingScreen,
+  ProfileSettingScreen,
+  RecordListScreen,
+} from '@/screens'
 import Test from '@/screens/MyPage/Test'
 import { Header } from '@/shared'
 
@@ -14,10 +19,17 @@ function MyPageStackNavigator() {
     <SafeScreen>
       <Stack.Navigator>
         <Stack.Screen
-          name="MyPageProfile"
-          component={ProfileEditScreen}
+          name="MyPageSettings"
+          component={ProfileSettingScreen}
           options={{
-            header: () => <Header title="프로필 설정" />,
+            header: () => <Header title="내 정보 관리" />,
+          }}
+        />
+        <Stack.Screen
+          name="MyPageNickName"
+          component={NickNameSettingScreen}
+          options={{
+            header: () => <Header title="닉네임 변경" />,
           }}
         />
         <Stack.Screen

@@ -6,36 +6,30 @@ import LinearGradient from 'react-native-linear-gradient'
 import { logoWelcome } from '@/assets/images'
 import { LoginButton } from '@/components/auth'
 import { SafeScreen } from '@/components/common'
-import { kakaoLogin, unAuthorizedLogin, appleSignIn } from '@/services/auth'
+import { type LoginProvider, loginWithProvider, ROLE } from '@/services/auth'
 import { ImageVariant } from '@/shared'
 import { RootStackParamList } from '@/types/navigation'
 
 export default function LoginScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
-  const handleSignInKakao = async () => {
-    if (await kakaoLogin()) {
-      navigation.navigate('PrivacyPolicy')
-    } else {
-      console.log('카카오 로그인에 실패하였습니다.')
-    }
-  }
-
-  const handleSignInApple = async () => {
-    await appleSignIn({
-      onSuccess: () => navigation.navigate('PrivacyPolicy'),
-      onError: () => console.log('에러 알람~!!'),
-    })
-  }
-
-  const handleSignInGuest = async () => {
-    if (await unAuthorizedLogin()) {
-      navigation.navigate('MainTab', {
-        screen: 'Map',
-        params: { screen: 'MapHome', params: { categories: [] } },
-      })
-    } else {
-      console.log('비회원 로그인에 실패하였습니다.')
+  const handleSignIn = async (provider: LoginProvider) => {
+    try {
+      const role = await loginWithProvider(provider)
+      switch (role) {
+        case ROLE.MEMBER:
+        case ROLE.GUEST:
+          navigation.navigate('MainTab', {
+            screen: 'Map',
+            params: { screen: 'MapHome', params: { categories: [] } },
+          })
+          break
+        case ROLE.PENDING_MEMBER:
+          navigation.navigate('PrivacyPolicy')
+          break
+      }
+    } catch (error) {
+      console.error(`[ERROR] ${provider} 로그인 중 오류 발생:`, error)
     }
   }
 
@@ -59,9 +53,11 @@ export default function LoginScreen() {
         </View>
 
         <View className="px-6" style={{ gap: 12 }}>
-          <LoginButton provider="kakao" onPress={handleSignInKakao} />
-          {Platform.OS === 'ios' && <LoginButton provider="apple" onPress={handleSignInApple} />}
-          <LoginButton provider="guest" onPress={handleSignInGuest} />
+          <LoginButton provider="kakao" onPress={() => handleSignIn('kakao')} />
+          {Platform.OS === 'ios' && (
+            <LoginButton provider="apple" onPress={() => handleSignIn('apple')} />
+          )}
+          <LoginButton provider="guest" onPress={() => handleSignIn('guest')} />
         </View>
       </LinearGradient>
     </SafeScreen>

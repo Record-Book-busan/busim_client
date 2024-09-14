@@ -1,9 +1,9 @@
 import { useNavigation } from '@react-navigation/native'
 import { type StackNavigationProp } from '@react-navigation/stack'
-import { Text, TouchableOpacity, View, ScrollView, Linking } from 'react-native'
+import { Text, TouchableOpacity, View, ScrollView, Linking, Pressable } from 'react-native'
 
 import { SafeScreen } from '@/components/common'
-import { logoutAll, showLoginInfo } from '@/services/auth'
+import { logoutAll } from '@/services/auth'
 import { Button, ImageVariant, SvgIcon } from '@/shared'
 import { type RootStackParamList } from '@/types/navigation'
 
@@ -11,8 +11,8 @@ export default function MyPageScreen() {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'MainTab'>>()
 
   const profileItem = {
-    title: '프로필 설정',
-    onPress: () => navigation.navigate('MyPageStack', { screen: 'MyPageProfile' }),
+    title: '내 정보 관리',
+    onPress: () => navigation.navigate('MyPageStack', { screen: 'MyPageSettings' }),
   }
   const menuItems = [
     {
@@ -24,6 +24,7 @@ export default function MyPageScreen() {
       onPress: () => navigation.navigate('MyPageStack', { screen: 'BookMarkList' }),
     },
     {
+      // FIXME: 배포 시 제거
       title: '테스트',
       onPress: () => navigation.navigate('MyPageStack', { screen: 'Test' }),
     },
@@ -55,10 +56,8 @@ export default function MyPageScreen() {
   ]
 
   const handleLogoutPress = () => {
-    showLoginInfo()
     logoutAll()
       .then(() => {
-        showLoginInfo()
         navigation.navigate('Login')
       })
       .catch(err => console.log(`로그아웃 오류가 발생했습니다.: ${err}`))
@@ -99,28 +98,30 @@ type MenuItemProps = {
 }
 
 const ProfileHeader = ({ onPress }: Pick<MenuItemProps, 'onPress'>) => (
-  <View className="mb-2 mt-4 flex-row items-center justify-between">
-    <View className="flex-row items-center">
-      <ImageVariant
-        className="mr-4 h-16 w-16 rounded-full bg-gray-300"
-        source={{
-          uri: 'https://avatars.githubusercontent.com/u/139189221?v=4',
-        }}
-        resizeMode="cover"
-      />
-      <Text className="text-xl font-medium text-gray-700">ssunn113</Text>
+  <Pressable onPress={onPress}>
+    <View className="mb-2 mt-4 flex-row items-center justify-between">
+      <View className="flex-row items-center">
+        <ImageVariant
+          className="mr-4 h-16 w-16 rounded-full bg-gray-300"
+          source={{
+            uri: 'https://avatars.githubusercontent.com/u/139189221?v=4',
+          }}
+          resizeMode="cover"
+        />
+        <Text className="text-xl font-semibold text-gray-950">ssunn113</Text>
+      </View>
+      <Pressable className="pr-1" onPress={onPress}>
+        <SvgIcon name="setting" className="text-gray-400" />
+      </Pressable>
     </View>
-    <TouchableOpacity onPress={onPress}>
-      <SvgIcon name="setting" className="text-gray-400" />
-    </TouchableOpacity>
-  </View>
+  </Pressable>
 )
 
 const MenuItem = ({ title, onPress }: MenuItemProps) => (
   <View className="flex-row items-center justify-between py-1">
     <Button onPress={onPress} type="text" variant="ghost">
       <Text className="text-base text-gray-600">{title}</Text>
-      <SvgIcon name="chevronRight" size={14} className="text-gray-400" />
+      <SvgIcon name="chevronRight" size={14} className="text-gray-300" />
     </Button>
   </View>
 )

@@ -5,6 +5,7 @@ import { ScrollView, Text, TouchableOpacity, View, Linking } from 'react-native'
 import { SafeScreen } from '@/components/common'
 import { SvgIcon } from '@/shared'
 import { RootStackParamList } from '@/types/navigation'
+import { storage } from '@/utils/storage'
 
 const PRIVACY_CONTENTS = [
   {
@@ -91,6 +92,7 @@ function PrivacyPolicyScreen() {
     const allChecked = PRIVACY_CONTENTS.every(item => checkedItems[item.id])
 
     if (allChecked) {
+      storage.set('hasAgreedToTerms', true)
       navigation.navigate('OnBoardingStack', { screen: 'OnBoarding' })
     } else {
       void makeAlert('모든 이용 약관에 대한 동의가 필요합니다.')
