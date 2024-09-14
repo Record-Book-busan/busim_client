@@ -1,6 +1,6 @@
 import { CategoryType } from '@/constants'
 
-import { instance } from './instance'
+import { instance, kakaoMap } from './instance'
 
 type searchPlaceProps = {
   query?: string
@@ -84,7 +84,17 @@ const delBookmarkRecord = async (params: delBookmarkRecordProps) =>
     .json()
 
 type getRecordDetailProps = {
-  markId: string
+  markId: number
+}
+
+type getRecordDetailResponseType = {
+  id: number
+  title: string
+  content: string
+  imageUrl: string
+  lat: number
+  lng: number
+  createdAt: string
 }
 
 /**
@@ -92,8 +102,57 @@ type getRecordDetailProps = {
  * @param markId - 기록 식별자
  * @returns
  */
-const getRecordDetail = async (params: getRecordDetailProps) =>
+const getRecordDetail = async (
+  params: getRecordDetailProps,
+): Promise<getRecordDetailResponseType> =>
   await instance('kkilogbu/').get(`record/${params.markId}`).json()
+
+type getLocationToAddrProps = {
+  x: number
+  y: number
+  input_coord?: string
+}
+
+type RoadAddress = {
+  address_name: string
+  region_1depth_name: string
+  region_2depth_name: string
+  region_3depth_name: string
+  road_name: string
+  underground_yn: string
+  main_building_no: string
+  sub_building_no: string
+  building_name: string
+  zone_no: string
+}
+
+type Address = {
+  address_name: string
+  region_1depth_name: string
+  region_2depth_name: string
+  region_3depth_name: string
+  mountain_yn: string
+  main_address_no: string
+  sub_address_no: string
+  zip_code: string
+}
+
+type Document = {
+  road_address: RoadAddress
+  address: Address
+}
+
+type getLocationToAddrResponseType = {
+  meta: {
+    total_count: number
+  }
+  documents: Document[]
+}
+
+const getLocationToAddr = async (
+  params: getLocationToAddrProps,
+): Promise<getLocationToAddrResponseType> =>
+  await kakaoMap().get('geo/coord2address.json', { searchParams: params }).json()
 
 type delRecordProps = {
   markId: string
@@ -381,6 +440,7 @@ export {
   postBookmarkRecord,
   delBookmarkRecord,
   getRecordDetail,
+  getLocationToAddr,
   delRecord,
   patchRecord,
   postBookmarkPlace,

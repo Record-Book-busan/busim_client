@@ -13,3 +13,14 @@ export const instance = (path: string) => {
     retry: 0,
   })
 }
+
+export const kakaoMap = () => {
+  return ky.extend({
+    prefixUrl: 'https://dapi.kakao.com/v2/local/',
+    headers: {
+      Accept: 'application/json',
+      Authorization: `KakaoAK ${process.env.KakaoRestApiKey}`,
+    },
+    retry: 0,
+  })
+}
