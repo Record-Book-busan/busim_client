@@ -150,6 +150,9 @@ const map = `
        * 인포 윈도우 클릭 함수
        */
       function handleInfowindowClick(id, type) {
+        if(type === 'NORMAL_RESTAURANT' || 'SPECIAL_RESTAURANT') type = 'restaurant'
+        else type = 'tourist'
+
         window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'overlayClick', data: { type: type, id: id } }));
       }
 

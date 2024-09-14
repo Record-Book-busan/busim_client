@@ -1,3 +1,5 @@
+import { CategoryType } from '@/constants'
+
 import { instance } from './instance'
 
 type searchPlaceProps = {
@@ -180,8 +182,20 @@ type getCategoryDetailProps = {
 }
 
 type getCategoryDetailResponseType = {
-  type: string
-  placeId: number
+  id: number
+  title: string
+  content: string
+  imageUrl: [string]
+  imageUrl2: string
+  address: string
+  addressDetail: string
+  zipcode: string
+  lat: number
+  lng: number
+  cat1: string
+  cat2: CategoryType
+  operatingTime: string
+  phone: string
 }
 
 /**

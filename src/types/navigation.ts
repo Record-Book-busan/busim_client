@@ -45,7 +45,7 @@ export type MyPageStackParamList = {
 
 export type SearchStackParamList = {
   Search: undefined
-  Detail: { id: number }
+  Detail: { id: number; type: string }
 }
 
 export type RootScreenProps<S extends keyof RootStackParamList = keyof RootStackParamList> =

@@ -75,7 +75,7 @@ export default function BookmarkListScreen() {
       /** 검색 디테일 화면으로 이동 */
       navigation.navigate('SearchStack', {
         screen: 'Detail',
-        params: { id: item.id },
+        params: { id: item.id, type: item.cat2 },
       })
     } else {
       /** 기록 디테일 화면으로 이동 */

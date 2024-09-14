@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { View, Text, ActivityIndicator } from 'react-native'
 import { WebView } from 'react-native-webview'
 
+import { CategoryType } from '@/constants'
 import map from '@/services/map/map'
 import { getCategory, getParking, getRecord, getToilet } from '@/services/service'
 import { RootStackParamList } from '@/types/navigation'
@@ -29,7 +30,7 @@ type returnProps = {
     zoomLevel: string
     lat: number
     lng: number
-    type: string
+    type: CategoryType
     id: string
   }
 }
@@ -307,7 +308,7 @@ function MapView({
   const navigateToDetail = (type: string, id: number) => {
     if (type === 'RECORD')
       navigation.navigate('RecordStack', { screen: 'ReadRecord', params: { id: id } })
-    else navigation.navigate('SearchStack', { screen: 'Detail', params: { id: id } })
+    else navigation.navigate('SearchStack', { screen: 'Detail', params: { id: id, type: type } })
   }
 
   const handleMessage = useCallback((event: any) => {

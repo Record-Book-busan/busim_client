@@ -24,7 +24,7 @@ function MapDetail(props: MapDetailProps) {
   useEffect(() => {
     if (webViewRef.current) {
       const initFn = `
-        kakao.maps.load(function(){ 
+        kakao.maps.load(function() {
           const container = document.getElementById('map');
           const options = {
               center: new kakao.maps.LatLng(${position.lat}, ${position.lon}),

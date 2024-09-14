@@ -6,6 +6,7 @@ export const CATEGORY = {
   핫플: 'HOT_PLACE',
   맛집: 'NORMAL_RESTAURANT',
   특별한_맛집: 'SPECIAL_RESTAURANT',
+  기록: 'RECORD',
 } as const
 export type CategoryKey = keyof typeof CATEGORY
 export type CategoryType = (typeof CATEGORY)[keyof typeof CATEGORY]
