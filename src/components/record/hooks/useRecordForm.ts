@@ -1,12 +1,11 @@
 import { useCallback } from 'react'
-import { ScrollView, TextInput, findNodeHandle } from 'react-native'
+import { View, ScrollView, TextInput, findNodeHandle } from 'react-native'
 
 import { showToast } from '@/utils/toast'
 
 import type { ImageAsset, PostImageProps } from '@/services/image'
-import type { PostRecord } from '@/types/schemas/record'
+import type { PostRecord, UpdateRecord } from '@/types/schemas/record'
 import type { UseMutateAsyncFunction, UseMutateFunction } from '@tanstack/react-query'
-
 export interface RecordFormState {
   title: string
   location: {
@@ -28,7 +27,7 @@ export type RecordFormAction =
 export const initialState: RecordFormState = {
   title: '',
   location: {
-    name: '현재 위치',
+    name: '위치 확인 중...',
     lat: 0,
     lng: 0,
   },
@@ -55,102 +54,234 @@ export function recordFormReducer(
       return state
   }
 }
-
 export interface FieldError {
   field: number
   message: string
 }
 
+/**
+ * 레코드 양식 상태의 유효성을 검사합니다.
+ * @param state - 유효성을 검사할 양식의 현재 상태
+ * @returns 에러가 있는 필드 배열 반환
+ */
+export const validateForm = (state: RecordFormState): FieldError[] => {
+  const newErrors: FieldError[] = []
+  if (!state.title) newErrors.push({ field: 0, message: '제목을 입력해주세요.' })
+  if (!state.image) newErrors.push({ field: 1, message: '사진을 추가해주세요.' })
+  if (!state.content) newErrors.push({ field: 2, message: '기록을 작성해주세요.' })
+  return newErrors
+}
+
+/**
+ * form의 특정 필드로 스크롤 합니다.
+ * @param fieldIndex - 스크롤할 필드의 인덱스
+ * @param scrollViewRef - ScrollView ref
+ * @param fieldRefs - 필드 refs
+ */
+export const scrollToField = (
+  fieldIndex: number,
+  scrollViewRef: React.RefObject<ScrollView>,
+  fieldRefs: React.MutableRefObject<Array<React.RefObject<TextInput | View>>>,
+) => {
+  const ref = fieldRefs.current[fieldIndex]
+  if (ref?.current && scrollViewRef.current) {
+    const scrollHandle = findNodeHandle(scrollViewRef.current)
+    const inputHandle = findNodeHandle(ref.current)
+    if (scrollHandle && inputHandle) {
+      ref.current.measureLayout(scrollHandle, (_, y) => {
+        scrollViewRef.current?.scrollTo({ y, animated: true })
+      })
+    }
+    if ('focus' in ref.current) {
+      ref.current.focus()
+    }
+  }
+}
+
+/**
+ * 에러가 발생한 필드로 스크롤하고 토스트 메시지를 표시합니다.
+ * @param formErrors - 에러가 발생한 필드 배열
+ * @param scrollViewRef - ScrollView ref
+ * @param fieldRefs - 필드 refs
+ * @returns 에러가 있으면 true를 반환하고, 그렇지 않으면 false를 반환합니다
+ */
+export const handleFormErrors = (
+  formErrors: FieldError[],
+  scrollViewRef: React.RefObject<ScrollView>,
+  fieldRefs: React.MutableRefObject<Array<React.RefObject<TextInput | View>>>,
+): boolean => {
+  if (formErrors.length > 0) {
+    scrollToField(formErrors[0].field, scrollViewRef, fieldRefs)
+    showToast({ text: formErrors[0].message, type: 'info' })
+    return true
+  }
+  return false
+}
+
+/**
+ * 기록 폼을 관리하기 위한 유틸리티 훅입니다.
+ * @param state - 현재 폼의 상태(value)
+ * @param dispatch - 상태를 업데이트하기 위한 디스패치 함수
+ * @param scrollViewRef - ScrollView ref
+ * @param fieldRefs - 필드 refs
+ */
 export const useRecordForm = (
+  state: RecordFormState,
+  dispatch: React.Dispatch<RecordFormAction>,
+  scrollViewRef: React.RefObject<ScrollView>,
+  fieldRefs: React.MutableRefObject<Array<React.RefObject<TextInput | View>>>,
+) => {
+  const updateRecordData = useCallback(
+    (field: keyof RecordFormState, value: RecordFormState[typeof field]) => {
+      dispatch({
+        type: `UPDATE_${field.toUpperCase()}` as RecordFormAction['type'],
+        value,
+      } as RecordFormAction)
+    },
+    [dispatch],
+  )
+
+  const validateAndHandleErrors = useCallback(() => {
+    const formErrors = validateForm(state)
+    return handleFormErrors(formErrors, scrollViewRef, fieldRefs)
+  }, [state, scrollViewRef, fieldRefs])
+
+  return {
+    updateRecordData,
+    validateAndHandleErrors,
+  }
+}
+
+/**
+ * 기록 작성 폼의 유효성을 검사하고 생성하는 훅입니다.
+ * @param state - 현재 폼의 상태(value)
+ * @param dispatch - 상태를 업데이트하기 위한 디스패치 함수
+ * @param mutateRecord - 기록 데이터 생성 요청하는 함수
+ * @param mutateImage - 이미지 데이터 생성 요청하는 함수
+ * @param scrollViewRef - ScrollView ref
+ * @param fieldRefs - 필드 refs
+ */
+export const useCreateRecordForm = (
   state: RecordFormState,
   dispatch: React.Dispatch<RecordFormAction>,
   mutateRecord: UseMutateFunction<unknown, Error, PostRecord, unknown>,
   mutateImage: UseMutateAsyncFunction<string, Error, PostImageProps, unknown>,
   scrollViewRef: React.RefObject<ScrollView>,
-  inputRefs: React.MutableRefObject<Array<React.RefObject<TextInput>>>,
+  fieldRefs: React.MutableRefObject<Array<React.RefObject<TextInput | View>>>,
 ) => {
-  const validateForm = useCallback((): FieldError[] => {
-    const newErrors: FieldError[] = []
-    if (!state.title) newErrors.push({ field: 0, message: '제목을 입력해주세요.' })
-    if (!state.image) newErrors.push({ field: 1, message: '사진을 추가해주세요.' })
-    if (!state.content) newErrors.push({ field: 2, message: '기록을 작성해주세요.' })
-    return newErrors
-  }, [state])
+  const { updateRecordData, validateAndHandleErrors } = useRecordForm(
+    state,
+    dispatch,
+    scrollViewRef,
+    fieldRefs,
+  )
 
-  const scrollToField = (fieldIndex: number) => {
-    const ref = inputRefs.current[fieldIndex]
-    if (ref?.current && scrollViewRef.current) {
-      const scrollHandle = findNodeHandle(scrollViewRef.current)
-      const inputHandle = findNodeHandle(ref.current)
-      if (scrollHandle && inputHandle) {
-        ref.current.measureLayout(scrollHandle, (_, y) => {
-          scrollViewRef.current?.scrollTo({ y, animated: true })
-        })
+  const handleSubmit = useCallback(async () => {
+    if (validateAndHandleErrors()) return
+
+    try {
+      if (!state.image) throw new Error('이미지 없음!')
+
+      showToast({ text: '이미지 업로드 중...', type: 'info' })
+      const uploadedImageUrl = await mutateImage({
+        type: 'post',
+        image: { uri: state.image.uri, fileName: state.image.fileName, type: state.image.type },
+      })
+
+      const postRecord: PostRecord = {
+        title: state.title,
+        lat: state.location.lat,
+        lng: state.location.lng,
+        content: state.content,
+        imageUrl: uploadedImageUrl,
       }
-      ref.current.focus()
+
+      mutateRecord(postRecord, {
+        onSuccess: () => {
+          showToast({ text: '기록이 저장되었습니다.', type: 'info' })
+          dispatch({ type: 'RESET_FORM' })
+        },
+        onError: err => {
+          showToast({ text: '기록 저장에 실패했습니다.', type: 'info' })
+          console.error('[ERROR] 기록 저장 실패:', err)
+        },
+      })
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('알수 없는 에러 발생!')
+      console.error('[ERROR] 기록 저장 프로세스 에러:', error.message)
     }
-  }
-
-  const updateRecordData = (field: keyof RecordFormState, value: any) => {
-    switch (field) {
-      case 'title':
-        dispatch({ type: 'UPDATE_TITLE', value })
-        break
-      case 'location':
-        dispatch({ type: 'UPDATE_LOCATION', value })
-        break
-      case 'content':
-        dispatch({ type: 'UPDATE_CONTENT', value })
-        break
-      case 'image':
-        dispatch({ type: 'UPDATE_IMAGE', value })
-        break
-    }
-  }
-
-  const handleSubmit = async () => {
-    const formErrors = validateForm()
-    if (formErrors.length > 0) {
-      scrollToField(formErrors[0].field)
-      showToast({ text: formErrors[0].message, type: 'info' })
-    } else {
-      try {
-        if (!state.image) throw new Error('이미지 없음!')
-
-        showToast({ text: '이미지 업로드 중...', type: 'info' })
-        const uploadedImageUrl = await mutateImage({
-          type: 'post',
-          image: { uri: state.image.uri, fileName: state.image.fileName, type: state.image.type },
-        })
-
-        const postRecord: PostRecord = {
-          title: state.title,
-          lat: state.location.lat,
-          lng: state.location.lng,
-          content: state.content,
-          imageUrl: uploadedImageUrl,
-        }
-
-        console.log(postRecord)
-        // mutateRecord(postRecord, {
-        //   onSuccess: () => {
-        //     showToast({ text: '기록이 저장되었습니다.', type: 'info' })
-        //     dispatch({ type: 'RESET_FORM' })
-        //   },
-        //   onError: err => {
-        //     showToast({ text: '기록 저장에 실패했습니다.', type: 'info' })
-        //     console.error('[ERROR] 기록 저장 실패:', err)
-        //   },
-        // })
-      } catch (err) {
-        const error = err instanceof Error ? err : new Error('알수 없는 에러 발생!')
-        console.error('[ERROR] 기록 저장 프로세스 에러:', error.message)
-      }
-    }
-  }
+  }, [state, mutateRecord, mutateImage, validateAndHandleErrors, dispatch])
 
   return {
-    handleSubmit,
     updateRecordData,
+    handleSubmit,
+  }
+}
+
+/**
+ * 기록 편집 폼의 유효성을 검사하고 업데이트하는 훅입니다.
+ * @param state - 현재 폼의 상태(value)
+ * @param dispatch - 상태를 업데이트하기 위한 디스패치 함수
+ * @param mutateUpdate - 기록 데이터 업데이트 요청하는 함수
+ * @param mutateImage - 이미지 데이터 생성 요청하는 함수
+ * @param scrollViewRef - ScrollView ref
+ * @param fieldRefs - 필드 refs
+ * @param recordId
+ */
+export const useEditRecordForm = (
+  state: RecordFormState,
+  dispatch: React.Dispatch<RecordFormAction>,
+  mutateUpdate: UseMutateFunction<unknown, Error, UpdateRecord, unknown>,
+  mutateImage: UseMutateAsyncFunction<string, Error, PostImageProps, unknown>,
+  scrollViewRef: React.RefObject<ScrollView>,
+  fieldRefs: React.MutableRefObject<Array<React.RefObject<TextInput | View>>>,
+  recordId: number,
+) => {
+  const { updateRecordData, validateAndHandleErrors } = useRecordForm(
+    state,
+    dispatch,
+    scrollViewRef,
+    fieldRefs,
+  )
+
+  const handleSubmit = useCallback(async () => {
+    if (validateAndHandleErrors()) return
+
+    try {
+      if (!state.image) throw new Error('이미지 없음!')
+
+      showToast({ text: '이미지 업로드 중...', type: 'info' })
+      const uploadedImageUrl = await mutateImage({
+        type: 'post',
+        image: { uri: state.image.uri, fileName: state.image.fileName, type: state.image.type },
+      })
+
+      const updateRecord: UpdateRecord = {
+        markId: recordId,
+        title: state.title,
+        lat: state.location.lat,
+        lng: state.location.lng,
+        content: state.content,
+        imageUrl: uploadedImageUrl,
+      }
+
+      mutateUpdate(updateRecord, {
+        onSuccess: () => {
+          showToast({ text: '기록이 수정되었습니다.', type: 'info' })
+        },
+        onError: err => {
+          showToast({ text: '기록 수정에 실패했습니다.', type: 'info' })
+          console.error('[ERROR] 기록 수정 실패:', err)
+        },
+      })
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('알수 없는 에러 발생!')
+      console.error('[ERROR] 기록 수정 프로세스 에러:', error.message)
+    }
+  }, [state, mutateUpdate, mutateImage, validateAndHandleErrors, recordId])
+
+  return {
+    updateRecordData,
+    handleSubmit,
   }
 }

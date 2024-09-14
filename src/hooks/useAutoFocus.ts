@@ -2,11 +2,11 @@ import { useRef, useCallback } from 'react'
 import { TextInput } from 'react-native'
 
 /**
- * 여러 TextInput 컴포넌트 간의 포커스를 관리하는 커스텀 훅입니다.
+ * 여러 TextInput, View 컴포넌트 간의 포커스를 관리하는 커스텀 훅입니다.
  *
  * @param {number} inputCount - 관리할 TextInput 컴포넌트의 수
  * @returns {Object} inputRefs와 focusNextInput 함수를 포함하는 객체
- * @property {React.MutableRefObject<Array<React.RefObject<TextInput>>>} inputRefs - 각 TextInput에 대한 ref 배열
+ * @property {React.MutableRefObject<Array<React.RefObject<TextInput | View>>>} inputRefs - 각 TextInput에 대한 ref 배열
  * @property {(currentIndex: number) => void} focusNextInput - 다음 입력 필드로 포커스를 이동시키는 함수
  */
 export const useAutoFocus = (inputCount: number) => {
