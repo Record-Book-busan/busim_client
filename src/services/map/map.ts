@@ -78,6 +78,8 @@ const map = `
        * 오버레이 초기화 함수
        */
       function initOverlays() {
+        initInfowindows()
+
         if(showingOverlays && showingOverlays.length > 0) {
             showingOverlays.forEach(m => m.setMap(null))
             showingOverlays = []
@@ -100,12 +102,14 @@ const map = `
           let gridSize = 50
           const zoomLevel = map.getLevel()
           
-          if (zoomLevel < 5) {
-              gridSize = 100
+          if (zoomLevel  === 1) {
+              gridSize = 1
+          } else if (zoomLevel > 1 && zoomLevel < 5) {
+              gridSize = 50
           } else if (zoomLevel >= 5 && zoomLevel < 10) {
-              gridSize = 50
+              gridSize = 100
           } else {
-              gridSize = 50
+              gridSize = 150
           }
 
           const projection = map.getProjection()
@@ -179,7 +183,7 @@ const map = `
        * 오버레이 클릭 함수
        */
        function handleOverlayClick({ lng, lat, level, type, id }) {
-        if(level > 3) {
+        if(level > 1) {
             moveMap({ lng: lng, lat: lat, level: level-1 })
         } else {
             if(type !== 'TOILET' && type !== 'PARKING') {

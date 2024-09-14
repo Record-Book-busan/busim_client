@@ -1,6 +1,11 @@
-import { type NavigationProp, type RouteProp, useNavigation } from '@react-navigation/native'
+import {
+  type NavigationProp,
+  type RouteProp,
+  useFocusEffect,
+  useNavigation,
+} from '@react-navigation/native'
 import React, { useEffect, useRef, useState } from 'react'
-import { Text, TouchableOpacity, View } from 'react-native'
+import { StatusBar, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { Categories, SafeScreen, SearchBarView } from '@/components/common'
@@ -121,6 +126,13 @@ export default function MapScreen({ route }: MapScreenProps) {
     void refreshLocation()
     setLocationPressed(prev => !prev)
   }
+
+  useFocusEffect(
+    React.useCallback(() => {
+      StatusBar.setBackgroundColor('transparent')
+      StatusBar.setTranslucent(true)
+    }, []),
+  )
 
   return (
     <SafeScreen excludeEdges={['top']}>

@@ -170,8 +170,6 @@ function MapView({
 
   const fetchParkingData = async (): Promise<responseType[]> => {
     try {
-      setLoading(true)
-
       const response: getParkingResponseType[] = await getParking({
         lat: nowLat || location.lat,
         lng: nowLng || location.lng,
@@ -201,8 +199,6 @@ function MapView({
 
   const fetchRecordData = async (): Promise<responseType[]> => {
     try {
-      setLoading(true)
-
       const response: getRecordResponseType[] = await getRecord({
         lat: nowLat || location.lat,
         lng: nowLng || location.lng,
@@ -243,8 +239,6 @@ function MapView({
         ) {
           webViewRef.current.injectJavaScript('initOverlays()')
         } else {
-          setLoading(true)
-
           const data: responseType[] = []
 
           if (mapType === 'place') {
@@ -295,7 +289,12 @@ function MapView({
 
   useEffect(() => {
     void fetchData()
-  }, [fetchData, refreshed])
+  }, [fetchData])
+
+  useEffect(() => {
+    setLoading(true)
+    void fetchData()
+  }, [refreshed])
 
   useEffect(() => {
     if (webViewRef.current) {

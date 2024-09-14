@@ -1,4 +1,4 @@
-import React, { useRef, useReducer } from 'react'
+import React, { useRef, useReducer, useEffect } from 'react'
 import { View, Text, TextInput, ScrollView } from 'react-native'
 
 import { KeyboardAvoidingView, SafeScreen } from '@/components/common'
@@ -15,7 +15,7 @@ export default function RecordScreen() {
   const { inputRefs, focusNextInput } = useAutoFocus(4)
   const { mutateRecord } = useCreateRecord()
   const { mutateUpload } = useUploadImage()
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const { location, refreshLocation } = useLocation()
   const [state, dispatch] = useReducer(recordFormReducer, initialState)
 
@@ -27,6 +27,22 @@ export default function RecordScreen() {
     scrollViewRef,
     inputRefs,
   )
+
+  useEffect(() => {
+    const getCurrentPosition = async () => {
+      await refreshLocation()
+
+      dispatch({
+        type: 'UPDATE_LOCATION',
+        value: {
+          lat: location.lat,
+          lng: location.lng,
+        },
+      })
+    }
+
+    void getCurrentPosition()
+  }, [location])
 
   return (
     <SafeScreen>

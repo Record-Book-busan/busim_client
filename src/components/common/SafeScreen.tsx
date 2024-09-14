@@ -1,4 +1,5 @@
 import { useColorScheme } from 'nativewind'
+import { useEffect } from 'react'
 import { ColorValue, StatusBar, StatusBarStyle } from 'react-native'
 import { SafeAreaView, type Edge } from 'react-native-safe-area-context'
 
@@ -7,23 +8,40 @@ type SafeScreenProps = {
   excludeEdges?: Edge[]
   bgColor?: ColorValue
   textColor?: StatusBarStyle
+  statusBarColor?: ColorValue
+  isTranslucent?: boolean
 }
 
-export function SafeScreen({ children, excludeEdges = [], bgColor, textColor }: SafeScreenProps) {
+export function SafeScreen({
+  children,
+  excludeEdges = [],
+  bgColor = 'white',
+  textColor,
+  statusBarColor = 'white',
+  isTranslucent = false,
+}: SafeScreenProps) {
   const { colorScheme } = useColorScheme()
+
+  useEffect(() => {
+    StatusBar.setBarStyle(
+      textColor ? textColor : colorScheme === 'dark' ? 'light-content' : 'dark-content',
+    )
+    StatusBar.setBackgroundColor(statusBarColor)
+    StatusBar.setTranslucent(isTranslucent)
+  }, [])
 
   return (
     <SafeAreaView
       edges={['top', 'right', 'bottom', 'left'].filter(
         (edge): edge is Edge => !excludeEdges.includes(edge as Edge),
       )}
-      style={{ flex: 1, backgroundColor: bgColor || 'white' }}
+      style={{ flex: 1, backgroundColor: bgColor }}
     >
-      <StatusBar
+      {/* <StatusBar
         barStyle={textColor ? textColor : colorScheme === 'dark' ? 'light-content' : 'dark-content'}
-        backgroundColor="transparent"
-        translucent
-      />
+        backgroundColor={statusBarColor}
+        translucent={isTranslucent}
+      /> */}
       {children}
     </SafeAreaView>
   )

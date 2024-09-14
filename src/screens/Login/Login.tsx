@@ -1,5 +1,6 @@
-import { type NavigationProp, useNavigation } from '@react-navigation/native'
-import { Platform, Text, View } from 'react-native'
+import { type NavigationProp, useFocusEffect, useNavigation } from '@react-navigation/native'
+import React from 'react'
+import { Platform, StatusBar, Text, View } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 
 import { logoWelcome } from '@/assets/images'
@@ -38,8 +39,16 @@ export default function LoginScreen() {
     }
   }
 
+  useFocusEffect(
+    React.useCallback(() => {
+      StatusBar.setBackgroundColor('#5e7dc0')
+      StatusBar.setTranslucent(true)
+      StatusBar.setBarStyle('light-content')
+    }, []),
+  )
+
   return (
-    <SafeScreen excludeEdges={['bottom']} bgColor="#5e7dc0" textColor="light-content">
+    <SafeScreen excludeEdges={['bottom']}>
       <LinearGradient
         className="flex w-full flex-1 items-center justify-start"
         colors={['#5e7dc0', '#bac8e4', '#FFFFFF']}

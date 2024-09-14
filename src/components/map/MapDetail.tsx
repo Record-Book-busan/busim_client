@@ -1,11 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import WebView from 'react-native-webview'
 
-import { useLocation } from '@/hooks/useLocation'
 import map from '@/services/map/map'
 
 type MapDetailProps = {
-  geometry?: {
+  geometry: {
     lon: number
     lat: number
   }
@@ -14,47 +13,28 @@ type MapDetailProps = {
 function MapDetail(props: MapDetailProps) {
   const webViewRef = useRef<WebView>(null)
 
-  const [position, setPosition] = useState<MapDetailProps>()
-  const { location, refreshLocation } = useLocation()
+  const position = useMemo(
+    () => ({
+      lat: props.geometry.lat,
+      lon: props.geometry.lon,
+    }),
+    [props.geometry.lat, props.geometry.lon],
+  )
 
   useEffect(() => {
-    const setMap = async () => {
-      if (!props.geometry) {
-        await refreshLocation()
-
-        setPosition({
-          geometry: {
-            lat: location.lat,
-            lon: location.lng,
-          },
-        })
-      } else {
-        setPosition({
-          geometry: {
-            lat: props.geometry.lat,
-            lon: props.geometry.lon,
-          },
-        })
-      }
-    }
-
-    void setMap()
-  }, [])
-
-  useEffect(() => {
-    if (position && webViewRef.current) {
+    if (webViewRef.current) {
       const initFn = `
         kakao.maps.load(function(){ 
           const container = document.getElementById('map');
           const options = {
-              center: new kakao.maps.LatLng(${position.geometry?.lat}, ${position.geometry?.lon}),
+              center: new kakao.maps.LatLng(${position.lat}, ${position.lon}),
               level: 3
           };
           
-          const map = new kakao.maps.Map(container, options)
+          const map = new kakao.maps.Map(container, options);
 
           const marker = new kakao.maps.Marker({
-              position: new kakao.maps.LatLng(${position.geometry?.lat}, ${position.geometry?.lon})
+              position: new kakao.maps.LatLng(${position.lat}, ${position.lon})
           });
 
           marker.setMap(map);
@@ -72,6 +52,7 @@ function MapDetail(props: MapDetailProps) {
       source={{ html: map }}
       javaScriptEnabled={true}
       domStorageEnabled={true}
+      startInLoadingState={true}
     />
   )
 }

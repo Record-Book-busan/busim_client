@@ -59,9 +59,6 @@ const MomorizedMapView = React.memo(
   },
 )
 
-/**
- * @todo 지도 연결, 내 위치 받아오기, 기록 작성 페이지로 위치 전달
- */
 export function Place() {
   const { location, refreshLocation } = useLocation()
   const [eyeState, setEyeState] = useState(true)
@@ -80,7 +77,7 @@ export function Place() {
   }
 
   return (
-    <View className="h-full w-full">
+    <View className="mt-1 flex-1">
       {/* 눈 아이콘 */}
       <View
         className={`absolute right-2 z-[1px]`}
@@ -139,7 +136,7 @@ export function Place() {
       </View>
 
       {/* 지도 웹뷰 */}
-      <View className="absolute bottom-0 left-0 right-0 top-0 h-full w-full">
+      <View className="flex-1">
         <MomorizedMapView
           mapType={'record'}
           activeCategory={[]}

@@ -25,7 +25,7 @@ export function Feed() {
     })
   }
   return (
-    <View className="flex-1">
+    <View className="mt-0.5 flex-1">
       <FlatList
         data={DATA}
         renderItem={({ item }) => <Item item={item} onPress={() => handleNavigation(item.id)} />}
