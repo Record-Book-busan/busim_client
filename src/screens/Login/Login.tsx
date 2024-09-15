@@ -20,7 +20,7 @@ export default function LoginScreen() {
         case ROLE.MEMBER:
           navigation.navigate('MainTab', {
             screen: 'Map',
-            params: { screen: 'MapHome', params: { categories: [] } },
+            params: { screen: 'MapMain', params: { categories: [] } },
           })
           break
         case ROLE.GUEST:
@@ -39,9 +39,11 @@ export default function LoginScreen() {
 
   useFocusEffect(
     React.useCallback(() => {
-      StatusBar.setBackgroundColor('#5e7dc0')
-      StatusBar.setTranslucent(true)
-      StatusBar.setBarStyle('light-content')
+      if (Platform.OS === 'android') {
+        StatusBar.setBackgroundColor('#5e7dc0')
+        StatusBar.setTranslucent(true)
+        StatusBar.setBarStyle('light-content')
+      }
     }, []),
   )
 
