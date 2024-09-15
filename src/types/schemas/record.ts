@@ -35,8 +35,38 @@ export const RecordListSchema = z.object({
   imageUrl: z.string(),
   title: z.string(),
   content: z.string(),
-  cat2: z.string(),
   lat: z.number(),
   lng: z.number(),
 })
 export type RecordList = z.infer<typeof RecordListSchema>
+
+const PageableSchema = z.object({
+  pageNumber: z.number(),
+  pageSize: z.number(),
+  sort: z.object({
+    empty: z.boolean(),
+    sorted: z.boolean(),
+    unsorted: z.boolean(),
+  }),
+  offset: z.number(),
+  paged: z.boolean(),
+  unpaged: z.boolean(),
+})
+
+export const RecordListResponseSchema = z.object({
+  content: z.array(RecordListSchema),
+  pageable: PageableSchema,
+  first: z.boolean(),
+  last: z.boolean(),
+  size: z.number(),
+  number: z.number(),
+  sort: z.object({
+    empty: z.boolean(),
+    sorted: z.boolean(),
+    unsorted: z.boolean(),
+  }),
+  numberOfElements: z.number(),
+  empty: z.boolean(),
+})
+
+export type RecordListResponse = z.infer<typeof RecordListResponseSchema>
