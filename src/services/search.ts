@@ -7,41 +7,6 @@ import { storage } from '@/utils/storage'
 
 import * as service from './service'
 
-/**
- * 검색어를 기반으로 맛집 또는 관광지를 검색합니다.
- * @param query - 검색어
- * @param offset - 데이터의 시작점
- * @param limit - 한 번에 가져올 데이터 크기
- * @returns
- */
-export const get_place_search = async ({
-  query,
-  offset,
-  limit,
-}: {
-  query: string
-  offset: number
-  limit: number
-}) => {
-  try {
-    const params = {
-      query,
-      offset: offset.toString(),
-      limit: limit.toString(),
-    }
-
-    const response = await service.getSearchPlace(params)
-    return PlaceArraySchema.parse(response)
-  } catch (error) {
-    if (error instanceof ZodError) {
-      console.error('데이터 유효성 검사 실패:', error.errors)
-    } else {
-      console.error('알 수 없는 에러 발생:', error)
-    }
-    throw error
-  }
-}
-
 const LIMIT = 10
 
 export const usePlaceInfiniteSearch = (query: string) => {
@@ -110,5 +75,40 @@ export const useRecentSearch = () => {
     recentSearches,
     addRecentSearch,
     removeRecentSearch,
+  }
+}
+
+/**
+ * 검색어를 기반으로 맛집 또는 관광지를 검색합니다.
+ * @param query - 검색어
+ * @param offset - 데이터의 시작점
+ * @param limit - 한 번에 가져올 데이터 크기
+ * @returns
+ */
+export const get_place_search = async ({
+  query,
+  offset,
+  limit,
+}: {
+  query: string
+  offset: number
+  limit: number
+}) => {
+  try {
+    const params = {
+      query,
+      offset: offset.toString(),
+      limit: limit.toString(),
+    }
+
+    const response = await service.getSearchPlace(params)
+    return PlaceArraySchema.parse(response)
+  } catch (error) {
+    if (error instanceof ZodError) {
+      console.error('데이터 유효성 검사 실패:', error.errors)
+    } else {
+      console.error('알 수 없는 에러 발생:', error)
+    }
+    throw error
   }
 }
