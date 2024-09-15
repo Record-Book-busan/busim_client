@@ -9,7 +9,7 @@ import { BookmarkButton } from '../common'
 type ImagePlaceItemProps = {
   id: number
   title: string
-  category: string
+  category?: string
   address?: string
   content?: string
   onPressBookMark?: (id: number) => void
@@ -50,10 +50,12 @@ export function ImagePlaceItem({
           </View>
           <View className="mt-2 flex-1 justify-start">
             <Text className="text-base font-semibold text-gray-800">{title}</Text>
-            <View className="mt-2 flex-row items-center">
-              <SvgIcon name="category" size={14} />
-              <Text className="ml-1 text-sm text-gray-500">{category}</Text>
-            </View>
+            {category && (
+              <View className="mt-2 flex-row items-center">
+                <SvgIcon name="category" size={14} />
+                <Text className="ml-1 text-sm text-gray-500">{category}</Text>
+              </View>
+            )}
             {content && (
               <View className="mt-1 flex-row items-center">
                 <SvgIcon name="explain" className="text-gray-400" size={14} />

@@ -108,9 +108,9 @@ const guestSignIn = (): Role => {
 }
 
 /**
- * 지정된 제공자를 사용하여 로그인을 수행합니다.
+ * 소셜로그인을 수행합니다.
  */
-export const loginWithProvider = async (provider: LoginProvider): Promise<Role> => {
+export const handleSocialLogin = async (provider: LoginProvider): Promise<Role> => {
   await logoutAll()
 
   switch (provider) {

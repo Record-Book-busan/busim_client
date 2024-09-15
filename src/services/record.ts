@@ -1,12 +1,18 @@
-import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query'
+import {
+  useMutation,
+  useQuery,
+  useSuspenseInfiniteQuery,
+  useSuspenseQuery,
+} from '@tanstack/react-query'
 
 import {
   type PostRecord,
   PostRecordSchema,
-  type RecordList,
   RecordDetailSchema,
   type UpdateRecord,
   UpdateRecordSchema,
+  RecordListResponseSchema,
+  RecordListResponse,
 } from '@/types/schemas/record'
 
 import { instance, kakaoMap } from './instance'
@@ -32,6 +38,23 @@ export const useRecordDetail = (id: number) => {
   return useSuspenseQuery({
     queryKey: ['recordDetail', id],
     queryFn: () => get_record_detail({ markId: id }),
+  })
+}
+
+/** 나의 여행 기록 리스트를 가져오는 훅입니다. */
+export const useInfiniteRecordList = () => {
+  return useSuspenseInfiniteQuery<RecordListResponse>({
+    queryKey: ['recordList'],
+    queryFn: ({ pageParam = 0 }) => get_record_list({ page: pageParam as number, size: 10 }),
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.last) return undefined // 마지막 페이지면 undefined 반환
+      return allPages.length // 다음 페이지 번호
+    },
+    getPreviousPageParam: (firstPage, allPages) => {
+      if (firstPage.first) return undefined // 첫 페이지면 undefined 반환
+      return allPages.length - 2 // 이전 페이지 번호
+    },
+    initialPageParam: 0,
   })
 }
 
@@ -64,8 +87,7 @@ export const post_record = async (params: PostRecord) => {
 export const patch_record = async (params: UpdateRecord) => {
   const { markId, ...response } = UpdateRecordSchema.parse(params)
   return await instance('kkilogbu/')
-    .post('record', {
-      searchParams: markId.toString(),
+    .post(`record/${params.markId}`, {
       json: response,
     })
     .json()
@@ -80,31 +102,22 @@ const get_record_detail = async (params: { markId: number }) => {
   const response = await instance('kkilogbu/').get(`record/${params.markId}`).json()
   return RecordDetailSchema.parse(response)
 }
-export interface RecordListResponse {
-  content: RecordList[]
-  pageable: {
-    pageNumber: number
-    pageSize: number
-    sort: {
-      empty: boolean
-      sorted: boolean
-      unsorted: boolean
-    }
-    offset: number
-    paged: boolean
-    unpaged: boolean
-  }
-  first: boolean
-  last: boolean
-  size: number
-  number: number
-  sort: {
-    empty: boolean
-    sorted: boolean
-    unsorted: boolean
-  }
-  numberOfElements: number
-  empty: boolean
+
+/**
+ * 내 여행 기록을 가져옵니다.
+ * @param page
+ * @param size
+ */
+const get_record_list = async (params: { page: number; size: number }) => {
+  const response = await instance('kkilogbu/')
+    .get('user/record', {
+      searchParams: {
+        page: params.page,
+        size: params.size,
+      },
+    })
+    .json()
+  return RecordListResponseSchema.parse(response)
 }
 
 type RoadAddress = {
