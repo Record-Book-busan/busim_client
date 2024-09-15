@@ -53,10 +53,10 @@ export default function LoginScreen() {
         </View>
 
         <View className="px-6" style={{ gap: 12 }}>
-          <LoginButton provider="kakao" onPress={() => handleSignIn('kakao')} />
           {Platform.OS === 'ios' && (
             <LoginButton provider="apple" onPress={() => handleSignIn('apple')} />
           )}
+          <LoginButton provider="kakao" onPress={() => handleSignIn('kakao')} />
           <LoginButton provider="guest" onPress={() => handleSignIn('guest')} />
         </View>
       </LinearGradient>

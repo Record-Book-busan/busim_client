@@ -1,6 +1,6 @@
 import { useColorScheme } from 'nativewind'
 import { useEffect } from 'react'
-import { ColorValue, StatusBar, StatusBarStyle } from 'react-native'
+import { ColorValue, Platform, StatusBar, StatusBarStyle } from 'react-native'
 import { SafeAreaView, type Edge } from 'react-native-safe-area-context'
 
 type SafeScreenProps = {
@@ -27,8 +27,8 @@ export function SafeScreen({
       textColor ? textColor : colorScheme === 'dark' ? 'light-content' : 'dark-content',
     )
     StatusBar.setBackgroundColor(statusBarColor)
-    StatusBar.setTranslucent(isTranslucent)
-  }, [])
+    if (Platform.OS === 'android') StatusBar.setTranslucent(isTranslucent)
+  }, [textColor, statusBarColor, isTranslucent])
 
   return (
     <SafeAreaView

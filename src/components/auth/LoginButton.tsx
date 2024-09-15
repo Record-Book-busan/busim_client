@@ -10,7 +10,7 @@ const buttonVariants = cva('relative flex-row items-center rounded-lg px-4 py-4'
     provider: {
       apple: 'bg-black',
       kakao: 'bg-[#FEE500]',
-      guest: 'bg-BUSIM-blue-dark',
+      guest: 'bg-[#DBDCE5]',
     },
   },
 })
@@ -20,7 +20,7 @@ const PressColorVariants = cva('opacity-80', {
     provider: {
       apple: 'bg-black',
       kakao: 'bg-[#FFEB33] opacity-100',
-      guest: 'bg-BUSIM-blue-dark',
+      guest: 'bg-[#DBDCE5]',
     },
   },
 })
@@ -28,9 +28,9 @@ const PressColorVariants = cva('opacity-80', {
 const textVariants = cva('flex-1 text-base text-center font-semibold', {
   variants: {
     provider: {
-      apple: 'text-white',
-      kakao: 'text-black font-medium',
-      guest: 'text-white',
+      apple: 'text-white font-semibold',
+      kakao: 'text-black font-semibold',
+      guest: 'text-black font-semibold',
     },
   },
 })
@@ -76,7 +76,7 @@ export function LoginButton({ provider, onPress }: LoginButtonProps) {
       onPress={onPress}
       disableAnimation
     >
-      <SvgIcon name={getIconName(provider)} size={20} className="text-white" />
+      <SvgIcon name={getIconName(provider)} size={24} className="text-black" />
       <Text className={cn(textVariants({ provider }))}>{getText(provider)}</Text>
     </Button>
   )
