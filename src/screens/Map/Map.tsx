@@ -5,7 +5,7 @@ import {
   useNavigation,
 } from '@react-navigation/native'
 import React, { useEffect, useRef, useState } from 'react'
-import { Alert, StatusBar, Text, TouchableOpacity, View } from 'react-native'
+import { Platform, Alert, StatusBar, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { Categories, SafeScreen, SearchBarView } from '@/components/common'
@@ -19,7 +19,7 @@ import { RecommendSheet } from './RecommendSheet'
 import { CategoryType } from '../../constants/data'
 
 interface MapScreenProps {
-  route: RouteProp<MapStackParamList, 'MapHome'>
+  route: RouteProp<MapStackParamList, 'MapMain'>
 }
 
 type MapViewProps = {
@@ -138,8 +138,10 @@ export default function MapScreen({ route }: MapScreenProps) {
 
   useFocusEffect(
     React.useCallback(() => {
-      StatusBar.setBackgroundColor('transparent')
-      StatusBar.setTranslucent(true)
+      if (Platform.OS === 'android') {
+        StatusBar.setBackgroundColor('transparent')
+        StatusBar.setTranslucent(true)
+      }
     }, []),
   )
 

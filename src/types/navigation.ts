@@ -1,4 +1,5 @@
 import type { CategoryType } from '@/constants'
+import type { PlaceType } from '@/services/place'
 import type { NavigatorScreenParams } from '@react-navigation/native'
 import type { StackScreenProps } from '@react-navigation/stack'
 
@@ -24,7 +25,8 @@ export type MainTabParamList = {
 }
 
 export type MapStackParamList = {
-  MapHome: { categories: CategoryType[] }
+  MapMain: { categories: CategoryType[] }
+  MapDetail: { id: number; type: PlaceType }
   MapRecommend: undefined
 }
 
@@ -44,7 +46,7 @@ export type MyPageStackParamList = {
 
 export type SearchStackParamList = {
   Search: undefined
-  Detail: { id: number; type: string }
+  Detail: { id: number }
 }
 
 export type RootScreenProps<S extends keyof RootStackParamList = keyof RootStackParamList> =
