@@ -1,7 +1,6 @@
-import React from 'react'
-import { Text, TouchableOpacity, View } from 'react-native'
+import { TouchableOpacity, View } from 'react-native'
 
-import { ImageVariant, SvgIcon } from '@/shared'
+import { ImageVariant, SvgIcon, Typo } from '@/shared'
 import { ButtonPrimitive } from '@/shared/Button'
 
 import { BookmarkButton } from '../common'
@@ -49,27 +48,27 @@ export function ImagePlaceItem({
             )}
           </View>
           <View className="mt-2 flex-1 justify-start">
-            <Text className="text-base font-semibold text-gray-800">{title}</Text>
+            <Typo className="font-SemiBold text-base text-gray-800">{title}</Typo>
             {category && (
               <View className="mt-2 flex-row items-center">
                 <SvgIcon name="category" size={14} />
-                <Text className="ml-1 text-sm text-gray-500">{category}</Text>
+                <Typo className="ml-1 text-sm text-gray-500">{category}</Typo>
               </View>
             )}
             {content && (
               <View className="mt-1 flex-row items-center">
                 <SvgIcon name="explain" className="text-gray-400" size={14} />
-                <Text className="ml-1 text-sm text-gray-500" numberOfLines={1}>
+                <Typo className="ml-1 text-sm text-gray-500" numberOfLines={1}>
                   {content}
-                </Text>
+                </Typo>
               </View>
             )}
             {address && (
               <View className="mt-1 flex-row items-center">
                 <SvgIcon name="marker" className="text-gray-400" size={14} />
-                <Text className="ml-1 text-sm text-gray-500" numberOfLines={1}>
+                <Typo className="ml-1 text-sm text-gray-500" numberOfLines={1}>
                   {address}
-                </Text>
+                </Typo>
               </View>
             )}
           </View>
