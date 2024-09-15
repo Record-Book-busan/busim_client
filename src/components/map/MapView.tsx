@@ -1,11 +1,13 @@
-import { useNavigation } from '@react-navigation/native'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { type CompositeNavigationProp, useNavigation } from '@react-navigation/native'
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { View, Text, ActivityIndicator } from 'react-native'
 import { WebView } from 'react-native-webview'
 
 import map from '@/services/map/map'
+import { PlaceType } from '@/services/place'
 import { getCategory, getParking, getRecord, getToilet } from '@/services/service'
-import { RootStackParamList } from '@/types/navigation'
+import { MapStackParamList, RootStackParamList } from '@/types/navigation'
 
 import type { StackNavigationProp } from '@react-navigation/stack'
 
@@ -302,12 +304,19 @@ function MapView({
     }
   }, [locationPressed])
 
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'SearchStack'>>()
+  const navigation =
+    useNavigation<
+      CompositeNavigationProp<
+        StackNavigationProp<MapStackParamList, 'MapMain'>,
+        StackNavigationProp<RootStackParamList>
+      >
+    >()
 
+  // TODO: 백엔드 api 수정 후에 네비게이트 처리하기. 지금은 type을 잘못 받고 있어서 에러남...
   const navigateToDetail = (type: string, id: number) => {
     if (type === 'record')
       navigation.navigate('RecordStack', { screen: 'ReadRecord', params: { id: id } })
-    else navigation.navigate('SearchStack', { screen: 'Detail', params: { id: id, type: type } })
+    else navigation.navigate('MapDetail', { id: id, type: type as PlaceType })
   }
 
   const handleMessage = useCallback((event: any) => {
@@ -324,7 +333,8 @@ function MapView({
     }
 
     if (eventData.type === 'overlayClick') {
-      navigateToDetail(eventData.data.type, parseInt(eventData.data.id))
+      console.log(eventData.type, eventData.data)
+      // navigateToDetail(eventData.data.type, parseInt(eventData.data.id))
     }
   }, [])
 

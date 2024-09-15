@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { type NavigationProp, type RouteProp, useNavigation } from '@react-navigation/native'
-import React, { useEffect, useState } from 'react'
-import { ScrollView, Text, View } from 'react-native'
+import React from 'react'
+import { ScrollView, View } from 'react-native'
 
-import { BookmarkButton, ImageCarousel, SafeScreen, Tag } from '@/components/common'
+import { ImageCarousel, SafeScreen, Tag } from '@/components/common'
 import { MapDetail } from '@/components/map'
 import { CATEGORY, CategoryType } from '@/constants'
-import { getCategoryDetail } from '@/services/service'
-import { FAB, SvgIcon, type IconName } from '@/shared'
+import { useAnimatedHeader } from '@/hooks/useAnimatedHeader'
+import { AnimatedHeader, FAB, SvgIcon, Typo, type IconName } from '@/shared'
 
 import type { SearchStackParamList, RootStackParamList } from '@/types/navigation'
 
@@ -45,128 +46,105 @@ const mockData: getCategoryDetailResponseType = {
   address: '부산광역시 해운대구 우동',
   addressDetail: '',
   zipcode: '48094',
-  lat: 36.1587,
-  lng: 128.1603,
+  lat: 37,
+  lng: 127,
   cat1: 'PLACE',
   cat2: CATEGORY.관광지,
-  // cat2: [CATEGORY.관광지, CATEGORY.특별한_맛집],
   operatingTime: '09:00 - 18:00 (여름 시즌)',
   phone: '051-123-4567',
-  // isBookMarked: true,
 }
 
 export default function DetailScreen({ route }: DetailScreenProps) {
   const navigation = useNavigation<NavigationProp<RootStackParamList, 'SearchStack'>>()
-  const [data, setData] = useState<getCategoryDetailResponseType>(mockData)
 
-  const handleButtonPress = (id: number) => {
+  const navigateToRecordDetail = (id: number) => {
     navigation.navigate('RecordStack', {
       screen: 'ReadRecord',
       params: { id },
     })
   }
 
-  const onBookMarkPress = () => {
-    console.log(`bookmark now`)
-  }
+  const { scrollY, handleScroll } = useAnimatedHeader()
 
-  useEffect(() => {
-    const fetchData = async () => {
-      console.log('its start')
-
-      try {
-        const response: getCategoryDetailResponseType = await getCategoryDetail({
-          type: route.params.type,
-          placeId: route.params.id,
-        })
-
-        setData(response)
-      } catch (err: any) {
-        console.log(`error: ${err}`)
-      }
-    }
-
-    void fetchData()
-  }, [route.params.id])
+  const catArray = Array.isArray(mockData.cat2) ? mockData.cat2 : [mockData.cat2]
 
   return (
-    <SafeScreen excludeEdges={['top']}>
-      <FAB
+    <SafeScreen>
+      <AnimatedHeader
+        title={mockData.title}
+        scrollY={scrollY}
+        triggerPoint={190}
+        initialBackgroundColor="transparent"
+        finalBackgroundColor="white"
+      />
+      {/* <FAB
         position={'topCenter'}
         buttonStyle="bg-white rounded-full px-5 py-2 shadow-md"
         rightAddon={<SvgIcon name="arrowRightBlack" />}
-        onPress={() => handleButtonPress(route.params.id)}
+        onPress={() => navigateToRecordDetail(route.params.id)}
       >
         여행기록 보러가기
-      </FAB>
+      </FAB> */}
 
-      <ScrollView className="flex-1 bg-gray-100">
-        <View className="bg-white px-4 pt-4">
-          <ImageCarousel images={data.imageUrl} />
+      <ScrollView
+        className="flex-1 bg-gray-100"
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        contentContainerStyle={{ paddingTop: 0 }}
+      >
+        <View className="w-full bg-white">
+          <ImageCarousel images={mockData.imageUrl} />
         </View>
 
-        <View className="bg-white px-5 pb-6">
-          <View className="mt-2 flex-row items-center justify-between py-4">
-            <Text className="flex-1 text-xl font-bold text-gray-800">{data.title}</Text>
-            {/* <BookmarkButton onPress={onBookMarkPress} isBookMarked={data.isBookMarked} /> */}
-            <BookmarkButton onPress={onBookMarkPress} isBookMarked={false} />
+        <View className="bg-white px-4 pb-6">
+          <View className="mt-1 flex-row items-center justify-between py-4">
+            <Typo className="flex-1 font-SemiBold text-xl text-gray-800">{mockData.title}</Typo>
           </View>
 
           <View className="mb-8 flex-row flex-wrap" style={{ columnGap: 6 }}>
-            {/* {data.cat2.map((item, index) => (
+            {catArray.map((item, index) => (
               <Tag key={index} category={item} />
-            ))} */}
-            <Tag category={data.cat2} />
+            ))}
           </View>
 
-          <InfoSection title="장소 소개" content={data.content || '장소 소개'} />
-          <InfoSection title="정보">
-            <InfoItem icon="phone" text={data.phone || '전화번호'} isBlack={true} />
-            <InfoItem
-              icon="calendar"
-              text={data.operatingTime || '운영시간 정보 제공 칸입니다'}
-              isBlack={true}
-            />
+          <View className="mb-6">
+            <Typo className="mb-3 font-Medium text-lg text-gray-700">장소 소개</Typo>
+            <InfoSection content={mockData.content || ''} />
+          </View>
+          <Typo className="mb-3 font-Medium text-lg text-gray-700">정보</Typo>
+          <InfoSection>
+            <InfoItem icon="marker" text={mockData.address} />
+            <InfoItem icon="time" text={mockData.operatingTime || '운영시간 정보 제공 칸입니다'} />
+            <InfoItem icon="phone" text={mockData.phone || '전화번호'} />
           </InfoSection>
         </View>
 
-        <View className="mt-3 bg-white px-5 py-6">
-          <View className="mb-4 h-36 w-full">
-            <MapDetail geometry={{ lon: data.lng, lat: data.lat }} />
+        <View className="mt-3 bg-white px-4 py-6">
+          <Typo className="mb-3 font-Medium text-lg text-gray-700">지도</Typo>
+          <View className="mb-4 h-40 w-full overflow-hidden rounded-xl">
+            <MapDetail title={mockData.title} geometry={{ lon: mockData.lng, lat: mockData.lat }} />
           </View>
-
-          <InfoItem icon="marker" text={`경도: ${data.lng}, 위도: ${data.lat}`} isBlack={false} />
-          <InfoItem
-            icon="time"
-            text={data.operatingTime || '운영시간 정보 제공 칸입니다'}
-            isBlack={false}
-          />
+          <InfoItem icon="marker" text={mockData.address} />
         </View>
       </ScrollView>
     </SafeScreen>
   )
 }
 
-const InfoItem: React.FC<{ icon: IconName; text: string; isBlack: boolean }> = ({
-  icon,
-  text,
-  isBlack,
-}) => (
-  <View className="flex-row items-center py-1">
-    <SvgIcon name={icon} size={16} className={`${isBlack ? 'text-black' : 'text-neutral-400'}`} />
-    <Text className={`ml-2 text-sm ${isBlack ? 'text-black' : 'text-neutral-500'}`}>{text}</Text>
+const InfoItem: React.FC<{ icon: IconName; text: string }> = ({ icon, text }) => (
+  <View className="flex-row items-center py-1.5">
+    <SvgIcon name={icon} size={16} className="text-BUSIM-slate" />
+    <Typo className="ml-2 text-[15px] leading-5 text-gray-700">{text}</Typo>
   </View>
 )
 
-const InfoSection: React.FC<{ title: string; content?: string; children?: React.ReactNode }> = ({
-  title,
+const InfoSection: React.FC<{ content?: string; children?: React.ReactNode }> = ({
   content,
   children,
 }) => (
-  <View className="mb-6">
-    <Text className="mb-4 text-lg font-semibold text-gray-700">{title}</Text>
-    <View className="w-full rounded-xl bg-[#BECCE8] p-4">
-      {content ? <Text className="text-sm text-black">{content}</Text> : children}
-    </View>
+  <View className="w-full rounded-xl bg-BUSIM-slate-light px-3 py-3">
+    {content ? <Typo className="text-[15px] leading-6 text-gray-700">{content}</Typo> : children}
   </View>
 )

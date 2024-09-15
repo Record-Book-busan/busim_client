@@ -1,58 +1,90 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useMemo } from 'react'
 import WebView from 'react-native-webview'
 
-import map from '@/services/map/map'
+const KAKAO_SDK_URL = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.KakaoJsApiKey}`
 
-type MapDetailProps = {
+interface MapDetailProps {
   geometry: {
     lon: number
     lat: number
   }
+  /** 장소명 */
+  title?: string
 }
 
-function MapDetail(props: MapDetailProps) {
-  const webViewRef = useRef<WebView>(null)
+function MapDetail({ geometry, title }: MapDetailProps) {
+  const { lat, lon } = geometry
 
-  const position = useMemo(
-    () => ({
-      lat: props.geometry.lat,
-      lon: props.geometry.lon,
-    }),
-    [props.geometry.lat, props.geometry.lon],
-  )
-
-  useEffect(() => {
-    if (webViewRef.current) {
-      const initFn = `
-        kakao.maps.load(function() {
-          const container = document.getElementById('map');
-          const options = {
-              center: new kakao.maps.LatLng(${position.lat}, ${position.lon}),
+  const htmlContent = useMemo(
+    () => `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+          body, html { margin: 0; padding: 0; height: 100%; }
+          #map { width: 100%; height: 100%; }
+          .custom-overlay {
+            position: relative;
+            bottom: -23px;
+            border-radius: 6px;
+            float: left;
+            text-align: center;
+          }
+          .custom-overlay .label {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: -0.05em;
+            text-shadow: -1px 0px white, 0px 1px white, 1px 0px white, 0px -1px white;
+          }
+        </style>
+      </head>
+      <body>
+        <div id="map"></div>
+        <script src="${KAKAO_SDK_URL}"></script>
+        <script>
+          function initMap() {
+            var container = document.getElementById('map');
+            var options = {
+              center: new kakao.maps.LatLng(${lat}, ${lon}),
               level: 3
-          };
-          
-          const map = new kakao.maps.Map(container, options);
-
-          const marker = new kakao.maps.Marker({
-              position: new kakao.maps.LatLng(${position.lat}, ${position.lon})
-          });
-
-          marker.setMap(map);
-          map.setDraggable(false);
-        });
-      `
-
-      webViewRef.current.injectJavaScript(initFn)
-    }
-  }, [position])
+            };
+            var map = new kakao.maps.Map(container, options);
+            var markerPosition = new kakao.maps.LatLng(${lat}, ${lon});
+            var marker = new kakao.maps.Marker({
+              position: new kakao.maps.LatLng(${lat}, ${lon})
+            });
+            marker.setMap(map);
+            var content = '<div class="custom-overlay">' +
+                            '<span class="label">${title}</span>' +
+                          '</div>';
+            var customOverlay = new kakao.maps.CustomOverlay({
+              map: map,
+              position: markerPosition,
+              content: content,
+              yAnchor: 1 
+            });
+            map.setDraggable(false);
+          }
+          kakao.maps.load(initMap);
+        </script>
+      </body>
+    </html>
+  `,
+    [title, lat, lon],
+  )
 
   return (
     <WebView
-      ref={webViewRef}
-      source={{ html: map }}
+      source={{ html: htmlContent }}
+      style={{ flex: 1 }}
       javaScriptEnabled={true}
       domStorageEnabled={true}
-      startInLoadingState={true}
+      onError={syntheticEvent => {
+        const { nativeEvent } = syntheticEvent
+        console.error('[ERROR] WebView 에러: ', nativeEvent)
+      }}
     />
   )
 }

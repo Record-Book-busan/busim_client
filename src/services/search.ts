@@ -2,7 +2,7 @@ import { useSuspenseInfiniteQuery } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
 import { ZodError } from 'zod'
 
-import { PlaceArraySchema, PlaceSchema, type Place } from '@/types/schemas/search'
+import { PlaceArraySchema, PlaceSchema, type Place } from '@/types/schemas/place'
 import { storage } from '@/utils/storage'
 
 import * as service from './service'

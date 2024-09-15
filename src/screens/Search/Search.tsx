@@ -7,7 +7,7 @@ import { SearchResults, RecentSearches } from '@/components/search'
 import { useRecentSearch } from '@/services/search'
 
 import type { SearchStackParamList } from '@/types/navigation'
-import type { Place } from '@/types/schemas/search'
+import type { Place } from '@/types/schemas/place'
 import type { StackNavigationProp } from '@react-navigation/stack'
 
 export default function SearchScreen() {

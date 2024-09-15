@@ -16,6 +16,7 @@
     "index.d.ts",
     ".eslintrc.js",
     "babel.config.js",
+    "react-native.config.js",
     "nativewind-env.d.ts",
     "index.js"
   ]

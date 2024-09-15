@@ -1,5 +1,5 @@
-import { useRef } from 'react'
-import { Image, View } from 'react-native'
+import React, { useRef, useState } from 'react'
+import { Image, View, TouchableOpacity } from 'react-native'
 import Lightbox from 'react-native-lightbox-v2'
 import Animated, {
   useAnimatedReaction,
@@ -15,8 +15,8 @@ import { ImageVariant } from '@/shared'
 const SCREEN_WIDTH = window.width
 
 interface ImageCarouselProps {
-  /** 이미지 배열 */
-  images: string[]
+  /** 이미지 배열 또는 단일 값 */
+  images: string[] | string
   /** 캐로셀 너비 */
   width?: number
   /** 캐로셀 높이 */
@@ -26,26 +26,60 @@ interface ImageCarouselProps {
 export function ImageCarousel({ images, width, height }: ImageCarouselProps) {
   const progressValue = useSharedValue<number>(0)
   const ref = useRef<ICarouselInstance>(null)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
 
-  const carouselWidth = width ? width : SCREEN_WIDTH - 32
+  const carouselWidth = width ? width : SCREEN_WIDTH
   const carouselHeight = height ? height : (carouselWidth * 3) / 4
 
+  const imageArray = Array.isArray(images) ? images : [images]
+
+  const renderLightboxContent = () => (
+    <Carousel
+      width={SCREEN_WIDTH}
+      height={SCREEN_WIDTH}
+      loop
+      enabled
+      data={imageArray}
+      renderItem={({ item }) => (
+        <Image
+          source={{ uri: item }}
+          style={{ width: SCREEN_WIDTH, height: SCREEN_WIDTH, resizeMode: 'contain' }}
+        />
+      )}
+    />
+  )
+
   return (
-    <View className="relative overflow-hidden rounded-xl">
-      <Carousel
-        width={carouselWidth}
-        height={carouselHeight}
-        loop
-        enabled
-        ref={ref}
-        autoPlay={false}
-        data={images}
-        onProgressChange={(_, absoluteProgress) => {
-          progressValue.value = absoluteProgress
+    <View className="relative overflow-hidden">
+      <Lightbox
+        activeProps={{
+          style: {
+            width: SCREEN_WIDTH,
+            height: SCREEN_WIDTH,
+          },
         }}
-        renderItem={info => <ImageItem key={info.index} item={info.item} index={info.index} />}
-      />
-      <Indicator count={images.length} progressValue={progressValue} />
+        springConfig={{ tension: 15, friction: 7 }}
+        renderContent={renderLightboxContent}
+        onOpen={() => setLightboxOpen(true)}
+        onClose={() => setLightboxOpen(false)}
+      >
+        <Carousel
+          width={carouselWidth}
+          height={carouselHeight}
+          loop
+          enabled={!lightboxOpen}
+          ref={ref}
+          autoPlay={false}
+          data={imageArray}
+          onProgressChange={(_, absoluteProgress) => {
+            progressValue.value = absoluteProgress
+          }}
+          renderItem={({ item, index }) => <ImageItem key={index} item={item} index={index} />}
+        />
+      </Lightbox>
+      {imageArray.length > 1 && (
+        <Indicator count={imageArray.length} progressValue={progressValue} />
+      )}
     </View>
   )
 }
@@ -57,24 +91,9 @@ interface ItemProps {
 
 function ImageItem({ item }: ItemProps) {
   return (
-    <Lightbox
-      activeProps={{
-        style: {
-          width: SCREEN_WIDTH,
-          height: SCREEN_WIDTH,
-        },
-        resizeMode: 'contain',
-      }}
-      springConfig={{ tension: 15, friction: 7 }}
-      renderContent={() => (
-        <Image
-          source={{ uri: item }}
-          style={{ width: SCREEN_WIDTH, height: SCREEN_WIDTH, resizeMode: 'contain' }}
-        />
-      )}
-    >
+    <TouchableOpacity activeOpacity={0.9}>
       <ImageVariant className="h-full w-full" source={{ uri: item }} resizeMode="cover" />
-    </Lightbox>
+    </TouchableOpacity>
   )
 }
 

@@ -7,6 +7,13 @@ module.exports = {
   theme: {
     g: ({ theme }) => theme('spacing'),
     extend: {
+      fontFamily: {
+        Light: ['Pretendard-Light'],
+        Regular: ['Pretendard-Regular'],
+        Medium: ['Pretendard-Medium'],
+        Bold: ['Pretendard-Bold'],
+        SemiBold: ['Pretendard-SemiBold'],
+      },
       colors: {
         'BUSIM-blue': '#1753e3',
         'BUSIM-blue-light': '#f4f8ff',

@@ -26,8 +26,11 @@ export function SafeScreen({
     StatusBar.setBarStyle(
       textColor ? textColor : colorScheme === 'dark' ? 'light-content' : 'dark-content',
     )
-    StatusBar.setBackgroundColor(statusBarColor)
-    if (Platform.OS === 'android') StatusBar.setTranslucent(isTranslucent)
+
+    if (Platform.OS === 'android') {
+      StatusBar.setBackgroundColor(statusBarColor)
+      StatusBar.setTranslucent(isTranslucent)
+    }
   }, [textColor, statusBarColor, isTranslucent])
 
   return (
