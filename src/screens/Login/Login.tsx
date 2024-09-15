@@ -6,7 +6,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import { logoWelcome } from '@/assets/images'
 import { LoginButton } from '@/components/auth'
 import { SafeScreen } from '@/components/common'
-import { type LoginProvider, loginWithProvider, ROLE } from '@/services/auth'
+import { type LoginProvider, handleSocialLogin, ROLE } from '@/services/auth'
 import { ImageVariant } from '@/shared'
 import { RootStackParamList } from '@/types/navigation'
 
@@ -15,13 +15,17 @@ export default function LoginScreen() {
 
   const handleSignIn = async (provider: LoginProvider) => {
     try {
-      const role = await loginWithProvider(provider)
+      const role = await handleSocialLogin(provider)
       switch (role) {
         case ROLE.MEMBER:
-        case ROLE.GUEST:
           navigation.navigate('MainTab', {
             screen: 'Map',
             params: { screen: 'MapHome', params: { categories: [] } },
+          })
+          break
+        case ROLE.GUEST:
+          navigation.navigate('OnBoardingStack', {
+            screen: 'OnBoarding',
           })
           break
         case ROLE.PENDING_MEMBER:
