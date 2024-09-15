@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import Geolocation from 'react-native-geolocation-service'
 
+import { useLocationToAddr } from '@/services/record'
+
 import { useLocationPermission } from './useLocationPermission'
 
 type Location = {
@@ -10,26 +12,38 @@ type Location = {
 
 export const useLocation = () => {
   const [location, setLocation] = useState<Location>({ lng: 129.16, lat: 35.1626 })
+  const [tempLocation, setTempLocation] = useState<Location>(location)
   const { permissionStatus, requestLocationAccess } = useLocationPermission()
+  const { refetch } = useLocationToAddr(tempLocation.lat, tempLocation.lng)
+  const [myPositionValid, setMyPositionValid] = useState<boolean>(false)
 
-  /** @todo 부산 정확한 범위가 필요합니다 */
-  // const verifyLocation = (lng: number, lat: number) => {
-  //   // 부산의 대략적인 좌표 범위
-  //   const minLng = 128.7 // 부산 서쪽 경계
-  //   const maxLng = 129.3 // 부산 동쪽 경계
-  //   const minLat = 34.9 // 부산 남쪽 경계
-  //   const maxLat = 35.4 // 부산 북쪽 경계
+  useEffect(() => {
+    const verifyLocation = async () => {
+      try {
+        const { data } = await refetch()
 
-  //   if (lng < minLng || lng > maxLng) return false
-  //   if (lat < minLat || lat > maxLat) return false
+        if (data?.documents[0]?.address.region_1depth_name.indexOf('부산') !== -1) {
+          setLocation({
+            lat: tempLocation.lat,
+            lng: tempLocation.lng,
+          })
 
-  //   return true
-  // }
+          setMyPositionValid(true)
+        } else {
+          setMyPositionValid(false)
+        }
+      } catch (err: any) {
+        console.log(`error: ${err}`)
+      }
+    }
+
+    verifyLocation()
+  }, [tempLocation])
 
   const getCurrentLocation = () => {
     Geolocation.getCurrentPosition(
       position => {
-        setLocation({
+        setTempLocation({
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         })
@@ -54,5 +68,5 @@ export const useLocation = () => {
     }
   }
 
-  return { location, refreshLocation }
+  return { location, myPositionValid, refreshLocation }
 }

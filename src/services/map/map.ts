@@ -275,17 +275,15 @@ const map = `
           const level = map.getLevel()
 
           data.forEach((d) => {
-              type.forEach((t) => {
-                  if(d.type === t.toString()) {
-                      const key = getClusterKey(new kakao.maps.LatLng(d.lat, d.lng))
+              if (d.type === 'TOILET' || d.type === 'PARKING' || type.some((t) => t.toString() === d.type)) {
+                const key = getClusterKey(new kakao.maps.LatLng(d.lat, d.lng))
 
-                      if (!clusters[key]) {
-                          clusters[key] = []
-                      }
+                if (!clusters[key]) {
+                    clusters[key] = []
+                }
 
-                      clusters[key].push(d)
-                  }
-              })
+                clusters[key].push(d)
+            }
           })
 
           for (const key in clusters) {

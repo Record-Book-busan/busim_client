@@ -5,7 +5,7 @@ import {
   useNavigation,
 } from '@react-navigation/native'
 import React, { useEffect, useRef, useState } from 'react'
-import { StatusBar, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, StatusBar, Text, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { Categories, SafeScreen, SearchBarView } from '@/components/common'
@@ -74,7 +74,7 @@ const MomorizedMapView = React.memo(
 )
 
 export default function MapScreen({ route }: MapScreenProps) {
-  const { location, refreshLocation } = useLocation()
+  const { location, myPositionValid, refreshLocation } = useLocation()
   const [activeCategory, setActiveCategory] = useState<string[]>([])
   const [eyeState, setEyeState] = useState(true)
   const [locationPressed, setLocationPressed] = useState(false)
@@ -124,7 +124,16 @@ export default function MapScreen({ route }: MapScreenProps) {
 
   const handleLocationPress = () => {
     void refreshLocation()
-    setLocationPressed(prev => !prev)
+
+    console.log(myPositionValid)
+
+    if (myPositionValid) {
+      setLocationPressed(prev => !prev)
+    } else {
+      Alert.alert('서비스 제공 위치가 아닙니다', '부산 외 지역은 서비스 제공 지역이 아닙니다.', [
+        { text: '확인', style: 'default' },
+      ])
+    }
   }
 
   useFocusEffect(

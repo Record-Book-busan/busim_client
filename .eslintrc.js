@@ -92,6 +92,7 @@ module.exports = {
     '@typescript-eslint/no-unnecessary-type-assertion': 'error',
     '@typescript-eslint/no-unsafe-assignment': 'warn',
     '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/no-floating-promises': 'warn',
     'prettier/prettier': 'error',
   },
 }

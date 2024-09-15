@@ -40,14 +40,18 @@ export const useLocationPermission = () => {
     if (status === RESULTS.DENIED) {
       return await requestPermission()
     } else if (status === RESULTS.BLOCKED) {
-      Alert.alert(
-        '위치 서비스를 사용할 수 없습니다.',
-        '기기의 "설정 > 개인정보 보호"에서 위치서비스를 켜주세요.',
-        [
-          { text: '취소', style: 'cancel' },
-          { text: '설정으로 이동', onPress: () => Linking.openSettings() },
-        ],
-      ) // TODO: 알럿모달 UI 띄우기
+      let msg: string = ''
+
+      if (Platform.OS === 'android') {
+        msg = '기기의 "설정 > 위치 > 앱 권한"에서 위치서비스를 켜주세요.'
+      } else {
+        msg = '기기의 "설정 > 개인정보 보호"에서 위치서비스를 켜주세요.'
+      }
+
+      Alert.alert('위치 서비스를 사용할 수 없습니다.', msg, [
+        { text: '취소', style: 'cancel' },
+        { text: '설정으로 이동', onPress: () => Linking.openSettings() },
+      ]) // TODO: 알럿모달 UI 띄우기
     }
 
     return status

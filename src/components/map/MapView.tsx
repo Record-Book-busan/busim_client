@@ -102,7 +102,7 @@ function MapView({
         const map = createMap(${JSON.stringify(location)})
       })
     `
-  }, [location])
+  }, [])
 
   const fetchCategory = async (): Promise<responseType[]> => {
     try {
@@ -300,7 +300,7 @@ function MapView({
     if (webViewRef.current) {
       webViewRef.current.injectJavaScript(`moveMap(${JSON.stringify(location)})`)
     }
-  }, [locationPressed, location])
+  }, [locationPressed])
 
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'SearchStack'>>()
 
