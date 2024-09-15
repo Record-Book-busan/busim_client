@@ -15,6 +15,7 @@ export { default as BookmarkListScreen } from './MyPage/BookmarkList'
 export { default as RecordListScreen } from './MyPage/RecordList'
 
 export { default as MapScreen } from './Map/Map'
+export { default as MapDetailScreen } from './Map/Detail'
 
 export { default as SearchScreen } from './Search/Search'
 export { default as DetailScreen } from './Search/Detail'
