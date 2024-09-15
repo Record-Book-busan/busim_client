@@ -3,8 +3,12 @@ import { useSuspenseInfiniteQuery } from '@tanstack/react-query'
 import { ActivityIndicator, FlatList, Text, View } from 'react-native'
 
 import { ImagePlaceItem } from '@/components/search'
-import { type RecordListResponse } from '@/services/record'
-import { type RecordList, RecordListSchema } from '@/types/schemas/record'
+import {
+  type RecordList,
+  type RecordListResponse,
+  RecordListResponseSchema,
+  RecordListSchema,
+} from '@/types/schemas/record'
 
 import type { MyPageStackParamList, RootStackParamList } from '@/types/navigation'
 import type { StackNavigationProp } from '@react-navigation/stack'
@@ -15,19 +19,19 @@ type NavigationProps = CompositeNavigationProp<
 >
 
 export default function RecordListScreen() {
+  // FIXME: 백엔드 api 수정되면 주석해제!!
+  // const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteRecordList()
+
+  // FIXME: 백엔드 api 수정되면 제거!!!
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useSuspenseInfiniteQuery<RecordListResponse>({
       queryKey: ['posts'],
-      queryFn: async ({ pageParam = 0 }) => {
-        const response = await fetchMockData(pageParam as number)
-        response.content = response.content.map(record => RecordListSchema.parse(record))
-        return response
-      },
-      getNextPageParam: lastPage => {
+      queryFn: ({ pageParam = 1 }) => fetchMockData(pageParam as number),
+      getNextPageParam: (lastPage, allPages) => {
         if (lastPage.last) return undefined
-        return lastPage.pageable.pageNumber + 1
+        return allPages.length + 1
       },
-      initialPageParam: 0,
+      initialPageParam: 1,
     })
 
   const navigation = useNavigation<NavigationProps>()
@@ -43,7 +47,6 @@ export default function RecordListScreen() {
     <ImagePlaceItem
       id={item.id}
       title={item.title}
-      category={item.cat2}
       content={item.content}
       onPressMove={() => handleItemPress(item.id)}
       imageUrl={item.imageUrl}
@@ -73,20 +76,19 @@ export default function RecordListScreen() {
 }
 
 // 가라데이터 생성기
-const generateMockData = (page: number, pageSize = 10) => {
+const generateMockData = (page: number, pageSize = 10): RecordListResponse => {
   const startId = (page - 1) * pageSize + 1
   const content = Array.from({ length: pageSize }, (_, index) => ({
     id: startId + index,
     imageUrl: `/postImage/image${startId + index}.jpg`,
     title: `Title ${startId + index}`,
     content: `Content for post ${startId + index}`,
-    cat2: '카테고리',
     lat: 35 + Math.random(),
     lng: 123 + Math.random(),
   }))
 
-  return {
-    content,
+  const response: RecordListResponse = {
+    content: content.map(item => RecordListSchema.parse(item)),
     pageable: {
       pageNumber: page - 1,
       pageSize,
@@ -111,9 +113,11 @@ const generateMockData = (page: number, pageSize = 10) => {
     numberOfElements: content.length,
     empty: content.length === 0,
   }
+
+  return RecordListResponseSchema.parse(response)
 }
 
-const fetchMockData = async (page: number) => {
-  await new Promise(resolve => setTimeout(resolve, 500))
+export const fetchMockData = async (page: number): Promise<RecordListResponse> => {
+  await new Promise(resolve => setTimeout(resolve, 500)) // 네트워크 지연 시뮬레이션
   return generateMockData(page)
 }
