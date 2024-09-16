@@ -4545,6 +4545,9 @@ __metadata:
     react-native-toast-message: "npm:^2.2.0"
     react-native-webview: "npm:^13.12.1"
     react-test-renderer: "npm:18.3.1"
+    reactotron-react-native: "npm:^5.1.8"
+    reactotron-react-native-mmkv: "npm:^0.2.7"
+    reactotron-react-query: "npm:^1.0.4"
     tailwind-merge: "npm:^2.5.2"
     tailwindcss: "npm:3.3.2"
     typescript: "npm:^5.5.4"
@@ -9701,6 +9704,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mitt@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "mitt@npm:3.0.1"
+  checksum: 10c0/3ab4fdecf3be8c5255536faa07064d05caa3dd332bd318ff02e04621f7b3069ca1de9106cfe8e7ced675abfc2bec2ce4c4ef321c4a1bb1fb29df8ae090741913
+  languageName: node
+  linkType: hard
+
 "mkdirp@npm:^0.5.1":
   version: 0.5.6
   resolution: "mkdirp@npm:0.5.6"
@@ -10925,6 +10935,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-flipper@npm:^0.164.0":
+  version: 0.164.0
+  resolution: "react-native-flipper@npm:0.164.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-native: ">0.62.0"
+  checksum: 10c0/3b370297e90670a4fc133d733c01ab0ca261af6c547521e35b3556460788a01ef4c4f4f385542fc2519ee0134a83b5e17c87d00b34175c456c6c6bf80ab8f898
+  languageName: node
+  linkType: hard
+
 "react-native-geolocation-service@npm:^5.3.1":
   version: 5.3.1
   resolution: "react-native-geolocation-service@npm:5.3.1"
@@ -11224,6 +11244,58 @@ __metadata:
   dependencies:
     loose-envify: "npm:^1.1.0"
   checksum: 10c0/283e8c5efcf37802c9d1ce767f302dd569dd97a70d9bb8c7be79a789b9902451e0d16334b05d73299b20f048cbc3c7d288bbbde10b701fa194e2089c237dbea3
+  languageName: node
+  linkType: hard
+
+"reactotron-core-client@npm:2.9.4":
+  version: 2.9.4
+  resolution: "reactotron-core-client@npm:2.9.4"
+  dependencies:
+    reactotron-core-contract: "npm:0.2.4"
+  checksum: 10c0/88a81c7ec2e56ee3a52c647164e301e0b2be7fe36e19220f846b97be5ea974f15091a79ca018f483831a8c323c2c0202303fc32541e3ae008d7bcd6e9278a4ed
+  languageName: node
+  linkType: hard
+
+"reactotron-core-contract@npm:0.2.4":
+  version: 0.2.4
+  resolution: "reactotron-core-contract@npm:0.2.4"
+  checksum: 10c0/5e675766340be8b19d1f4320fc6bac251333d517b9626aa23b2ed6fed26d349021ff832b77e2d98b7b0eec3f166c91a6cfaaee9dfddf67d76a27532f5435ad80
+  languageName: node
+  linkType: hard
+
+"reactotron-react-native-mmkv@npm:^0.2.7":
+  version: 0.2.7
+  resolution: "reactotron-react-native-mmkv@npm:0.2.7"
+  peerDependencies:
+    react-native-mmkv: "*"
+    reactotron-core-client: "*"
+  checksum: 10c0/03d1f84e3b43120ca1fdf7db418f1df3980a43b807310a05f62aacc0371763bba40d75cc4d9e88cf795cb363eab9f63ee7b439c957fa5115c1f338ced461bddb
+  languageName: node
+  linkType: hard
+
+"reactotron-react-native@npm:^5.1.8":
+  version: 5.1.8
+  resolution: "reactotron-react-native@npm:5.1.8"
+  dependencies:
+    mitt: "npm:^3.0.1"
+    react-native-flipper: "npm:^0.164.0"
+    reactotron-core-client: "npm:2.9.4"
+  peerDependencies:
+    react-native: ">=0.40.0"
+  dependenciesMeta:
+    react-native-flipper:
+      optional: true
+  checksum: 10c0/6ee741db29d15907bfd042178903b67733c3a17844a696eac8ec9d8c8a8e899849299597176913f42a297d6315083beaace37516b20abc8a2b7d102a31a9001e
+  languageName: node
+  linkType: hard
+
+"reactotron-react-query@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "reactotron-react-query@npm:1.0.4"
+  peerDependencies:
+    react-query: ^3.39.2
+    reactotron-core-client: ^2.9.3
+  checksum: 10c0/70d22fd22919c82989844505d6035835f554ebe9fdf22d6285a5853e75cc5b0a03979e2042d74a34bbd5147641b57ca24b0b7bc3b75f120436ca7c071208a6cf
   languageName: node
   linkType: hard
 
