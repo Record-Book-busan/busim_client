@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
 import React, { useRef, useState } from 'react'
-import { Text, TouchableOpacity, View } from 'react-native'
+import { Alert, Text, TouchableOpacity, View } from 'react-native'
 
 import { useLocation } from '@/hooks/useLocation'
 import { SvgIcon } from '@/shared'
@@ -60,7 +60,7 @@ const MomorizedMapView = React.memo(
 )
 
 export function Place() {
-  const { location, refreshLocation } = useLocation()
+  const { location, myPositionValid, refreshLocation } = useLocation()
   const [eyeState, setEyeState] = useState(true)
   const [locationPressed, setLocationPressed] = useState(false)
   const [isBookMarked, setIsBookMarked] = useState(false)
@@ -69,7 +69,14 @@ export function Place() {
 
   const handleLocationPress = () => {
     void refreshLocation()
-    setLocationPressed(prev => !prev)
+
+    if (myPositionValid) {
+      setLocationPressed(prev => !prev)
+    } else {
+      Alert.alert('서비스 제공 위치가 아닙니다', '부산 외 지역은 서비스 제공 지역이 아닙니다.', [
+        { text: '확인', style: 'default' },
+      ])
+    }
   }
 
   const handleEyePress = () => {

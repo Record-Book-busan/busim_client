@@ -23,11 +23,10 @@ export function SafeScreen({
   const { colorScheme } = useColorScheme()
 
   useEffect(() => {
-    StatusBar.setBarStyle(
-      textColor ? textColor : colorScheme === 'dark' ? 'light-content' : 'dark-content',
-    )
-
     if (Platform.OS === 'android') {
+      StatusBar.setBarStyle(
+        textColor ? textColor : colorScheme === 'dark' ? 'light-content' : 'dark-content',
+      )
       StatusBar.setBackgroundColor(statusBarColor)
       StatusBar.setTranslucent(isTranslucent)
     }
@@ -40,11 +39,14 @@ export function SafeScreen({
       )}
       style={{ flex: 1, backgroundColor: bgColor }}
     >
-      {/* <StatusBar
-        barStyle={textColor ? textColor : colorScheme === 'dark' ? 'light-content' : 'dark-content'}
-        backgroundColor={statusBarColor}
-        translucent={isTranslucent}
-      /> */}
+      {Platform.OS === 'ios' && (
+        <StatusBar
+          barStyle={
+            textColor ? textColor : colorScheme === 'dark' ? 'light-content' : 'dark-content'
+          }
+          backgroundColor={statusBarColor}
+        />
+      )}
       {children}
     </SafeAreaView>
   )
