@@ -5,7 +5,7 @@ import { cn } from '@/utils/cn'
 import type { ReactNode } from 'react'
 
 interface TypoProps extends TextProps {
-  className: string
+  className?: string
   children: ReactNode
 }
 
