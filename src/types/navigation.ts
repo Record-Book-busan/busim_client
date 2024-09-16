@@ -8,6 +8,7 @@ export type RootStackParamList = {
   PrivacyPolicy: undefined
   OnBoardingStack: NavigatorScreenParams<OnboardingStackParamList>
   MainTab: NavigatorScreenParams<MainTabParamList>
+  MapStack: NavigatorScreenParams<MapStackParamList>
   RecordStack: NavigatorScreenParams<RecordStackParamList>
   MyPageStack: NavigatorScreenParams<MyPageStackParamList>
   SearchStack: NavigatorScreenParams<SearchStackParamList>
@@ -18,14 +19,13 @@ export type OnboardingStackParamList = {
 }
 
 export type MainTabParamList = {
-  Map: NavigatorScreenParams<MapStackParamList>
+  Map: { categories: CategoryType[] }
   Search: undefined
   Record: undefined
   MyPage: undefined
 }
 
 export type MapStackParamList = {
-  MapMain: { categories: CategoryType[] }
   MapDetail: { id: number; type: PlaceType }
   MapRecommend: undefined
 }
