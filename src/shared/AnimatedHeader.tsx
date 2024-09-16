@@ -108,7 +108,7 @@ export const AnimatedHeader = ({
         >
           {title}
         </Animated.Text>
-        <TouchableOpacity style={{ width: 40, alignItems: 'flex-end' }}>
+        <TouchableOpacity style={{ width: 40, alignItems: 'flex-end' }} onPress={handleBackPress}>
           <Animated.Text style={{ color: iconColor }}>
             <SvgIcon name="x" width={22} height={22} />
           </Animated.Text>

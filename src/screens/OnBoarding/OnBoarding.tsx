@@ -74,7 +74,7 @@ export default function OnBoardingScreen() {
   const handleSkip = () => {
     navigation.navigate('MainTab', {
       screen: 'Map',
-      params: { screen: 'MapMain', params: { categories: [] } },
+      params: { categories: [] },
     })
   }
 
@@ -130,7 +130,7 @@ export default function OnBoardingScreen() {
     } else {
       navigation.navigate('MainTab', {
         screen: 'Map',
-        params: { screen: 'MapMain', params: { categories: getCheckedCategories() } },
+        params: { categories: getCheckedCategories() },
       })
     }
   }

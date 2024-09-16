@@ -77,15 +77,6 @@ export default function DetailScreen({ route }: DetailScreenProps) {
         initialBackgroundColor="transparent"
         finalBackgroundColor="white"
       />
-      {/* <FAB
-        position={'topCenter'}
-        buttonStyle="bg-white rounded-full px-5 py-2 shadow-md"
-        rightAddon={<SvgIcon name="arrowRightBlack" />}
-        onPress={() => navigateToRecordDetail(route.params.id)}
-      >
-        여행기록 보러가기
-      </FAB> */}
-
       <ScrollView
         className="flex-1 bg-gray-100"
         showsVerticalScrollIndicator={false}

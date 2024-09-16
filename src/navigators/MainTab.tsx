@@ -2,10 +2,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Platform, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { RecordMainScreen, MyPageScreen } from '@/screens'
+import { RecordMainScreen, MyPageScreen, MapScreen } from '@/screens'
 import { SvgIcon } from '@/shared'
-
-import MapStackNavigator from './MapStack'
 
 import type { IconName } from '@/shared/SvgIcon'
 import type { MainTabParamList } from '@/types/navigation'
@@ -58,7 +56,7 @@ function MainTabNavigator() {
     >
       <Tab.Screen
         name="Map"
-        component={MapStackNavigator}
+        component={MapScreen}
         options={{
           headerShown: false,
           tabBarLabel: '추천',

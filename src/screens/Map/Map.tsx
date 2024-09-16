@@ -1,138 +1,51 @@
-import {
-  type NavigationProp,
-  type RouteProp,
-  useFocusEffect,
-  useNavigation,
-} from '@react-navigation/native'
-import React, { useEffect, useRef, useState } from 'react'
-import { Platform, Alert, StatusBar, Text, TouchableOpacity, View } from 'react-native'
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
+import { useFocusEffect, useNavigation, type NavigationProp } from '@react-navigation/native'
+import React, { useState, useRef, useCallback } from 'react'
+import { View, Platform, Alert } from 'react-native'
+import { StatusBar } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { Categories, SafeScreen, SearchBarView } from '@/components/common'
-import { MapView } from '@/components/map'
-import { useForceUpdate } from '@/hooks/useForceUpdate'
+import { SafeScreen, SearchBarView, Categories } from '@/components/common'
+import { PlaceMapView, EyeButton, MapFAB } from '@/components/map'
+import { CategoryType } from '@/constants/data'
 import { useLocation } from '@/hooks/useLocation'
-import { SvgIcon } from '@/shared'
-import { MapStackParamList, RootStackParamList } from '@/types/navigation'
+import { RootStackParamList } from '@/types/navigation'
 
-import { RecommendSheet } from './RecommendSheet'
-import { CategoryType } from '../../constants/data'
-
-interface MapScreenProps {
-  route: RouteProp<MapStackParamList, 'MapMain'>
+type MapScreenProps = {
+  route: { params?: { categories?: CategoryType[] } }
 }
-
-type MapViewProps = {
-  mapType: 'place' | 'record'
-  activeCategory: string[]
-  eyeState: boolean
-  location: {
-    lng: number
-    lat: number
-  }
-  locationPressed: boolean
-  isToiletPressed: boolean
-  isTrafficPressed: boolean
-  refreshed: boolean
-}
-
-const MomorizedMapView = React.memo(
-  ({
-    mapType,
-    activeCategory,
-    eyeState,
-    location,
-    locationPressed,
-    isToiletPressed,
-    isTrafficPressed,
-    refreshed,
-  }: MapViewProps) => {
-    return (
-      <MapView
-        mapType={mapType}
-        activeCategory={activeCategory}
-        eyeState={eyeState}
-        location={location}
-        locationPressed={locationPressed}
-        isToiletPressed={isToiletPressed}
-        isTrafficPressed={isTrafficPressed}
-        refreshed={refreshed}
-      />
-    )
-  },
-  (prevProps, nextProps) => {
-    return (
-      prevProps.activeCategory === nextProps.activeCategory &&
-      prevProps.eyeState === nextProps.eyeState &&
-      prevProps.locationPressed === nextProps.locationPressed &&
-      prevProps.isToiletPressed === nextProps.isToiletPressed &&
-      prevProps.isTrafficPressed === nextProps.isTrafficPressed &&
-      prevProps.refreshed === nextProps.refreshed &&
-      prevProps.mapType === nextProps.mapType
-    )
-  },
-)
 
 export default function MapScreen({ route }: MapScreenProps) {
   const { location, myPositionValid, refreshLocation } = useLocation()
   const [activeCategory, setActiveCategory] = useState<string[]>([])
   const [eyeState, setEyeState] = useState(true)
-  const [locationPressed, setLocationPressed] = useState(false)
-  const [isBookMarked, setIsBookMarked] = useState(false)
+  const [isLocationPressed, setIsLocationPressed] = useState(false)
   const [isToiletPressed, setIsToiletPressed] = useState(false)
-  const [isTrafficPressed, setIsTrafficPressed] = useState(false)
-  const [refreshed, setRefreshed] = useState(false)
-  const searchBarHight = useRef(0)
-  const forceUpdate = useForceUpdate()
+  const [isParkingPressed, setIsTrafficPressed] = useState(false)
+  const searchBarHeight = useRef(0)
   const insets = useSafeAreaInsets()
   const navigation = useNavigation<NavigationProp<RootStackParamList, 'MainTab'>>()
 
-  useEffect(() => {
-    const categories: CategoryType[] = route.params?.categories || []
-
-    if (
-      categories.some(
-        category => category === 'NORMAL_RESTAURANT' || category === 'SPECIAL_RESTAURANT',
-      )
-    ) {
-      handleCategoryChange(
-        categories.filter(
-          category => category === 'NORMAL_RESTAURANT' || category === 'SPECIAL_RESTAURANT',
-        ),
-      )
-    } else {
-      handleCategoryChange(
-        categories.filter(
-          category => category !== 'NORMAL_RESTAURANT' && category !== 'SPECIAL_RESTAURANT',
-        ),
-      )
-    }
+  const handleCategoryChange = useCallback((cat: string[]) => {
+    setActiveCategory(cat)
   }, [])
 
-  const handleCategoryChange = (catId: string[]) => {
-    setActiveCategory(catId)
-  }
+  const handleSearchBarPress = useCallback(() => {
+    navigation.navigate('SearchStack', { screen: 'Search' })
+  }, [navigation])
 
-  const handleSearchBarPress = () =>
-    navigation.navigate('SearchStack', {
-      screen: 'Search',
-    })
-
-  const handleEyePress = () => {
+  const handleEyePress = useCallback(() => {
     setEyeState(prev => !prev)
-  }
+  }, [])
 
-  const handleLocationPress = () => {
+  const handleLocationPress = useCallback(() => {
     void refreshLocation()
-
     if (myPositionValid) {
-      setLocationPressed(prev => !prev)
+      setIsLocationPressed(prev => !prev)
     } else {
-      Alert.alert('서비스 제공 위치가 아닙니다', '부산 외 지역은 서비스 제공 지역이 아닙니다.', [
-        { text: '확인', style: 'default' },
-      ])
+      Alert.alert('서비스 제공 위치가 아닙니다', '부산 외 지역은 서비스 제공 지역이 아닙니다.')
     }
-  }
+  }, [myPositionValid, refreshLocation])
 
   useFocusEffect(
     React.useCallback(() => {
@@ -143,30 +56,24 @@ export default function MapScreen({ route }: MapScreenProps) {
     }, []),
   )
 
+  const bottomTabBarHeight = useBottomTabBarHeight()
+
   return (
     <SafeScreen excludeEdges={['top']}>
       {/* 검색바 */}
-      <View
-        style={{
-          position: 'relative',
-          marginTop: insets.top,
-        }}
-      >
+      <View style={{ position: 'relative', marginTop: insets.top }}>
         <View
           onLayout={event => {
-            const { height } = event.nativeEvent.layout
-            searchBarHight.current = height
-            forceUpdate()
+            searchBarHeight.current = event.nativeEvent.layout.height
           }}
         >
           <SearchBarView placeholder="장소 검색" onPress={handleSearchBarPress} />
         </View>
-
         {/* 카테고리 */}
         <View
           className={`absolute left-0 right-0 z-[1px]`}
           style={{
-            top: searchBarHight.current,
+            top: searchBarHeight.current,
           }}
         >
           <Categories
@@ -174,133 +81,57 @@ export default function MapScreen({ route }: MapScreenProps) {
             onCategoryChange={handleCategoryChange}
           />
         </View>
-
         {/* 눈 아이콘 */}
         <View
-          className={`absolute right-2 z-[1px]`}
+          className={`absolute right-4 z-[1px]`}
           style={{
-            top: searchBarHight.current + 10,
+            top: searchBarHeight.current,
           }}
         >
-          <TouchableOpacity
-            style={{
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.25,
-              shadowRadius: 3.84,
-              elevation: 5,
-            }}
-            onPress={handleEyePress}
-            className={`flex items-center justify-center rounded-full p-2 ${eyeState ? 'bg-black' : 'bg-white'}`}
-          >
-            <SvgIcon name={eyeState ? 'eyeClose' : 'eyeOpen'} />
-          </TouchableOpacity>
+          <EyeButton eyeState={eyeState} onPress={handleEyePress} />
         </View>
       </View>
 
-      <View className={`absolute bottom-32 right-4 z-[2px] flex gap-4`}>
-        {/* 북마크 아이콘 */}
-        <TouchableOpacity
-          style={{
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
-          }}
-          onPress={() => setIsBookMarked(prev => !prev)}
-          className={`flex h-11 w-11 items-center justify-center rounded-full bg-white`}
-        >
-          <SvgIcon
-            name="bookmark"
-            className={`${isBookMarked ? 'text-BUSIM-blue' : 'text-white'}`}
-          />
-        </TouchableOpacity>
-
-        {/* 내 위치 아이콘 */}
-        <TouchableOpacity
-          style={{
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
-          }}
-          onPress={handleLocationPress}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-white"
-        >
-          <SvgIcon name="position" />
-        </TouchableOpacity>
+      {/* 내 위치 버튼 */}
+      <View
+        className="absolute bottom-6 right-4 z-[2] flex gap-4"
+        style={{
+          paddingBottom: bottomTabBarHeight,
+        }}
+      >
+        <MapFAB onPress={handleLocationPress} iconName="position" enabled={isLocationPressed} />
       </View>
-
-      <View className={`absolute bottom-32 left-4 z-[2px] flex gap-4`}>
-        {/* 버스 아이콘 */}
-        <TouchableOpacity
-          style={{
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
-          }}
-          onPress={() => setIsTrafficPressed(prev => !prev)}
-          className={`flex h-11 w-11 items-center justify-center rounded-full ${isTrafficPressed ? 'bg-BUSIM-blue' : 'bg-white'}`}
-        >
-          <SvgIcon name="bus" className={`${isTrafficPressed ? 'text-white' : 'text-black'}`} />
-        </TouchableOpacity>
-
-        {/* 화장실 아이콘 */}
-        <TouchableOpacity
-          style={{
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
-          }}
-          onPress={() => setIsToiletPressed(prev => !prev)}
-          className={`flex h-11 w-11 items-center justify-center rounded-full ${isToiletPressed ? 'bg-BUSIM-blue' : 'bg-white'}`}
-        >
-          <SvgIcon name="toilet" className={`${isToiletPressed ? 'text-white' : 'text-black'}`} />
-        </TouchableOpacity>
-      </View>
-
-      <View className={`absolute bottom-32 left-0 right-0 z-[1px] flex items-center`}>
-        {/* 재검색 */}
-        <TouchableOpacity
-          style={{
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
-          }}
-          onPress={() => setRefreshed(prev => !prev)}
-          className="flex w-48 items-center justify-center rounded-full bg-white"
-        >
-          <View className="flex w-full flex-row items-center justify-center gap-4 py-2">
-            <Text className="font-bold">현지도에서 재검색</Text>
-            <SvgIcon name="refresh" className="rotate-45 text-black" />
-          </View>
-        </TouchableOpacity>
-      </View>
-
-      {/* 지도 웹뷰 */}
-      <View className="absolute bottom-0 left-0 right-0 top-0 h-full w-full">
-        <MomorizedMapView
-          mapType={'place'}
-          activeCategory={activeCategory}
-          eyeState={eyeState}
-          location={location}
-          locationPressed={locationPressed}
-          isToiletPressed={isToiletPressed}
-          isTrafficPressed={isTrafficPressed}
-          refreshed={refreshed}
+      <View
+        className="absolute bottom-6 left-4 z-[2] flex gap-4"
+        style={{
+          paddingBottom: bottomTabBarHeight,
+        }}
+      >
+        {/* 주차장 표시 버튼 */}
+        <MapFAB
+          onPress={() => setIsTrafficPressed(!isParkingPressed)}
+          iconName="parking"
+          enabled={isParkingPressed}
+        />
+        {/* 화장실 표시 버튼 */}
+        <MapFAB
+          onPress={() => setIsToiletPressed(!isToiletPressed)}
+          iconName="toilet"
+          enabled={isToiletPressed}
         />
       </View>
 
-      {/* 하단 추천 시트 */}
-      <RecommendSheet headerHeight={searchBarHight.current + insets.top} />
+      {/* 지도 */}
+      <View className="absolute inset-0 h-full w-full">
+        <PlaceMapView
+          activeCategory={activeCategory}
+          eyeState={eyeState}
+          location={location}
+          isLocationPressed={isLocationPressed}
+          isToiletPressed={isToiletPressed}
+          isParkingPressed={isParkingPressed}
+        />
+      </View>
     </SafeScreen>
   )
 }
