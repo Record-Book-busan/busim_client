@@ -1,9 +1,10 @@
-import { ScrollView, Text, View } from 'react-native'
+import { View } from 'react-native'
 
+import { CATEGORY, type CategoryKey } from '@/constants'
 import { type PlaceType, usePlaceDetail } from '@/services/place'
-import { SvgIcon, type IconName } from '@/shared'
+import { SvgIcon, Typo, type IconName } from '@/shared'
 
-import { ImageCarousel } from '../common'
+import { ImageCarousel, Tag } from '../common'
 import MapDetail from './MapDetail'
 
 interface MapDetailContentProps {
@@ -14,70 +15,153 @@ interface MapDetailContentProps {
 export function MapDetailContent({ id, type }: MapDetailContentProps) {
   const { data } = usePlaceDetail(id, type)
 
-  console.log(type)
+  const validImage = getValidImage(data.imageUrl || data.imageUrl2)
+  const restaurantCat = formatCategoryData(data.restaurantCat2)
+  const touristCat = formatCategoryData(data.touristCat2)
 
   return (
-    <ScrollView className="flex-1 bg-gray-100">
-      <View className="bg-white px-4 pt-4">
-        <ImageCarousel images={data.imageUrl || data.imageUrl2} />
+    <>
+      <View className="w-full bg-white">
+        <ImageCarousel images={validImage} />
       </View>
 
-      <View className="bg-white px-5 pb-6">
-        <View className="mt-2 flex-row items-center justify-between py-4">
-          <Text className="flex-1 text-xl font-bold text-gray-800">{data.title}</Text>
+      <View className="bg-white px-4 pb-6">
+        <View className="mt-1 flex-row items-center py-4">
+          <Typo className="font-SemiBold text-xl text-gray-800">
+            {data.title || '장소명 미제공'}
+          </Typo>
+          {data.businessType && (
+            <Typo className="ml-1.5 font-Light text-base leading-tight text-neutral-400">
+              {data.businessType}
+            </Typo>
+          )}
         </View>
 
         <View className="mb-8 flex-row flex-wrap" style={{ columnGap: 6 }}>
-          {/* <Tag category={data.cat2} /> */}
+          {(restaurantCat || touristCat).map((item, index) => (
+            <Tag key={index} category={item} />
+          ))}
         </View>
 
-        <InfoSection title="장소 소개" content={data.content || '장소 소개'} />
-        <InfoSection title="정보">
-          <InfoItem icon="phone" text={data.phone || '전화번호'} isBlack={true} />
-          <InfoItem
-            icon="calendar"
-            text={data.operatingTime || '운영시간 정보 제공 칸입니다'}
-            isBlack={true}
-          />
+        {data.report ||
+          (data.content && (
+            <>
+              <Typo className="mb-3 font-Medium text-lg text-gray-700">장소 소개</Typo>
+              <InfoSection content={data.report || data.content} />
+            </>
+          ))}
+        <Typo className="mb-3 font-Medium text-lg text-gray-700">정보</Typo>
+        <InfoSection>
+          <InfoItem icon="marker" text={data.address} />
+          <InfoItem icon="time" text={data.operatingTime || '운영시간 미제공'} />
+          <InfoItem icon="phone" text={data.phone || '전화번호 미제공'} />
         </InfoSection>
       </View>
 
-      <View className="mt-3 bg-white px-5 py-6">
-        <View className="mb-4 h-36 w-full">
-          <MapDetail geometry={{ lon: data.lng, lat: data.lat }} />
+      <View className="mt-3 bg-white px-4 py-6">
+        <Typo className="mb-3 font-Medium text-lg text-gray-700">지도</Typo>
+        <View className="mb-4 h-40 w-full overflow-hidden rounded-xl">
+          <MapDetail title={data.title} geometry={{ lon: data.lng, lat: data.lat }} />
         </View>
-
-        <InfoItem icon="marker" text={`경도: ${data.lng}, 위도: ${data.lat}`} isBlack={false} />
-        <InfoItem
-          icon="time"
-          text={data.operatingTime || '운영시간 정보 제공 칸입니다'}
-          isBlack={false}
-        />
+        <InfoItem icon="marker" text={data.address} />
       </View>
-    </ScrollView>
+    </>
   )
 }
 
-const InfoItem = ({ icon, text, isBlack }: { icon: IconName; text: string; isBlack: boolean }) => (
-  <View className="flex-row items-center py-1">
-    <SvgIcon name={icon} size={16} className={`${isBlack ? 'text-black' : 'text-neutral-400'}`} />
-    <Text className={`ml-2 text-sm ${isBlack ? 'text-black' : 'text-neutral-500'}`}>{text}</Text>
+const InfoItem = ({ icon, text }: { icon: IconName; text: string }) => (
+  <View className="flex-row items-center py-1.5">
+    <SvgIcon name={icon} size={16} className="text-BUSIM-slate" />
+    <Typo className="ml-2 text-[15px] leading-5 text-gray-700">{text}</Typo>
   </View>
 )
 
-const InfoSection = ({
-  title,
-  content,
-  children,
-}: {
-  title: string
-  content?: string
-  children?: React.ReactNode
-}) => (
-  <View className="mb-6">
-    <Text className="mb-4 text-lg font-semibold text-gray-700">{title}</Text>
-    <View className="w-full rounded-xl bg-[#BECCE8] p-4">
-      {content ? <Text className="text-sm text-black">{content}</Text> : children}
-    </View>
+const InfoSection = ({ content, children }: { content?: string; children?: React.ReactNode }) => (
+  <View className="w-full rounded-xl bg-BUSIM-slate-light px-3 py-3">
+    {content ? <Typo className="text-[15px] leading-6 text-gray-700">{content}</Typo> : children}
   </View>
 )
+
+// FIXME: API 수정 후 지우기
+const DEFAULT_IMAGE_URL = 'https://example.com/default-image.jpg'
+/**
+ * 유효한 이미지로 반환하는 함수
+ */
+const getValidImage = (
+  imageUrl: string | (string | null)[] | string[] | null | undefined,
+): string => {
+  if (!imageUrl) {
+    return DEFAULT_IMAGE_URL
+  }
+  if (typeof imageUrl === 'string') {
+    return imageUrl
+  }
+  // 배열인 경우 (null 값을 걸러내고 첫 번째 값 사용)
+  if (Array.isArray(imageUrl)) {
+    const filteredArray = imageUrl.filter((img): img is string => img !== null)
+    if (filteredArray.length > 0) {
+      const firstImage = filteredArray[0] as string
+      try {
+        const parsedArray = JSON.parse(firstImage)
+        if (Array.isArray(parsedArray) && parsedArray.length > 0) {
+          return parsedArray[0] as string
+        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (error) {
+        return firstImage
+      }
+    }
+  }
+
+  // 문제가 있을 경우 디폴트 이미지 반환
+  return DEFAULT_IMAGE_URL
+}
+
+/**
+ * 유효하지 않은 카테고리 문자열을 배열로 변환하는 함수
+ * @param {string} categoryStr - 변환할 카테고리 문자열
+ * @returns {string[]} 변환된 카테고리 배열
+ * @todo DB 수정 후 제거하심됩니다.
+ */
+const parseCategoryString = (categoryStr: string): string[] => {
+  try {
+    // 문자열이 배열 형식의 JSON이면 파싱 시도
+    const parsed = JSON.parse(categoryStr.replace(/'/g, '"'))
+    if (Array.isArray(parsed)) {
+      return parsed as string[]
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (e) {
+    // 파싱에 실패한 경우, 원본 문자열을 배열로 반환
+    return [categoryStr]
+  }
+
+  return [categoryStr]
+}
+
+/**
+ * 카테고리 데이터를 포맷팅하는 함수
+ * @param {string | string[] | null | undefined} category - 처리할 카테고리 데이터
+ * @returns {(string | CategoryType)[]} 포맷팅된 카테고리 배열
+ */
+const formatCategoryData = (category: string | string[] | null | undefined): string[] => {
+  if (!category) return []
+  let categoryList: string[] = []
+  // 카테고리가 배열일 경우
+  if (Array.isArray(category)) {
+    category.forEach(cat => {
+      const formattedCat = parseCategoryString(cat)
+      categoryList = categoryList.concat(formattedCat)
+    })
+  } else {
+    // 카테고리가 문자열일 경우
+    categoryList = parseCategoryString(category)
+  }
+  return categoryList.map(cat => {
+    // CATEGORY에 없는 값은 그대로 반환
+    if (Object.keys(CATEGORY).includes(cat as CategoryKey)) {
+      return CATEGORY[cat as CategoryKey]
+    }
+    return cat
+  })
+}
