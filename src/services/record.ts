@@ -4,6 +4,7 @@ import {
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
 } from '@tanstack/react-query'
+import { z } from 'zod'
 
 import {
   type PostRecord,
@@ -13,6 +14,7 @@ import {
   UpdateRecordSchema,
   RecordListResponseSchema,
   RecordListResponse,
+  MapRecordSchema,
 } from '@/types/schemas/record'
 
 import { instance, kakaoMap } from './instance'
@@ -33,11 +35,19 @@ export const useUpdateRecord = () => {
   return { mutateRecord: mutate }
 }
 
-/** 기록을 가져오는 훅입니다. */
+/** 상세한 기록을 가져오는 훅입니다. */
 export const useRecordDetail = (id: number) => {
   return useSuspenseQuery({
     queryKey: ['recordDetail', id],
     queryFn: () => get_record_detail({ markId: id }),
+  })
+}
+
+/** 지도기반의 기록을 가져오는 훅입니다. */
+export const useMapRecord = (lat: number, lng: number, level: string) => {
+  return useQuery({
+    queryKey: ['mapRecord', lat, lng, level],
+    queryFn: () => get_map_record({ lat, lng, level }),
   })
 }
 
@@ -101,6 +111,17 @@ export const patch_record = async (params: UpdateRecord) => {
 const get_record_detail = async (params: { markId: number }) => {
   const response = await instance('kkilogbu/').get(`record/${params.markId}`).json()
   return RecordDetailSchema.parse(response)
+}
+
+/**
+ * 지도 기반의 기록을 가져옵니다.
+ * @param lat - 위도
+ * @param lng - 경도
+ * @level level - 줌 레벨
+ */
+const get_map_record = async (params: { lat: number; lng: number; level: string }) => {
+  const response = await instance('kkilogbu/').get('record', { searchParams: params }).json()
+  return z.array(MapRecordSchema).parse(response)
 }
 
 /**

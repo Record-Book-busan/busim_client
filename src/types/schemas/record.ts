@@ -70,3 +70,11 @@ export const RecordListResponseSchema = z.object({
 })
 
 export type RecordListResponse = z.infer<typeof RecordListResponseSchema>
+
+export const MapRecordSchema = z.object({
+  id: z.number(),
+  imageUrl: z.string(),
+  lat: z.number(),
+  lng: z.number(),
+})
+export type MapPlace = z.infer<typeof MapRecordSchema>
