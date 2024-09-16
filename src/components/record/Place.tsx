@@ -1,63 +1,14 @@
 import { useNavigation } from '@react-navigation/native'
-import React, { useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Alert, Text, TouchableOpacity, View } from 'react-native'
 
 import { useLocation } from '@/hooks/useLocation'
 import { SvgIcon } from '@/shared'
 
-import { MapView } from '../map'
+import { RecordMapView } from '../map'
 
 import type { RootStackParamList } from '@/types/navigation'
 import type { StackNavigationProp } from '@react-navigation/stack'
-
-type MapViewProps = {
-  mapType: 'place' | 'record'
-  activeCategory: string[]
-  eyeState: boolean
-  location: {
-    lng: number
-    lat: number
-  }
-  locationPressed: boolean
-  isToiletPressed?: boolean
-  isTrafficPressed?: boolean
-  refreshed?: boolean
-}
-
-const MomorizedMapView = React.memo(
-  ({
-    mapType,
-    activeCategory,
-    eyeState,
-    location,
-    locationPressed,
-    isToiletPressed,
-    isTrafficPressed,
-  }: MapViewProps) => {
-    return (
-      <MapView
-        mapType={mapType}
-        activeCategory={activeCategory}
-        eyeState={eyeState}
-        location={location}
-        locationPressed={locationPressed}
-        isToiletPressed={isToiletPressed}
-        isTrafficPressed={isTrafficPressed}
-      />
-    )
-  },
-  (prevProps, nextProps) => {
-    return (
-      prevProps.activeCategory === nextProps.activeCategory &&
-      prevProps.eyeState === nextProps.eyeState &&
-      prevProps.locationPressed === nextProps.locationPressed &&
-      prevProps.isToiletPressed === nextProps.isToiletPressed &&
-      prevProps.isTrafficPressed === nextProps.isTrafficPressed &&
-      prevProps.refreshed === nextProps.refreshed &&
-      prevProps.mapType === nextProps.mapType
-    )
-  },
-)
 
 export function Place() {
   const { location, myPositionValid, refreshLocation } = useLocation()
@@ -144,8 +95,7 @@ export function Place() {
 
       {/* 지도 웹뷰 */}
       <View className="flex-1">
-        <MomorizedMapView
-          mapType={'record'}
+        <RecordMapView
           activeCategory={[]}
           eyeState={eyeState}
           location={location}
