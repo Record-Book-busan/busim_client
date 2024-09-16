@@ -48,7 +48,7 @@ export default function LoginScreen() {
   )
 
   return (
-    <SafeScreen excludeEdges={['bottom']}>
+    <SafeScreen excludeEdges={['bottom']} bgColor={'#5e7dc0'} statusBarColor={'light-content'}>
       <LinearGradient
         className="flex w-full flex-1 items-center justify-start"
         colors={['#5e7dc0', '#bac8e4', '#FFFFFF']}

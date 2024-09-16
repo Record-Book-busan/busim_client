@@ -95,7 +95,7 @@ export const RecommendSheet: React.FC<RecommendSheetProps> = ({ headerHeight }) 
       Platform.OS === 'android' ? screenHeight - headerHeight : screenHeight - headerHeight - 50
 
     return [
-      Math.max(Platform.OS === 'android' ? tabBarHeight - 20 : tabBarHeight + 5, 0), // 0: 바텀 탭 위에 살짝 보이는 높이 (최소 0)
+      Math.max(tabBarHeight - 20, 0), // 0: 바텀 탭 위에 살짝 보이는 높이 (최소 0)
       Math.max(availableHeight * 0.5, tabBarHeight + 20), // 1: 사용 가능한 높이의 중간
       availableHeight, // 2: 헤더 바로 아래까지
     ]

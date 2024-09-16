@@ -267,9 +267,7 @@ function MapView({
 
             data.push(...recordPromise)
 
-            webViewRef.current.injectJavaScript(
-              `settingImageOverlays(${JSON.stringify(activeCategory)}, ${JSON.stringify(data)})`,
-            )
+            webViewRef.current.injectJavaScript(`settingImageOverlays(${JSON.stringify(data)})`)
           }
         }
       } catch (err: any) {

@@ -15,14 +15,18 @@ export const useLocation = () => {
   const [tempLocation, setTempLocation] = useState<Location>(location)
   const { permissionStatus, requestLocationAccess } = useLocationPermission()
   const { refetch } = useLocationToAddr(tempLocation.lat, tempLocation.lng)
-  const [myPositionValid, setMyPositionValid] = useState<boolean>(false)
+  const [myPositionValid, setMyPositionValid] = useState<boolean>()
 
   useEffect(() => {
     const verifyLocation = async () => {
       try {
         const { data } = await refetch()
 
-        if (data?.documents[0]?.address.region_1depth_name.indexOf('부산') !== -1) {
+        if (
+          data !== undefined &&
+          data.documents.length > 0 &&
+          data.documents[0].address.region_1depth_name.indexOf('부산') !== -1
+        ) {
           setLocation({
             lat: tempLocation.lat,
             lng: tempLocation.lng,

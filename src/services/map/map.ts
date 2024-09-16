@@ -345,7 +345,7 @@ const map = `
                   const content = '<div class="customoverlay" onClick="handleOverlayClick({ lng: ' 
                     + position.getLng() + ', lat: ' + position.getLat() + ', level: ' + level + ', type: \\'' + types + '\\', id: \\'' + keys
                     + '\\' })" style="position:relative;bottom:40px;background:#00339D;border-radius:20px 20px 20px 0;padding:10px;box-shadow:0 2px 6px rgba(0,0,0,0.3);">'
-                    + '  <div style="position:relative;display:flex;align-items:center;pointer-events: none;">'
+                    + '  <div style="position:relative;display:flex;align-items:center;">'
                     + imagesHtml + countHtml
                     + '  </div>'
                     + '  <div style="position:absolute;bottom:-10px;left:0;width:0;height:0;border-top:10px solid #00339D;border-right:10px solid transparent;"></div>'
@@ -368,7 +368,7 @@ const map = `
       /**
        * 이미지 오버레이 생성 함수
        */
-      function settingImageOverlays(type, response) {
+      function settingImageOverlays(response) {
           initOverlays()
 
           const data = response
@@ -432,7 +432,7 @@ const map = `
               const content = '<div class="customoverlay" onClick="handleOverlayClick({ lng: ' 
                     + position.getLng() + ', lat: ' + position.getLat() + ', level: ' + level + ', type: \\'' + types + '\\', id: \\'' + keys
                     + '\\' })" style="position:relative;bottom:40px;background:#00339D;border-radius:20px 20px 20px 0;padding:10px;box-shadow:0 2px 6px rgba(0,0,0,0.3);">'
-                    + '  <div style="position:relative;display:flex;align-items:center;pointer-events: none;">'
+                    + '  <div style="position:relative;display:flex;align-items:center;">'
                     + imagesHtml + countHtml
                     + '  </div>'
                     + '  <div style="position:absolute;bottom:-10px;left:0;width:0;height:0;border-top:10px solid #00339D;border-right:10px solid transparent;"></div>'

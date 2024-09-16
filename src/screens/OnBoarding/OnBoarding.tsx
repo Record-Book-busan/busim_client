@@ -201,7 +201,7 @@ export default function OnBoardingScreen() {
               </Animated.View>
             </View>
           </View>
-          <View className="absolute bottom-12 w-full items-center px-6 pb-6 pt-4">
+          <View className="absolute bottom-12 z-10 w-full items-center px-6 pb-6 pt-4">
             <TouchableOpacity
               className="mb-3 w-40 rounded-full bg-blue-800 py-3"
               style={{

@@ -125,8 +125,6 @@ export default function MapScreen({ route }: MapScreenProps) {
   const handleLocationPress = () => {
     void refreshLocation()
 
-    console.log(myPositionValid)
-
     if (myPositionValid) {
       setLocationPressed(prev => !prev)
     } else {
