@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Geolocation from 'react-native-geolocation-service'
 
 import { useLocationToAddr } from '@/services/record'
@@ -12,45 +12,36 @@ type Location = {
 
 export const useLocation = () => {
   const [location, setLocation] = useState<Location>({ lng: 129.16, lat: 35.1626 })
-  const [tempLocation, setTempLocation] = useState<Location>(location)
   const { permissionStatus, requestLocationAccess } = useLocationPermission()
-  const { refetch } = useLocationToAddr(tempLocation.lat, tempLocation.lng)
-  const [myPositionValid, setMyPositionValid] = useState<boolean>()
+  const { refetch } = useLocationToAddr(location.lat, location.lng)
+  const [myPositionValid, setMyPositionValid] = useState<boolean>(false)
 
-  useEffect(() => {
-    const verifyLocation = async () => {
+  const verifyLocation = useCallback(
+    async (newLocation: Location) => {
       try {
         const { data } = await refetch()
-
-        if (
-          data !== undefined &&
-          data.documents.length > 0 &&
-          data.documents[0].address.region_1depth_name.indexOf('부산') !== -1
-        ) {
-          setLocation({
-            lat: tempLocation.lat,
-            lng: tempLocation.lng,
-          })
-
+        if (data?.documents[0]?.address.region_1depth_name.indexOf('부산') !== -1) {
+          setLocation(newLocation)
           setMyPositionValid(true)
         } else {
           setMyPositionValid(false)
         }
-      } catch (err: any) {
-        console.log(`error: ${err}`)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (_) {
+        console.log(`[ERROR]`)
       }
-    }
-
-    verifyLocation()
-  }, [tempLocation])
+    },
+    [refetch],
+  )
 
   const getCurrentLocation = () => {
     Geolocation.getCurrentPosition(
       position => {
-        setTempLocation({
+        const newLocation = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
-        })
+        }
+        void verifyLocation(newLocation)
       },
       error => {
         console.log(error.code, error.message)
