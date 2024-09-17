@@ -9,7 +9,6 @@ export type RootStackParamList = {
   OnBoardingStack: NavigatorScreenParams<OnboardingStackParamList>
   MainTab: NavigatorScreenParams<MainTabParamList>
   MapStack: NavigatorScreenParams<MapStackParamList>
-  RecordStack: NavigatorScreenParams<RecordStackParamList>
   CreateRecordStack: NavigatorScreenParams<CreateRecordStackParamList>
   MyPageStack: NavigatorScreenParams<MyPageStackParamList>
   SearchStack: NavigatorScreenParams<SearchStackParamList>
@@ -22,7 +21,7 @@ export type OnboardingStackParamList = {
 export type MainTabParamList = {
   Map: { categories: CategoryType[] }
   Search: undefined
-  Record: undefined
+  Record: NavigatorScreenParams<RecordStackParamList>
   MyPage: undefined
 }
 

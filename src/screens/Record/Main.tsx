@@ -1,11 +1,10 @@
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { useNavigation } from '@react-navigation/native'
 import { useState } from 'react'
 import { View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { SafeScreen, SearchHeader } from '@/components/common'
-import { Feed, Place } from '@/components/record'
+import { Place } from '@/components/record'
+import { FeedMain } from '@/components/record/FeedMain'
 import { Tab, TabView } from '@/shared'
 
 import type { RecordStackParamList } from '@/types/navigation'
@@ -14,8 +13,6 @@ import type { StackNavigationProp } from '@react-navigation/stack'
 export default function RecordMainScreen() {
   const [index, setIndex] = useState(0)
   const navigation = useNavigation<StackNavigationProp<RecordStackParamList, 'RecordMain'>>()
-  const bottomTabBarHeight = useBottomTabBarHeight()
-  const { bottom } = useSafeAreaInsets()
 
   const handleSearchBarPress = () => navigation.navigate('RecordSearch')
 
@@ -35,12 +32,7 @@ export default function RecordMainScreen() {
             <Place />
           </TabView.Item>
           <TabView.Item>
-            <Feed
-              data={[]}
-              contentContainerStyle={{
-                paddingBottom: bottomTabBarHeight - bottom,
-              }}
-            />
+            <FeedMain />
           </TabView.Item>
         </TabView>
       </View>
