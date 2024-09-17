@@ -1,5 +1,5 @@
-import { useColorScheme } from 'nativewind'
-import { useEffect } from 'react'
+import { useFocusEffect } from '@react-navigation/native'
+import React from 'react'
 import { ColorValue, Platform, StatusBar, StatusBarStyle } from 'react-native'
 import { SafeAreaView, type Edge } from 'react-native-safe-area-context'
 
@@ -16,21 +16,27 @@ export function SafeScreen({
   children,
   excludeEdges = [],
   bgColor = 'white',
-  textColor,
+  textColor = 'dark-content',
   statusBarColor = 'white',
   isTranslucent = false,
 }: SafeScreenProps) {
-  const { colorScheme } = useColorScheme()
+  useFocusEffect(
+    React.useCallback(() => {
+      if (Platform.OS === 'android') {
+        StatusBar.setBarStyle(textColor)
+        StatusBar.setBackgroundColor(statusBarColor)
+        StatusBar.setTranslucent(isTranslucent)
+      }
 
-  useEffect(() => {
-    if (Platform.OS === 'android') {
-      StatusBar.setBarStyle(
-        textColor ? textColor : colorScheme === 'dark' ? 'light-content' : 'dark-content',
-      )
-      StatusBar.setBackgroundColor(statusBarColor)
-      StatusBar.setTranslucent(isTranslucent)
-    }
-  }, [textColor, statusBarColor, isTranslucent])
+      return () => {
+        if (Platform.OS === 'android') {
+          StatusBar.setBarStyle('dark-content')
+          StatusBar.setBackgroundColor('white')
+          StatusBar.setTranslucent(false)
+        }
+      }
+    }, [textColor, statusBarColor, isTranslucent]),
+  )
 
   return (
     <SafeAreaView
@@ -39,14 +45,7 @@ export function SafeScreen({
       )}
       style={{ flex: 1, backgroundColor: bgColor }}
     >
-      {Platform.OS === 'ios' && (
-        <StatusBar
-          barStyle={
-            textColor ? textColor : colorScheme === 'dark' ? 'light-content' : 'dark-content'
-          }
-          backgroundColor={statusBarColor}
-        />
-      )}
+      {Platform.OS === 'ios' && <StatusBar barStyle={textColor} backgroundColor={statusBarColor} />}
       {children}
     </SafeAreaView>
   )

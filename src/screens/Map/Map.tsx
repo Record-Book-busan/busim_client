@@ -1,8 +1,7 @@
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
-import { useFocusEffect, useNavigation, type NavigationProp } from '@react-navigation/native'
-import React, { useState, useRef, useCallback } from 'react'
-import { View, Platform, Alert } from 'react-native'
-import { StatusBar } from 'react-native'
+import { useNavigation, type NavigationProp } from '@react-navigation/native'
+import { useState, useRef, useCallback } from 'react'
+import { View, Alert } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { SafeScreen, SearchBarView, Categories } from '@/components/common'
@@ -47,19 +46,15 @@ export default function MapScreen({ route }: MapScreenProps) {
     }
   }, [myPositionValid, refreshLocation])
 
-  useFocusEffect(
-    React.useCallback(() => {
-      if (Platform.OS === 'android') {
-        StatusBar.setBackgroundColor('transparent')
-        StatusBar.setTranslucent(true)
-      }
-    }, []),
-  )
-
   const bottomTabBarHeight = useBottomTabBarHeight()
 
   return (
-    <SafeScreen excludeEdges={['top']}>
+    <SafeScreen
+      excludeEdges={['top']}
+      statusBarColor={'transparent'}
+      textColor={'dark-content'}
+      isTranslucent={true}
+    >
       {/* 검색바 */}
       <View style={{ position: 'relative', marginTop: insets.top }}>
         <View
