@@ -30,13 +30,13 @@ export default function MapScreen({ route }: MapScreenProps) {
     setActiveCategory(cat)
   }, [])
 
-  const handleSearchBarPress = useCallback(() => {
+  const handleSearchBarPress = () => {
     navigation.navigate('SearchStack', { screen: 'Search' })
-  }, [navigation])
+  }
 
-  const handleEyePress = useCallback(() => {
+  const handleEyePress = () => {
     setEyeState(prev => !prev)
-  }, [])
+  }
 
   const handleLocationPress = useCallback(() => {
     void refreshLocation()

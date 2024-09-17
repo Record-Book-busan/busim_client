@@ -1,6 +1,11 @@
 import { createStackNavigator } from '@react-navigation/stack'
 
-import { RecordCreateScreen, RecordDetailScreen, RecordEditScreen } from '@/screens'
+import {
+  RecordEditScreen,
+  RecordMainScreen,
+  RecordResultScreen,
+  RecordSearchScreen,
+} from '@/screens'
 
 import type { RecordStackParamList } from '@/types/navigation'
 
@@ -13,9 +18,10 @@ function RecordStackNavigator() {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="CreateRecord" component={RecordCreateScreen} />
-      <Stack.Screen name="EditRecord" component={RecordEditScreen} />
-      <Stack.Screen name="ReadRecord" component={RecordDetailScreen} />
+      <Stack.Screen name="RecordMain" component={RecordMainScreen} />
+      <Stack.Screen name="RecordSearch" component={RecordSearchScreen} />
+      <Stack.Screen name="RecordResult" component={RecordResultScreen} />
+      <Stack.Screen name="ReadRecord" component={RecordEditScreen} />
     </Stack.Navigator>
   )
 }

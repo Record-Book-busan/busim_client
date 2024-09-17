@@ -12,3 +12,4 @@ export * from './RecordSubmitButton'
 
 export * from './hooks/useRecordForm'
 export * from './hooks/useCurrentLocationToAddr'
+export * from './hooks/useResentSearch'

@@ -1,24 +1,28 @@
-import { type NavigationProp, useNavigation } from '@react-navigation/native'
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
+import { useNavigation } from '@react-navigation/native'
 import { useState } from 'react'
 import { View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { SafeScreen, SearchHeader } from '@/components/common'
 import { Feed, Place } from '@/components/record'
 import { Tab, TabView } from '@/shared'
-import { RootStackParamList } from '@/types/navigation'
+
+import type { RecordStackParamList } from '@/types/navigation'
+import type { StackNavigationProp } from '@react-navigation/stack'
 
 export default function RecordMainScreen() {
   const [index, setIndex] = useState(0)
-  const navigation = useNavigation<NavigationProp<RootStackParamList, 'MainTab'>>()
+  const navigation = useNavigation<StackNavigationProp<RecordStackParamList, 'RecordMain'>>()
+  const bottomTabBarHeight = useBottomTabBarHeight()
+  const { bottom } = useSafeAreaInsets()
 
-  const handleSearchBarPress = () =>
-    navigation.navigate('SearchStack', {
-      screen: 'Search',
-    })
+  const handleSearchBarPress = () => navigation.navigate('RecordSearch')
 
   return (
     <SafeScreen>
-      <SearchHeader mode="view" placeholder="장소 검색" onPress={handleSearchBarPress} />
+      {/* 검색바 */}
+      <SearchHeader type="button" placeholder="장소 검색" onPress={handleSearchBarPress} />
       <View className="flex-1 bg-white">
         <View className="bg-white pt-2">
           <Tab value={index} onValueChange={setIndex}>
@@ -31,7 +35,12 @@ export default function RecordMainScreen() {
             <Place />
           </TabView.Item>
           <TabView.Item>
-            <Feed />
+            <Feed
+              data={[]}
+              contentContainerStyle={{
+                paddingBottom: bottomTabBarHeight - bottom,
+              }}
+            />
           </TabView.Item>
         </TabView>
       </View>

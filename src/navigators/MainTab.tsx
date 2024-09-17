@@ -2,8 +2,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Platform, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { RecordMainScreen, MyPageScreen, MapScreen } from '@/screens'
+import { MyPageScreen, MapScreen } from '@/screens'
 import { SvgIcon } from '@/shared'
+
+import RecordStackNavigator from './RecordStack'
 
 import type { IconName } from '@/shared/SvgIcon'
 import type { MainTabParamList } from '@/types/navigation'
@@ -65,7 +67,7 @@ function MainTabNavigator() {
       />
       <Tab.Screen
         name="Record"
-        component={RecordMainScreen}
+        component={RecordStackNavigator}
         options={{
           headerShown: false,
           tabBarLabel: '기록',

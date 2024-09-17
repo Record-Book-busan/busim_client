@@ -2,11 +2,11 @@ import { createStackNavigator } from '@react-navigation/stack'
 
 import { LoginScreen, PrivacyPolicyScreen } from '@/screens'
 
+import CreateRecordStackNavigator from './CreateRecordStack'
 import MainTabNavigator from './MainTab'
 import MapStackNavigator from './MapStack'
 import MyPageStackNavigator from './MyPageStack'
 import OnboardingStackNavigator from './OnboardingStack'
-import RecordStackNavigator from './RecordStack'
 import SearchStackNavigator from './SearchStack'
 
 import type { RootStackParamList } from '@/types/navigation'
@@ -29,7 +29,7 @@ function ApplicationNavigator() {
       <Stack.Screen name="OnBoardingStack" component={OnboardingStackNavigator} />
       <Stack.Screen name="MainTab" component={MainTabNavigator} />
       <Stack.Screen name="MapStack" component={MapStackNavigator} />
-      <Stack.Screen name="RecordStack" component={RecordStackNavigator} />
+      <Stack.Screen name="CreateRecordStack" component={CreateRecordStackNavigator} />
       <Stack.Screen name="MyPageStack" component={MyPageStackNavigator} />
       <Stack.Screen name="SearchStack" component={SearchStackNavigator} />
     </Stack.Navigator>

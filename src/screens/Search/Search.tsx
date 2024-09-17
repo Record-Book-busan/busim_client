@@ -1,10 +1,11 @@
 import { useNavigation } from '@react-navigation/native'
 import { Suspense, useState } from 'react'
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View } from 'react-native'
 
 import { SafeScreen, SearchHeader } from '@/components/common'
 import { SearchResults, RecentSearches } from '@/components/search'
 import { useRecentSearch } from '@/services/search'
+import { Typo } from '@/shared'
 
 import type { SearchStackParamList } from '@/types/navigation'
 import type { Place } from '@/types/schemas/place'
@@ -29,12 +30,13 @@ export default function SearchScreen() {
 
   const navigateToDetail = (place: Place) => {
     addRecentSearch(place)
-    navigation.navigate('Detail', { id: place.id })
+    navigation.navigate('Detail', { id: place.id, type: getCategoryType(place.category) })
   }
 
   return (
     <SafeScreen>
       <SearchHeader
+        type="input"
         placeholder="장소 검색"
         onChangeText={handleInputChange}
         value={query}
@@ -50,20 +52,24 @@ export default function SearchScreen() {
             onItemDelete={removeRecentSearch}
           />
         ) : (
-          <Suspense fallback={<Text>Loading...</Text>}>
+          <Suspense fallback={<Typo>Loading...</Typo>}>
             {query.trim() !== '' && <SearchResults query={query} onItemPress={navigateToDetail} />}
           </Suspense>
         )}
       </View>
-
-      {query && !isSearching && (
-        <TouchableOpacity
-          onPress={handleSearch}
-          className="absolute bottom-5 left-5 right-5 rounded-full bg-blue-500 p-3"
-        >
-          <Text className="text-center font-bold text-white">검색</Text>
-        </TouchableOpacity>
-      )}
     </SafeScreen>
   )
+}
+
+/**
+ * 주어진 문자열에 따라 카테고리 타입을 결정하는 함수
+ * @param str - 카테고리를 나타내는 문자열
+ * @returns 'restaurant' 또는 'tourist'
+ */
+export function getCategoryType(str: string): 'restaurant' | 'tourist' {
+  const lowercaseStr = str.toLowerCase()
+  if (lowercaseStr.includes('특별 맛집') || lowercaseStr.includes('맛집')) {
+    return 'restaurant'
+  }
+  return 'tourist'
 }
