@@ -11,7 +11,7 @@ import {
 
 import { Typo } from '@/shared'
 
-import type { MainTabParamList, RootStackParamList } from '@/types/navigation'
+import type { MainTabParamList, RecordStackParamList } from '@/types/navigation'
 import type { FeedType } from '@/types/schemas/record'
 import type { StackNavigationProp } from '@react-navigation/stack'
 
@@ -19,7 +19,7 @@ const NUM_COLUMNS = 3
 
 type FeedNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<MainTabParamList, 'Record'>,
-  StackNavigationProp<RootStackParamList>
+  StackNavigationProp<RecordStackParamList>
 >
 
 type FeedProps = Omit<FlatListProps<FeedType>, 'renderItem'>
@@ -28,10 +28,7 @@ export function Feed(props: FeedProps) {
   const navigation = useNavigation<FeedNavigationProp>()
 
   const handleNavigation = (id: number) => {
-    navigation.navigate('RecordStack', {
-      screen: 'ReadRecord',
-      params: { id },
-    })
+    navigation.navigate('ReadRecord', { id })
   }
 
   if (!props.data || props.data.length === 0) {

@@ -1,7 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack'
 
 import {
-  RecordEditScreen,
+  RecordDetailScreen,
   RecordMainScreen,
   RecordResultScreen,
   RecordSearchScreen,
@@ -21,7 +21,7 @@ function RecordStackNavigator() {
       <Stack.Screen name="RecordMain" component={RecordMainScreen} />
       <Stack.Screen name="RecordSearch" component={RecordSearchScreen} />
       <Stack.Screen name="RecordResult" component={RecordResultScreen} />
-      <Stack.Screen name="ReadRecord" component={RecordEditScreen} />
+      <Stack.Screen name="ReadRecord" component={RecordDetailScreen} />
     </Stack.Navigator>
   )
 }

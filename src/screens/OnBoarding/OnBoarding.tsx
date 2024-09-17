@@ -1,6 +1,6 @@
 import { useNavigation, type NavigationProp } from '@react-navigation/native'
 import { useState } from 'react'
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, TouchableOpacity } from 'react-native'
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -11,7 +11,7 @@ import Animated, {
 
 import { SafeScreen } from '@/components/common'
 import { CATEGORY, CategoryType, window } from '@/constants'
-import { Button, SvgIcon } from '@/shared'
+import { SvgIcon, Typo } from '@/shared'
 
 import type { RootStackParamList } from '@/types/navigation'
 
@@ -25,8 +25,6 @@ type Selection = {
   description?: string
 }
 
-// TODO: 애니메이션 안정성 검사해야함
-// FIXME: onPress 가끔 씹히는 버그 해결해야함
 export default function OnBoardingScreen() {
   const [currentScreen, setCurrentScreen] = useState<'tour' | 'food'>('tour')
   const [isAnimating, setIsAnimating] = useState(false)
@@ -135,44 +133,27 @@ export default function OnBoardingScreen() {
     }
   }
 
-  const handleBack = () => {
-    if (currentScreen === 'food' && !isAnimating) {
-      setIsAnimating(true)
-      progress.value = withTiming(0, { duration: 170 }, () => {
-        runOnJS(setCurrentScreen)('tour')
-        runOnJS(setIsAnimating)(false)
-      })
-    } else {
-      navigation.goBack()
-    }
-  }
-
   return (
     <SafeScreen excludeEdges={['bottom']}>
       <View className="flex-1">
         {/* 헤더  영역 */}
-        <View className="flex-row items-center justify-between px-3 py-2">
-          <Button type="touch" onPress={handleBack}>
-            <SvgIcon name="chevronLeft" width={18} height={18} />
-          </Button>
+        <View className="flex-row items-center justify-end px-5 py-2">
           <TouchableOpacity onPress={handleSkip}>
-            <Text className="text-sm text-gray-500 underline">전체 건너뛰기</Text>
+            <Typo className="font-Light text-sm text-gray-500 underline">건너뛰기</Typo>
           </TouchableOpacity>
         </View>
 
-        <View className="w-full flex-1 items-center px-6">
-          <View className="w-full pt-8">
-            <Text className="mb-2 text-2xl font-bold text-gray-800">
+        <View className="flex-1 px-6">
+          <View className="pt-8">
+            <Typo className="mb-2 font-Bold text-3xl text-gray-800">
               어떤 여행에{'\n'}관심이 있으세요?
-            </Text>
-            <Text className="mb-8 text-xs text-[#ECA39D]">관심 여행지를 모두 골라주세요.</Text>
+            </Typo>
+            <Typo className="mb-8 text-base text-gray-500">관심 여행지를 모두 골라주세요.</Typo>
 
             {/* 관광지도 관심사 선택 */}
             <View className="relative h-full">
               <Animated.View style={[{ position: 'absolute', width: '100%' }, animatedStyleTour]}>
-                <Text className="mb-8 text-center text-xl font-semibold text-gray-700">
-                  관광지도
-                </Text>
+                <Typo className="mb-4 font-Medium text-xl text-gray-700">관광지도</Typo>
                 {tourSelections.map(item => (
                   <Selection
                     key={item.id}
@@ -184,9 +165,7 @@ export default function OnBoardingScreen() {
 
               {/* 맛집지도 관심사 선택 */}
               <Animated.View style={[{ position: 'absolute', width: '100%' }, animatedStyleFood]}>
-                <Text className="mb-8 text-center text-xl font-semibold text-gray-700">
-                  맛집지도
-                </Text>
+                <Typo className="mb-4 font-Medium text-xl text-gray-700">맛집지도</Typo>
                 {foodSelections.map(item => (
                   <View key={item.id} className="mb-4">
                     <Selection
@@ -200,25 +179,19 @@ export default function OnBoardingScreen() {
                 ))}
               </Animated.View>
             </View>
+            <View className="h-32" />
           </View>
-          <View className="absolute bottom-12 z-10 w-full items-center px-6 pb-6 pt-4">
-            <TouchableOpacity
-              className="mb-3 w-40 rounded-full bg-blue-800 py-3"
-              style={{
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.25,
-                shadowRadius: 3.84,
-                elevation: 5,
-              }}
-              onPress={handleNext}
-            >
-              <Text className="text-md text-center font-bold text-white">계속하기</Text>
-            </TouchableOpacity>
-            <Text className="text-center text-xs text-gray-500">
-              관심 여행지는 나중에 다시 수정할 수 있어요!
-            </Text>
-          </View>
+        </View>
+        <View className="absolute bottom-3 left-0 right-0 w-full items-center p-6">
+          <TouchableOpacity
+            className="mb-3 w-2/3 rounded-full bg-BUSIM-blue-dark py-3.5"
+            onPress={handleNext}
+          >
+            <Typo className="text-center font-SemiBold text-lg text-white">계속하기</Typo>
+          </TouchableOpacity>
+          <Typo className="text-center text-xs text-gray-500">
+            관심 여행지는 나중에 다시 수정할 수 있어요!
+          </Typo>
         </View>
       </View>
     </SafeScreen>
@@ -236,13 +209,15 @@ function Selection({ title, icon, isSelected, onPress }: SelectionProps) {
   return (
     <TouchableOpacity
       onPress={onPress}
-      className={`mb-3 w-full rounded-2xl ${isSelected ? 'border-blue-600 bg-blue-50' : 'border-gray-200 bg-white'} border p-4`}
+      className={`mb-3 w-full rounded-2xl ${isSelected ? 'border-blue-600 bg-BUSIM-blue-light' : 'border-gray-200 bg-white'} border p-4`}
     >
       <View className="flex-row items-center justify-center">
-        <Text className="mr-2 text-2xl">{icon}</Text>
-        <Text className={`text-lg font-bold ${isSelected ? 'text-blue-700' : 'black'}`}>
+        <Typo className="mr-2 text-2xl">{icon}</Typo>
+        <Typo
+          className={`mr-2 font-SemiBold text-lg ${isSelected ? 'text-BUSIM-blue' : 'text-gray-800'}`}
+        >
           {title}
-        </Text>
+        </Typo>
       </View>
     </TouchableOpacity>
   )
@@ -260,10 +235,10 @@ function QuestionSection({ title, description }: QuestionSectionProps) {
         <SvgIcon name="question" />
       </View>
       <View className="ml-2 flex-1">
-        <Text className="text-sm text-[#96979E]">
-          <Text className="font-semibold text-[#6B6D75]">{title}</Text>이란?
-        </Text>
-        <Text className="text-sm font-light text-[#96979E]">{description}</Text>
+        <Typo className="text-sm text-[#96979E]">
+          <Typo className="font-Medium text-[#6B6D75]">{title}</Typo>이란?
+        </Typo>
+        <Typo className="font-Light text-sm text-[#96979E]">{description}</Typo>
       </View>
     </View>
   )
