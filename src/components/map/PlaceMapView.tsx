@@ -78,38 +78,42 @@ export const PlaceMapView = ({
     isParkingPressed,
   )
 
-  console.log(placeData)
-
   useEffect(() => {
-    if (!webViewRef.current || !eyeState) return
-    const data = [
-      ...(placeData || []).map(r => ({
-        title: r.id.toString(),
-        category: r.category,
-        type: r.type,
-        lat: r.lat,
-        lng: r.lng,
-      })),
-      ...(isToiletPressed && toiletData
-        ? toiletData.map(r => ({
-            title: r.toiletName,
-            category: 'TOILET',
-            lat: r.latitude,
-            lng: r.longitude,
-          }))
-        : []),
-      ...(isParkingPressed && parkingData
-        ? parkingData.map(r => ({
-            title: r.id.toString(),
-            category: 'PARKING',
-            lat: r.lat,
-            lng: r.lng,
-          }))
-        : []),
-    ]
-    webViewRef.current.injectJavaScript(
-      `settingPlaceOverlays(${JSON.stringify(activeCategory)}, ${JSON.stringify(data)})`,
-    )
+    if (!webViewRef.current) return
+
+    if (eyeState) {
+      const data = [
+        ...(placeData || []).map(r => ({
+          title: r.id.toString(),
+          category: r.category,
+          type: r.type,
+          lat: r.lat,
+          lng: r.lng,
+        })),
+        ...(isToiletPressed && toiletData
+          ? toiletData.map(r => ({
+              title: r.toiletName,
+              category: 'TOILET',
+              lat: r.latitude,
+              lng: r.longitude,
+            }))
+          : []),
+        ...(isParkingPressed && parkingData
+          ? parkingData.map(r => ({
+              title: r.id.toString(),
+              category: 'PARKING',
+              lat: r.lat,
+              lng: r.lng,
+            }))
+          : []),
+      ]
+      webViewRef.current.injectJavaScript(
+        `settingPlaceOverlays(${JSON.stringify(activeCategory)}, ${JSON.stringify(data)})`,
+      )
+    } else {
+      // eyeState가 false일 때 오버레이 제거
+      webViewRef.current.injectJavaScript('removeOverlays();')
+    }
   }, [
     eyeState,
     zoomLevel,

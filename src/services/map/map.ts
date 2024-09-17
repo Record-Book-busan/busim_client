@@ -137,6 +137,13 @@ const map = `<!DOCTYPE html>
     }
 
     /**
+     * 오버레이 제거 함수
+     */
+    function removeOverlays() {
+        initOverlays();
+    }
+
+    /**
      * 클러스터 키 가져오기
      */
     function getClusterKey(position) {
