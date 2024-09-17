@@ -48,6 +48,8 @@ export const useMapRecord = (lat: number, lng: number, level: string) => {
   return useQuery({
     queryKey: ['mapRecord', lat, lng, level],
     queryFn: () => get_map_record({ lat, lng, level }),
+    retryOnMount: false,
+    refetchOnWindowFocus: false,
   })
 }
 
@@ -109,7 +111,7 @@ export const patch_record = async (params: UpdateRecord) => {
  * @returns
  */
 const get_record_detail = async (params: { markId: number }) => {
-  const response = await instance('kkilogbu/').get(`record/${params.markId}`).json()
+  const response = await instance('kkilogbu/').get(`record/images/${params.markId}`).json()
   return RecordDetailSchema.parse(response)
 }
 

@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleGetInfoString</key>
-	<string/>
+	<string></string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -53,6 +53,13 @@
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
+			<key>tong.visitkorea.or.kr</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
 			<key>schedules.store</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>

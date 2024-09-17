@@ -1,28 +1,20 @@
-import { useNavigation } from '@react-navigation/native'
-import { useRef, useState } from 'react'
-import { Alert, Text, TouchableOpacity, View } from 'react-native'
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
+import { useState } from 'react'
+import { Alert, View } from 'react-native'
 
 import { useLocation } from '@/hooks/useLocation'
-import { SvgIcon } from '@/shared'
 
-import { RecordMapView } from '../map'
-
-import type { RootStackParamList } from '@/types/navigation'
-import type { StackNavigationProp } from '@react-navigation/stack'
+import { MapFAB, RecordMapView } from '../map'
 
 export function Place() {
   const { location, myPositionValid, refreshLocation } = useLocation()
-  const [eyeState, setEyeState] = useState(true)
-  const [locationPressed, setLocationPressed] = useState(false)
-  const [isBookMarked, setIsBookMarked] = useState(false)
-  const searchBarHight = useRef(0)
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'MainTab'>>()
+  const [isLocationPressed, setIsLocationPressed] = useState(false)
 
   const handleLocationPress = () => {
     void refreshLocation()
 
     if (myPositionValid) {
-      setLocationPressed(prev => !prev)
+      setIsLocationPressed(prev => !prev)
     } else {
       Alert.alert('서비스 제공 위치가 아닙니다', '부산 외 지역은 서비스 제공 지역이 아닙니다.', [
         { text: '확인', style: 'default' },
@@ -30,99 +22,23 @@ export function Place() {
     }
   }
 
-  const handleEyePress = () => {
-    setEyeState(prev => !prev)
-  }
+  const bottomTabBarHeight = useBottomTabBarHeight()
 
   return (
     <View className="mt-1 flex-1">
-      {/* 눈 아이콘 */}
+      {/* 내 위치 버튼 */}
       <View
-        className={`absolute right-2 z-[1px]`}
+        className="absolute bottom-0 right-4 z-[2] flex gap-4"
         style={{
-          top: searchBarHight.current + 25,
+          paddingBottom: bottomTabBarHeight - 10,
         }}
       >
-        <TouchableOpacity
-          style={{
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
-          }}
-          onPress={handleEyePress}
-          className={`flex items-center justify-center rounded-full p-2 ${eyeState ? 'bg-black' : 'bg-white'}`}
-        >
-          <SvgIcon name={eyeState ? 'eyeClose' : 'eyeOpen'} />
-        </TouchableOpacity>
-      </View>
-
-      <View className={`absolute bottom-32 right-4 z-[2px] flex gap-4`}>
-        {/* 북마크 아이콘 */}
-        <TouchableOpacity
-          style={{
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
-          }}
-          onPress={() => setIsBookMarked(prev => !prev)}
-          className={`flex h-11 w-11 items-center justify-center rounded-full bg-white`}
-        >
-          <SvgIcon
-            name="bookmark"
-            className={`${isBookMarked ? 'text-BUSIM-blue' : 'text-white'}`}
-          />
-        </TouchableOpacity>
-
-        {/* 내 위치 아이콘 */}
-        <TouchableOpacity
-          style={{
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
-          }}
-          onPress={handleLocationPress}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-white"
-        >
-          <SvgIcon name="position" />
-        </TouchableOpacity>
+        <MapFAB onPress={handleLocationPress} iconName="position" enabled={isLocationPressed} />
       </View>
 
       {/* 지도 웹뷰 */}
       <View className="flex-1">
-        <RecordMapView
-          activeCategory={[]}
-          eyeState={eyeState}
-          location={location}
-          locationPressed={locationPressed}
-        />
-      </View>
-
-      <View className={`absolute bottom-32 left-4 z-[2px] flex w-3/4 gap-4`}>
-        <TouchableOpacity
-          style={{
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
-          }}
-          className="flex h-14 items-start justify-center rounded-xl bg-white px-4"
-          onPress={() => {
-            navigation.navigate('RecordStack', { screen: 'CreateRecord' })
-          }}
-        >
-          <View className="">
-            <Text className="text-base font-bold text-black">여행 기록 작성하기</Text>
-            <Text className="text-xs text-[#ECA39D]">현위치로 기록이 남겨집니다.</Text>
-          </View>
-          <SvgIcon name="doubleChevronRight" className="absolute right-2 text-black" />
-        </TouchableOpacity>
+        <RecordMapView location={location} isLocationPressed={isLocationPressed} />
       </View>
     </View>
   )

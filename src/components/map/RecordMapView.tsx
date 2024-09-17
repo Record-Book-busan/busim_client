@@ -1,6 +1,5 @@
 import { useNavigation } from '@react-navigation/native'
 import React, { useEffect, useCallback, useRef, useState } from 'react'
-import { View, Text, ActivityIndicator } from 'react-native'
 import { WebView, type WebViewMessageEvent } from 'react-native-webview'
 
 import map from '@/services/map/map'
@@ -12,121 +11,107 @@ import type { StackNavigationProp } from '@react-navigation/stack'
 type ReturnProps = {
   type: string
   data: {
-    zoomLevel: string
-    lat: number
-    lng: number
-    type: string
-    id: number
+    zoomLevel?: string
+    lat?: number
+    lng?: number
+    type?: string
+    id?: number
   }
 }
 
 type ResponseType = {
-  title: string
-  type: string
+  id: string
+  category: string
   lat: number
   lng: number
   url?: string
 }
 
 type MapViewProps = {
-  activeCategory: string[]
-  eyeState: boolean
   location: { lng: number; lat: number }
-  locationPressed: boolean
+  isLocationPressed: boolean
 }
 
-export const RecordMapView = React.memo(
-  ({ activeCategory, eyeState, location, locationPressed }: MapViewProps) => {
-    const webViewRef = useRef<WebView>(null)
-    const [loading, setLoading] = useState(false)
-    const [nowLat, setNowLat] = useState(location.lat)
-    const [nowLng, setNowLng] = useState(location.lng)
-    const [zoomLevel, setZoomLevel] = useState('LEVEL_3')
+export const RecordMapView = React.memo(({ location, isLocationPressed }: MapViewProps) => {
+  const webViewRef = useRef<WebView>(null)
+  const [nowLat, setNowLat] = useState(location.lat)
+  const [nowLng, setNowLng] = useState(location.lng)
+  const [zoomLevel, setZoomLevel] = useState('LEVEL_3')
 
-    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>()
-    const { data: recordData } = useMapRecord(nowLat, nowLng, zoomLevel)
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>()
+  const { data: recordData } = useMapRecord(nowLat, nowLng, zoomLevel)
 
-    const updateOverlays = useCallback(() => {
-      if (!webViewRef.current || !eyeState) return
+  const updateOverlays = useCallback(() => {
+    if (!webViewRef.current) return
 
-      const data: ResponseType[] = []
+    if (recordData) {
+      const data: ResponseType[] = recordData.map(r => ({
+        id: r.id.toString(),
+        category: 'RECORD',
+        lat: r.lat,
+        lng: r.lng,
+        // url: r.imageUrl ? `${process.env.IMAGE_URL}/postImage/${r.imageUrl}` : undefined,
+      }))
 
-      if (recordData) {
-        data.push(
-          ...recordData.map(r => ({
-            title: r.id.toString(),
-            type: 'RECORD',
-            lat: r.lat,
-            lng: r.lng,
-            url: `${process.env.IMAGE_URL}/postImage/${r.imageUrl}`,
-          })),
-        )
-      }
+      console.log(data)
 
-      webViewRef.current.injectJavaScript(
-        `settingImageOverlays(${JSON.stringify(activeCategory)}, ${JSON.stringify(data)})`,
-      )
-    }, [webViewRef, eyeState, activeCategory, recordData])
+      webViewRef.current.injectJavaScript(`settingImageOverlays(${JSON.stringify(data)})`)
+    } else {
+      webViewRef.current.injectJavaScript('initOverlays()') // 데이터가 없을 경우 오버레이 초기화
+    }
+  }, [recordData])
 
-    useEffect(() => {
-      updateOverlays()
-    }, [updateOverlays])
+  useEffect(() => {
+    updateOverlays()
+  }, [updateOverlays])
 
-    useEffect(() => {
-      setLoading(true)
-      updateOverlays()
-      setLoading(false)
-    }, [])
+  useEffect(() => {
+    if (webViewRef.current) {
+      webViewRef.current.injectJavaScript(`moveMap(${JSON.stringify(location)})`)
+    }
+  }, [isLocationPressed, location])
 
-    useEffect(() => {
-      if (webViewRef.current) {
-        webViewRef.current.injectJavaScript(`moveMap(${JSON.stringify(location)})`)
-      }
-    }, [locationPressed, location])
-
-    const handleMessage = useCallback((event: WebViewMessageEvent) => {
+  const handleMessage = useCallback(
+    (event: WebViewMessageEvent) => {
       const eventData: ReturnProps = JSON.parse(event.nativeEvent.data)
 
       switch (eventData.type) {
         case 'zoomChanged':
-          setZoomLevel(eventData.data.zoomLevel)
+          if (eventData.data.zoomLevel) setZoomLevel(eventData.data.zoomLevel)
           break
         case 'dragend':
-          setNowLat(eventData.data.lat)
-          setNowLng(eventData.data.lng)
+          if (eventData.data.lat && eventData.data.lng) {
+            setNowLat(eventData.data.lat)
+            setNowLng(eventData.data.lng)
+          }
           break
         case 'overlayClick':
-          navigateToDetail(eventData.data.id)
+          console.log(eventData.data)
+          if (eventData.data.id) {
+            navigation.navigate('RecordStack', {
+              screen: 'ReadRecord',
+              params: { id: eventData.data.id },
+            })
+          }
           break
       }
-    }, [])
+    },
+    [navigation],
+  )
 
-    const navigateToDetail = (id: number) => {
-      navigation.navigate('RecordStack', { screen: 'ReadRecord', params: { id } })
-    }
-
-    return (
-      <>
-        {loading && (
-          <View className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
-            <ActivityIndicator size="large" color="#ffffff" />
-            <Text className="mt-2 text-lg text-white">Now loading...</Text>
-          </View>
-        )}
-        <WebView
-          ref={webViewRef}
-          source={{ html: map }}
-          injectedJavaScript={`
-          kakao.maps.load(function(){
-            const map = createMap(${JSON.stringify(location)})
-          })
-        `}
-          onMessage={handleMessage}
-          javaScriptEnabled={true}
-          domStorageEnabled={true}
-          cacheEnabled={false}
-        />
-      </>
-    )
-  },
-)
+  return (
+    <WebView
+      ref={webViewRef}
+      source={{ html: map }}
+      injectedJavaScript={`
+        kakao.maps.load(function(){
+          const map = createMap(${JSON.stringify(location)});
+        });
+      `}
+      onMessage={handleMessage}
+      javaScriptEnabled
+      domStorageEnabled
+      cacheEnabled={false}
+    />
+  )
+})

@@ -6,7 +6,7 @@ import { Tab, TabView } from '@/shared'
 
 import { ImagePlaceItem } from './ImagePlaceItem'
 
-import type { Place } from '@/types/schemas/search'
+import type { Place } from '@/types/schemas/place'
 
 type SearchResultsProps = {
   query: string
@@ -40,7 +40,6 @@ export const SearchResults = React.memo(({ query, onItemPress }: SearchResultsPr
     <View className="flex-1 bg-white">
       <Tab value={index} onValueChange={setIndex} containerStyle="border-b-2 border-gray-200">
         <Tab.Item>장소</Tab.Item>
-        <Tab.Item>여행 기록</Tab.Item>
       </Tab>
       <TabView value={index} onValueChange={setIndex} disableSwipe>
         <TabView.Item>
@@ -60,9 +59,6 @@ export const SearchResults = React.memo(({ query, onItemPress }: SearchResultsPr
               showsHorizontalScrollIndicator={false}
             />
           </View>
-        </TabView.Item>
-        <TabView.Item>
-          <Text className="p-4">데이터 추가하고 수정해야함!!!</Text>
         </TabView.Item>
       </TabView>
     </View>

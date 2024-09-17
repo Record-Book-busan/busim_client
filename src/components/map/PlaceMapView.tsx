@@ -81,36 +81,35 @@ export const PlaceMapView = ({
   console.log(placeData)
 
   useEffect(() => {
-    if (webViewRef.current) {
-      const data = [
-        ...(placeData || []).map(r => ({
-          title: r.id.toString(),
-          category: r.category,
-          type: r.type,
-          lat: r.lat,
-          lng: r.lng,
-        })),
-        ...(isToiletPressed && toiletData
-          ? toiletData.map(r => ({
-              title: r.toiletName,
-              category: 'TOILET',
-              lat: r.latitude,
-              lng: r.longitude,
-            }))
-          : []),
-        ...(isParkingPressed && parkingData
-          ? parkingData.map(r => ({
-              title: r.id.toString(),
-              category: 'PARKING',
-              lat: r.lat,
-              lng: r.lng,
-            }))
-          : []),
-      ]
-      webViewRef.current.injectJavaScript(
-        `settingPlaceOverlays(${JSON.stringify(activeCategory)}, ${JSON.stringify(data)})`,
-      )
-    }
+    if (!webViewRef.current || !eyeState) return
+    const data = [
+      ...(placeData || []).map(r => ({
+        title: r.id.toString(),
+        category: r.category,
+        type: r.type,
+        lat: r.lat,
+        lng: r.lng,
+      })),
+      ...(isToiletPressed && toiletData
+        ? toiletData.map(r => ({
+            title: r.toiletName,
+            category: 'TOILET',
+            lat: r.latitude,
+            lng: r.longitude,
+          }))
+        : []),
+      ...(isParkingPressed && parkingData
+        ? parkingData.map(r => ({
+            title: r.id.toString(),
+            category: 'PARKING',
+            lat: r.lat,
+            lng: r.lng,
+          }))
+        : []),
+    ]
+    webViewRef.current.injectJavaScript(
+      `settingPlaceOverlays(${JSON.stringify(activeCategory)}, ${JSON.stringify(data)})`,
+    )
   }, [
     eyeState,
     zoomLevel,

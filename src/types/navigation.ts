@@ -10,6 +10,7 @@ export type RootStackParamList = {
   MainTab: NavigatorScreenParams<MainTabParamList>
   MapStack: NavigatorScreenParams<MapStackParamList>
   RecordStack: NavigatorScreenParams<RecordStackParamList>
+  CreateRecordStack: NavigatorScreenParams<CreateRecordStackParamList>
   MyPageStack: NavigatorScreenParams<MyPageStackParamList>
   SearchStack: NavigatorScreenParams<SearchStackParamList>
 }
@@ -30,10 +31,16 @@ export type MapStackParamList = {
   MapRecommend: undefined
 }
 
-export type RecordStackParamList = {
+export type CreateRecordStackParamList = {
   CreateRecord: undefined
-  ReadRecord: { id: number }
   EditRecord: { id: number }
+}
+
+export type RecordStackParamList = {
+  RecordMain: undefined
+  RecordSearch?: { query?: string }
+  RecordResult: { query: string }
+  ReadRecord: { id: number }
 }
 
 export type MyPageStackParamList = {
@@ -46,7 +53,7 @@ export type MyPageStackParamList = {
 
 export type SearchStackParamList = {
   Search: undefined
-  Detail: { id: number }
+  Detail: { id: number; type: string }
 }
 
 export type RootScreenProps<S extends keyof RootStackParamList = keyof RootStackParamList> =

@@ -22,11 +22,12 @@ export type UpdateRecord = z.infer<typeof UpdateRecordSchema>
 export const RecordDetailSchema = z.object({
   id: z.number(),
   title: z.string().min(1).max(100),
-  content: z.string().min(1).max(1000),
-  imageUrl: z.string().url(),
+  thumbnailUrl: z.string().url().nullable(),
+  address: z.string(),
   lat: z.number().min(-90).max(90),
   lng: z.number().min(-180).max(180),
-  createdAt: z.string().datetime(),
+  touristCategory: z.string().optional(),
+  restaurantCategory: z.string().optional(),
 })
 export type RecordDetail = z.infer<typeof RecordDetailSchema>
 
@@ -78,3 +79,10 @@ export const MapRecordSchema = z.object({
   lng: z.number(),
 })
 export type MapPlace = z.infer<typeof MapRecordSchema>
+
+export const FeedSchema = z.object({
+  id: z.number(),
+  imageUrl: z.string().url().or(z.literal('')),
+})
+export type FeedType = z.infer<typeof FeedSchema>
+export const FeedArraySchema = z.array(FeedSchema)

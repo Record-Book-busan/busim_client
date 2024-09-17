@@ -39,8 +39,41 @@ export const PlaceDetailSchema = z.object({
   businessType: z.string().nullable().optional(),
   report: z.string().nullable().optional(),
 })
-
 export type PlaceDetail = z.infer<typeof PlaceDetailSchema>
+
+const SearchDetailBaseSchema = z.object({
+  id: z.number(),
+  title: z.string().optional(),
+  address: z.string(),
+  lat: z.number(),
+  lng: z.number(),
+  cat1: z.string(),
+  report: z.string(),
+  phoneNumber: z.string().optional(),
+})
+
+const SearchTouristSchema = SearchDetailBaseSchema.extend({
+  cat1: z.literal('tourist'),
+  imageUrl2: z.string().url(),
+  touristCat2: z.string(),
+})
+
+const SearchDetailRestaurantSchema = SearchDetailBaseSchema.extend({
+  cat1: z.literal('restaurant'),
+  imageUrl: z.array(z.string().url()),
+  restaurantCat2: z.array(z.string()),
+  phoneNumber: z.string(),
+  businessType: z.string(),
+})
+
+export const SearchDetailSchema = z.discriminatedUnion('cat1', [
+  SearchTouristSchema,
+  SearchDetailRestaurantSchema,
+])
+export type SearchDetailBase = z.infer<typeof SearchDetailBaseSchema>
+export type SearchTourist = z.infer<typeof SearchTouristSchema>
+export type SearchDetailRestaurant = z.infer<typeof SearchDetailRestaurantSchema>
+export type SearchDetail = z.infer<typeof SearchDetailSchema>
 
 export const MapPlaceSchema = z.object({
   id: z.number(),

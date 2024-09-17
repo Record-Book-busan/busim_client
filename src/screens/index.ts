@@ -7,6 +7,8 @@ export { default as RecordCreateScreen } from './Record/Create'
 export { default as RecordEditScreen } from './Record/Edit'
 export { default as RecordMainScreen } from './Record/Main'
 export { default as RecordDetailScreen } from './Record/Detail'
+export { default as RecordResultScreen } from './Record/Result'
+export { default as RecordSearchScreen } from './Record/Search'
 
 export { default as MyPageScreen } from './MyPage/MyPage'
 export { default as ProfileSettingScreen } from './MyPage/ProfileSetting'
