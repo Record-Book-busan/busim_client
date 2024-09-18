@@ -1,7 +1,9 @@
+import { useEffect, useState } from 'react'
 import { Image, ScrollView, Text, View } from 'react-native'
 import Lightbox from 'react-native-lightbox-v2'
 
 import { window } from '@/constants'
+import { validateImageUri } from '@/services/image'
 import { useRecordDetail } from '@/services/record'
 import { SvgIcon } from '@/shared'
 
@@ -9,6 +11,19 @@ const { width } = window
 
 export function RecordDetailContent({ id }: { id: number }) {
   const { data: record } = useRecordDetail(id)
+  const [imageUri, setImageUri] = useState<string>()
+
+  useEffect(() => {
+    const fetchImageUri = async () => {
+      const validImageUri = await validateImageUri(
+        record.thumbnailUrl !== null ? record.thumbnailUrl : undefined,
+      )
+      setImageUri(validImageUri)
+    }
+
+    fetchImageUri()
+  }, [record.thumbnailUrl])
+
   return (
     <ScrollView className="flex-1">
       {/* 이미지 */}
@@ -19,7 +34,7 @@ export function RecordDetailContent({ id }: { id: number }) {
             resizeMode: 'contain',
           }}
         >
-          <Image source={{ uri: record.thumbnailUrl || '' }} className="h-full w-full" />
+          <Image source={{ uri: imageUri }} className="h-full w-full" />
         </Lightbox>
       </View>
 

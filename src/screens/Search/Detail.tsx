@@ -1,10 +1,11 @@
 import { type RouteProp } from '@react-navigation/native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { ScrollView, View } from 'react-native'
 
 import { ImageCarousel, SafeScreen, Tag } from '@/components/common'
 import { MapDetail } from '@/components/map'
 import { useAnimatedHeader } from '@/hooks/useAnimatedHeader'
+import { validateImageUris } from '@/services/image'
 import { useSearchDetail } from '@/services/search'
 import { AnimatedHeader, SvgIcon, Typo, type IconName } from '@/shared'
 import { isRestaurant, isTourist } from '@/types/guards/is'
@@ -19,8 +20,18 @@ interface DetailScreenProps {
 export default function DetailScreen({ route }: DetailScreenProps) {
   const { id, type } = route.params
   const { data } = useSearchDetail(type, id)
+  const [imageUris, setImageUris] = useState<string[]>([])
 
   const { scrollY, handleScroll } = useAnimatedHeader()
+
+  useEffect(() => {
+    const fetchImageUris = async () => {
+      const validImageUris = await getImageUrl(data)
+      setImageUris(validImageUris)
+    }
+
+    fetchImageUris()
+  }, [data])
 
   return (
     <SafeScreen>
@@ -40,7 +51,7 @@ export default function DetailScreen({ route }: DetailScreenProps) {
         contentContainerStyle={{ paddingTop: 0 }}
       >
         <View className="w-full bg-white">
-          <ImageCarousel images={getImageUrl(data)} />
+          <ImageCarousel images={imageUris} />
         </View>
 
         <View className="bg-white px-4 pb-6">
@@ -109,11 +120,16 @@ const InfoSection: React.FC<{ content?: string; children?: React.ReactNode }> = 
   </View>
 )
 
-export function getImageUrl(detail: SearchDetail): string[] {
+export async function getImageUrl(detail: SearchDetail): Promise<string[]> {
+  let imageUrls: string[] = []
+
   if (isTourist(detail)) {
-    return [detail.imageUrl2]
+    imageUrls = [detail.imageUrl2]
   } else if (isRestaurant(detail)) {
-    return detail.imageUrl
+    imageUrls = detail.imageUrl
   }
-  return []
+
+  const validImageUrls = await validateImageUris(imageUrls)
+
+  return validImageUrls
 }

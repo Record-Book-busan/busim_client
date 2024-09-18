@@ -1,5 +1,6 @@
 import { type BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
 import { type CompositeNavigationProp, useNavigation } from '@react-navigation/native'
+import { useEffect, useState } from 'react'
 import {
   FlatList,
   Image,
@@ -9,6 +10,7 @@ import {
   type FlatListProps,
 } from 'react-native'
 
+import { validateImageUri } from '@/services/image'
 import { Typo } from '@/shared'
 
 import type { MainTabParamList, RecordStackParamList } from '@/types/navigation'
@@ -55,26 +57,25 @@ export function Feed(props: FeedProps) {
 const Item = ({ item, onPress }: { item: FeedType; onPress: () => void }) => {
   const { width } = useWindowDimensions()
   const size = width / NUM_COLUMNS
+  const [imageUri, setImageUri] = useState<string>()
 
-  console.log(item.imageUrl)
+  useEffect(() => {
+    const fetchImageUri = async () => {
+      const validImageUri = await validateImageUri(item.imageUrl)
+      setImageUri(validImageUri)
+    }
+
+    fetchImageUri()
+  }, [item.imageUrl])
 
   return (
     <TouchableOpacity onPress={onPress} className="p-[1.25px]">
-      {item.imageUrl ? (
-        <Image
-          source={{ uri: item.imageUrl }}
-          className="h-full w-full"
-          style={{ width: size - 4, height: size - 4 }}
-          resizeMode="cover"
-        />
-      ) : (
-        <View
-          style={{ width: size - 4, height: size - 4 }}
-          className="items-center justify-center bg-gray-200"
-        >
-          <Typo>No Image</Typo>
-        </View>
-      )}
+      <Image
+        source={{ uri: imageUri }}
+        className="h-full w-full"
+        style={{ width: size - 4, height: size - 4 }}
+        resizeMode="cover"
+      />
     </TouchableOpacity>
   )
 }

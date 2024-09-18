@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
+import ky from 'ky'
 
 import { showToast } from '@/utils/toast'
 
@@ -15,6 +16,8 @@ type ImageType = 'post' | 'profile'
 type getImageProps = {
   name: string
 }
+
+const baseUri = 'https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg'
 
 /**
  * 이미지를 가져옵니다.
@@ -83,3 +86,55 @@ interface DelImageProps {
  */
 export const delImage = async (params: DelImageProps) =>
   await instance('api/').delete('image', { json: params }).json()
+
+/**
+ * 이미지 유효성을 체크하고, 유효하지 않을 시 ImageUri를 리턴합니다.
+ * @param uri - 이미지 URI
+ */
+export const validateImageUri = async (uri?: string): Promise<string> => {
+  if (uri) {
+    try {
+      const response = await ky.get(uri)
+
+      if (response.ok) {
+        return uri
+      } else {
+        console.error('[ERROR] 유효하지 않은 이미지:', response.status)
+
+        return baseUri
+      }
+    } catch (error) {
+      console.error('[ERROR] 이미지 로드 실패:', error)
+
+      return baseUri
+    }
+  }
+
+  return baseUri
+}
+
+/**
+ * 이미지들 유효성을 체크하고, 유효하지 않을 시 ImageUri를 리턴합니다.
+ * @param uri - 이미지 URI
+ */
+export const validateImageUris = async (uris: string[]): Promise<string[]> => {
+  const validUris: string[] = []
+
+  for (const imageUrl of uris) {
+    try {
+      const response = await ky.head(imageUrl)
+
+      if (response.ok) {
+        validUris.push(imageUrl)
+      } else {
+        console.error('[ERROR] 유효하지 않은 이미지:', response.status)
+        validUris.push(baseUri)
+      }
+    } catch (error) {
+      console.error('[ERROR] 이미지 로드 실패:', error)
+      validUris.push(baseUri)
+    }
+  }
+
+  return validUris
+}

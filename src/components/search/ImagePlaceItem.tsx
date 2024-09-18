@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react'
 import { TouchableOpacity, View } from 'react-native'
 
+import { validateImageUri } from '@/services/image'
 import { ImageVariant, SvgIcon, Typo } from '@/shared'
 import { ButtonPrimitive } from '@/shared/Button'
 
@@ -26,17 +28,25 @@ export function ImagePlaceItem({
   onPressBookMark,
   onPressMove,
   isBookMarked,
-  // imageUrl,
+  imageUrl,
 }: ImagePlaceItemProps) {
+  const [imageUri, setImageUri] = useState<string>()
+
+  useEffect(() => {
+    const fetchImageUri = async () => {
+      const validImageUri = await validateImageUri(imageUrl)
+      setImageUri(validImageUri)
+    }
+
+    fetchImageUri()
+  }, [imageUri])
+
   return (
     <View className="border-b border-neutral-200 py-3 last:border-b-0">
       <ButtonPrimitive animationConfig={{ toValue: 0.99 }} onPress={() => onPressMove(id)}>
         <View className="flex-row">
           <View className="mr-3">
-            <ImageVariant
-              className="aspect-3/4 h-24 w-20 rounded-lg"
-              source={{ uri: 'https://via.placeholder.com/640x480' }} // FIXME: 디폴트 이미지 추가 필요!
-            />
+            <ImageVariant className="aspect-3/4 h-24 w-20 rounded-lg" source={{ uri: imageUri }} />
             {isBookMarked && onPressBookMark && (
               <View className="absolute left-1 top-1">
                 <BookmarkButton
