@@ -429,7 +429,7 @@ const map = `<!DOCTYPE html>
     });
     }
 
-   /**
+    /**
      * 이미지 오버레이 생성 함수
      */
     function settingImageOverlays(response) {
@@ -467,82 +467,80 @@ const map = `<!DOCTYPE html>
         }
     }
 
-/**
- * 단일 이미지 오버레이 생성 함수
- */
-function createSingleImageOverlay(item, level) {
-    const imageUrl = getOverlayImage('RECORD');
-    const content = '<div class="single-overlay" onClick="handleOverlayClick({ lng: ' + item.lng +
-        ', lat: ' + item.lat +
-        ', level: ' + level +
-        ', category: \\\'' + item.category + '\\\', id: \\\'' + item.id + '\\\' })">' +
-        '<div class="icons">' +
-            '<img class="icon" src="' + imageUrl + '" alt="Marker"/>' +
-        '</div>' +
-    '</div>';
+    /**
+     * 단일 이미지 오버레이 생성 함수
+     */
+    function createSingleImageOverlay(item, level) {
+        const imageUrl = getOverlayImage('RECORD');
+        const content = '<div class="single-overlay" onClick="handleOverlayClick({ lng: ' + item.lng +
+            ', lat: ' + item.lat +
+            ', level: ' + level +
+            ', category: \\\'' + item.category + '\\\', id: \\\'' + item.id + '\\\' })">' +
+            '<div class="icons">' +
+                '<img class="icon" src="' + imageUrl + '" alt="Marker"/>' +
+            '</div>' +
+        '</div>';
 
-    return new kakao.maps.CustomOverlay({
-        position: new kakao.maps.LatLng(item.lat, item.lng),
-        content: content,
-        yAnchor: getAnchorY(level),
-        xAnchor: 0,
-    });
-}
-
-
-/**
- * 클러스터 이미지 오버레이 생성 함수
- */
-function createClusteredImageOverlay(items, level) {
-    let sumLat = 0;
-    let sumLng = 0;
-    let ids = '';
-    let categories = '';
-    let imagesHtml = '';
-    let imageCount = Math.min(items.length, 5);
-
-    const imageUrl = getOverlayImage('RECORD');
-
-    for (let i = 0; i < imageCount; i++) {
-        const item = items[i];
-        sumLat += item.lat;
-        sumLng += item.lng;
-
-        imagesHtml += '<img src="' + imageUrl + '" class="icon" style="left:' + (i * 15) +
-            'px; z-index:' + (imageCount - i) + ';"/>';
+        return new kakao.maps.CustomOverlay({
+            position: new kakao.maps.LatLng(item.lat, item.lng),
+            content: content,
+            yAnchor: getAnchorY(level),
+            xAnchor: 0,
+        });
     }
 
-    items.forEach((item) => {
-        ids += item.id + ',';
-        categories += item.category + ',';
-    });
-    ids = ids.slice(0, -1);
-    categories = categories.slice(0, -1);
 
-    const position = new kakao.maps.LatLng(sumLat / items.length, sumLng / items.length);
-    const countHtml = '<div class="count" style="margin-left:' +
-        ((imageCount - 1) * 15 + 35) + 'px;">+' + items.length + '</div>';
+    /**
+     * 클러스터 이미지 오버레이 생성 함수
+     */
+    function createClusteredImageOverlay(items, level) {
+        let sumLat = 0;
+        let sumLng = 0;
+        let ids = '';
+        let categories = '';
+        let imagesHtml = '';
+        let imageCount = Math.min(items.length, 5);
 
-    const content = '<div class="group-overlay" onClick="handleOverlayClick({ lng: ' +
-        position.getLng() + ', lat: ' + position.getLat() +
-        ', level: ' + level +
-        ', category: \\\'' + categories + '\\\', id: \\\'' + ids + '\\\' })">' +
-        '<div class="icons">' +
-            imagesHtml +
-            countHtml +
-        '</div>' +
-        '<div class="arrow"></div>' +
-    '</div>';
+        const imageUrl = getOverlayImage('RECORD');
 
-    return new kakao.maps.CustomOverlay({
-        position: position,
-        content: content,
-        yAnchor: getAnchorY(level),
-        xAnchor: 0,
-    });
-}
+        for (let i = 0; i < imageCount; i++) {
+            const item = items[i];
+            sumLat += item.lat;
+            sumLng += item.lng;
 
+            imagesHtml += '<img src="' + imageUrl + '" class="icon" style="left:' + (i * 15) +
+                'px; z-index:' + (imageCount - i) + ';"/>';
+        }
 
+        items.forEach((item) => {
+            ids += item.id + ',';
+            categories += item.category + ',';
+        });
+        ids = ids.slice(0, -1);
+        categories = categories.slice(0, -1);
+
+        const position = new kakao.maps.LatLng(sumLat / items.length, sumLng / items.length);
+        const countHtml = '<div class="count" style="margin-left:' +
+            ((imageCount - 1) * 15 + 35) + 'px;">+' + items.length + '</div>';
+
+        const content = '<div class="group-overlay" onClick="handleOverlayClick({ lng: ' +
+            position.getLng() + ', lat: ' + position.getLat() +
+            ', level: ' + level +
+            ', category: \\\'' + categories + '\\\', id: \\\'' + ids + '\\\' })">' +
+            '<div class="icons">' +
+                imagesHtml +
+                countHtml +
+            '</div>' +
+            '<div class="arrow"></div>' +
+        '</div>';
+
+        return new kakao.maps.CustomOverlay({
+            position: position,
+            content: content,
+            yAnchor: getAnchorY(level),
+            xAnchor: 0,
+        });
+    }
     </script>
   </body>
   </html>

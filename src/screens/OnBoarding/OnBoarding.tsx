@@ -1,4 +1,5 @@
-import { useNavigation, type NavigationProp } from '@react-navigation/native'
+import { type BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
+import { useNavigation } from '@react-navigation/native'
 import { useState } from 'react'
 import { View, TouchableOpacity } from 'react-native'
 import Animated, {
@@ -29,7 +30,7 @@ export default function OnBoardingScreen() {
   const [currentScreen, setCurrentScreen] = useState<'tour' | 'food'>('tour')
   const [isAnimating, setIsAnimating] = useState(false)
   const progress = useSharedValue(0)
-  const navigation = useNavigation<NavigationProp<RootStackParamList, 'MainTab'>>()
+  const navigation = useNavigation<BottomTabNavigationProp<RootStackParamList, 'MainTab'>>()
 
   const [tourSelections, setTourSelections] = useState<Selection[]>([
     { id: CATEGORY.관광지, title: '관광지', icon: '🏖', isSelected: false },

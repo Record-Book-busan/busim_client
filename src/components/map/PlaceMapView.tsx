@@ -1,10 +1,10 @@
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
-import { type NavigationProp, useNavigation } from '@react-navigation/native'
+import { type BottomTabNavigationProp, useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
+import { useNavigation } from '@react-navigation/native'
 import { useEffect, useCallback, useMemo, useRef, useState } from 'react'
 import { View } from 'react-native'
 import { WebView, type WebViewMessageEvent } from 'react-native-webview'
 
-import map from '@/services/map/map'
+import map from '@/services/map'
 import { type PlaceType, useMapPlace, useParking, useToilet } from '@/services/place'
 
 import { RefreshButton } from './RefreshButton'
@@ -45,7 +45,7 @@ export const PlaceMapView = ({
   const [zoomLevel, setZoomLevel] = useState('LEVEL_3')
   const [queryZoomLevel, setQueryZoomLevel] = useState('LEVEL_3')
   const [needsRefresh, setNeedsRefresh] = useState(false)
-  const navigation = useNavigation<NavigationProp<RootStackParamList, 'MainTab'>>()
+  const navigation = useNavigation<BottomTabNavigationProp<RootStackParamList, 'MainTab'>>()
   const bottomTabBarHeight = useBottomTabBarHeight()
 
   const { restaurantCategories, touristCategories } = useMemo(() => {

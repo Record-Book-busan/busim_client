@@ -1,5 +1,5 @@
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
-import { useNavigation, type NavigationProp } from '@react-navigation/native'
+import { type BottomTabNavigationProp, useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
+import { useNavigation } from '@react-navigation/native'
 import { useState, useRef, useCallback } from 'react'
 import { View, Alert } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -23,7 +23,7 @@ export default function MapScreen({ route }: MapScreenProps) {
   const [isParkingPressed, setIsTrafficPressed] = useState(false)
   const searchBarHeight = useRef(0)
   const insets = useSafeAreaInsets()
-  const navigation = useNavigation<NavigationProp<RootStackParamList, 'MainTab'>>()
+  const navigation = useNavigation<BottomTabNavigationProp<RootStackParamList, 'MainTab'>>()
 
   const handleCategoryChange = useCallback((cat: string[]) => {
     setActiveCategory(cat)

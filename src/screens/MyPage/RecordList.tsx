@@ -37,9 +37,12 @@ export default function RecordListScreen() {
   const navigation = useNavigation<NavigationProps>()
 
   const handleItemPress = (id: number) => {
-    navigation.navigate('RecordStack', {
-      screen: 'ReadRecord',
-      params: { id },
+    navigation.navigate('MainTab', {
+      screen: 'Record',
+      params: {
+        screen: 'ReadRecord',
+        params: { id },
+      },
     })
   }
 

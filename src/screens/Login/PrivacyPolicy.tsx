@@ -1,4 +1,5 @@
-import { type NavigationProp, useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
+import { type StackNavigationProp } from '@react-navigation/stack'
 import React, { useState } from 'react'
 import { ScrollView, Text, TouchableOpacity, View, Linking } from 'react-native'
 
@@ -62,7 +63,7 @@ const handlerClickWhole = (type: string) => {
 }
 
 function PrivacyPolicyScreen() {
-  const navigation = useNavigation<NavigationProp<RootStackParamList, 'OnBoardingStack'>>()
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'OnBoardingStack'>>()
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({})
   const [notice, setNotice] = useState('')
 

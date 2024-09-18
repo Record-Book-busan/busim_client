@@ -1,4 +1,5 @@
-import { type NavigationProp, useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
+import { type StackNavigationProp } from '@react-navigation/stack'
 import { Platform, Text, View } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 
@@ -10,7 +11,7 @@ import { ImageVariant } from '@/shared'
 import { RootStackParamList } from '@/types/navigation'
 
 export default function LoginScreen() {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Login'>>()
 
   const handleSignIn = async (provider: LoginProvider) => {
     try {
@@ -19,7 +20,7 @@ export default function LoginScreen() {
         case ROLE.MEMBER:
           navigation.navigate('MainTab', {
             screen: 'Map',
-            params: { screen: 'MapMain', params: { categories: [] } },
+            params: { categories: [] },
           })
           break
         case ROLE.GUEST:

@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native'
 import React, { useEffect, useCallback, useRef, useState } from 'react'
 import { WebView, type WebViewMessageEvent } from 'react-native-webview'
 
-import map from '@/services/map/map'
+import map from '@/services/map'
 import { useMapRecord } from '@/services/record'
 
 import type { RootStackParamList } from '@/types/navigation'
@@ -88,9 +88,12 @@ export const RecordMapView = React.memo(({ location, isLocationPressed }: MapVie
         case 'overlayClick':
           console.log(eventData.data)
           if (eventData.data.id) {
-            navigation.navigate('RecordStack', {
-              screen: 'ReadRecord',
-              params: { id: eventData.data.id },
+            navigation.navigate('MainTab', {
+              screen: 'Record',
+              params: {
+                screen: 'ReadRecord',
+                params: { id: eventData.data.id },
+              },
             })
           }
           break
