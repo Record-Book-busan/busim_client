@@ -2395,15 +2395,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-clipboard/clipboard@npm:^1.14.1":
-  version: 1.14.1
-  resolution: "@react-native-clipboard/clipboard@npm:1.14.1"
+"@react-native-clipboard/clipboard@npm:^1.14.2":
+  version: 1.14.2
+  resolution: "@react-native-clipboard/clipboard@npm:1.14.2"
   peerDependencies:
-    react: 16.9.0 || 16.11.0 || 16.13.1 || 17.0.1 || 17.0.2 || 18.0.0 || 18.1.0 || 18.2.0
-    react-native: ^0.61.5 || ^0.62.3 || ^0.63.2 || ^0.64.2 || ^0.65.0 || ^0.66.0 || ^0.67.0 || ^0.68.0 || ^0.69.0 || ^0.70.0 || ^0.71.0 || ^0.72.0 || ^0.73.0
-    react-native-macos: ^0.61.0 || ^0.62.0 || ^0.63.0 || ^0.64.0 || ^0.65.0 || ^0.66.0 || ^0.67.0 || ^0.68.0 || ^0.69.0 || ^0.70.0 || ^0.71.0 || ^0.72.0 || ^0.73.0
-    react-native-windows: ^0.61.0 || ^0.62.0 || ^0.63.0 || ^0.64.0 || ^0.65.0 || ^0.66.0 || ^0.67.0 || ^0.68.0 || ^0.69.0 || ^0.70.0 || ^0.71.0 || ^0.72.0 || ^0.73.0
-  checksum: 10c0/581512d46cb23ec14a93244eaf09138ce78f2d0a7003ef4a172f7c83665509a6043348d80be3adb899b34f1a131ce36aa5b17f7ec1f94fbfedad37321f105c90
+    react: ">= 16.9.0"
+    react-native: ">= 0.61.5"
+    react-native-macos: ">= 0.61.0"
+    react-native-windows: ">= 0.61.0"
+  peerDependenciesMeta:
+    react-native-macos:
+      optional: true
+    react-native-windows:
+      optional: true
+  checksum: 10c0/32d3bd4c68a1292700b61fba479aeb8defd41ee115b4baf1965e43a67a2cfcc0b2ee9730eb0a6cbca01861a1b6d7f01cb32235fd6842eb337957781da1d3a1da
   languageName: node
   linkType: hard
 
@@ -4476,7 +4481,7 @@ __metadata:
     "@gorhom/bottom-sheet": "npm:^4.6.4"
     "@invertase/react-native-apple-authentication": "npm:^2.3.0"
     "@react-native-camera-roll/camera-roll": "npm:^7.8.3"
-    "@react-native-clipboard/clipboard": "npm:^1.14.1"
+    "@react-native-clipboard/clipboard": "npm:^1.14.2"
     "@react-native-kakao/core": "npm:^2.2.5"
     "@react-native-kakao/user": "npm:^2.2.5"
     "@react-native-masked-view/masked-view": "npm:^0.3.1"

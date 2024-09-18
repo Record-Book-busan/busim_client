@@ -1665,27 +1665,6 @@ PODS:
     - React-utils (= 0.75.2)
   - RNAppleAuthentication (2.3.0):
     - React-Core
-  - RNCClipboard (1.14.1):
-    - DoubleConversion
-    - glog
-    - hermes-engine
-    - RCT-Folly (= 2024.01.01.00)
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - Yoga
   - RNCKakaoCore (2.2.5):
     - DoubleConversion
     - glog
@@ -2005,7 +1984,6 @@ DEPENDENCIES:
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNAppleAuthentication (from `../node_modules/@invertase/react-native-apple-authentication`)"
-  - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - "RNCKakaoCore (from `../node_modules/@react-native-kakao/core`)"
   - "RNCKakaoUser (from `../node_modules/@react-native-kakao/user`)"
   - "RNCMaskedView (from `../node_modules/@react-native-masked-view/masked-view`)"
@@ -2165,8 +2143,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNAppleAuthentication:
     :path: "../node_modules/@invertase/react-native-apple-authentication"
-  RNCClipboard:
-    :path: "../node_modules/@react-native-clipboard/clipboard"
   RNCKakaoCore:
     :path: "../node_modules/@react-native-kakao/core"
   RNCKakaoUser:
@@ -2262,7 +2238,6 @@ SPEC CHECKSUMS:
   ReactCodegen: 60973d382704c793c605b9be0fc7f31cb279442f
   ReactCommon: 6ef348087d250257c44c0204461c03f036650e9b
   RNAppleAuthentication: e99eaf3c4c01ad8ecb6125dd6f0cfd98871685b5
-  RNCClipboard: 71edae0b18baef15ce101087697f318c42efb7e7
   RNCKakaoCore: ef771d1e776134c2bb61a4fd6d031d745f9c4d56
   RNCKakaoUser: 1ff746bd5cb5051afaf28c57db5b05f794d0c340
   RNCMaskedView: 090213d32d8b3bb83a4dcb7d12c18f0152591906
