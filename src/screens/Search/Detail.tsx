@@ -120,7 +120,7 @@ const InfoSection: React.FC<{ content?: string; children?: React.ReactNode }> = 
   </View>
 )
 
-export async function getImageUrl(detail: SearchDetail): Promise<string[]> {
+async function getImageUrl(detail: SearchDetail): Promise<string[]> {
   let imageUrls: string[] = []
 
   if (isTourist(detail)) {
