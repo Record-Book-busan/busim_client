@@ -1,5 +1,4 @@
 import ky from 'ky'
-import { Alert } from 'react-native'
 
 const url = `${process.env.API_URL ? process.env.API_URL : ''}`
 
@@ -25,21 +24,13 @@ const kyExtend = ({ prefixUrl, headers }: kyExtendProps) =>
       afterResponse: [
         (request, options, response) => {
           if (!response.ok) {
-            Alert.alert(
-              'API 요청이 실패했습니다.',
-              `에러코드: ${response.status} ${response.statusText}`,
-            )
-            console.error('Response Error:', response.statusText)
+            console.error('kyExtend afterResponse Error:', response.statusText)
           }
         },
       ],
       beforeError: [
         error => {
-          Alert.alert(
-            'API 요청이 실패했습니다.',
-            `에러코드 ${error?.response.status || 'Unknown'}: ${error?.response.statusText || 'Unknown error'}`,
-          )
-          console.error(error)
+          console.error('kyExtend beforeError Error:', error)
 
           return error
         },

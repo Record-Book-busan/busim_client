@@ -1,10 +1,16 @@
+import { useNavigation } from '@react-navigation/native'
 import { View } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 
 import { SafeScreen } from '@/components/common'
 import { Button, SvgIcon, Typo } from '@/shared'
+import { RootStackParamList } from '@/types/navigation'
+
+import type { StackNavigationProp } from '@react-navigation/stack'
 
 export default function ErrorScreen() {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Error'>>()
+
   return (
     <SafeScreen excludeEdges={['bottom']} statusBarColor={'#f3c5c1'} textColor={'light-content'}>
       <LinearGradient
@@ -28,7 +34,7 @@ export default function ErrorScreen() {
               elevation: 5,
             }}
             hoverColor="#eca39d"
-            onPress={() => console.log('다시 시도하기 클릭 이벤트')}
+            onPress={() => navigation.goBack()}
           >
             <Typo className="text-white">다시 시도하기</Typo>
           </Button>

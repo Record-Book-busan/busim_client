@@ -1,5 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack'
 
+import { ErrorScreen } from '@/screens'
+
 import CreateRecordStackNavigator from './CreateRecordStack'
 import MainTabNavigator from './MainTab'
 import MapStackNavigator from './MapStack'
@@ -20,6 +22,7 @@ function ApplicationNavigator() {
       <Stack.Screen name="CreateRecordStack" component={CreateRecordStackNavigator} />
       <Stack.Screen name="MyPageStack" component={MyPageStackNavigator} />
       <Stack.Screen name="SearchStack" component={SearchStackNavigator} />
+      <Stack.Screen name="Error" component={ErrorScreen} />
     </Stack.Navigator>
   )
 }

@@ -12,6 +12,7 @@ export type RootStackParamList = {
   CreateRecordStack: NavigatorScreenParams<CreateRecordStackParamList>
   MyPageStack: NavigatorScreenParams<MyPageStackParamList>
   SearchStack: NavigatorScreenParams<SearchStackParamList>
+  Error: undefined
 }
 
 export type OnboardingStackParamList = {
