@@ -55,11 +55,6 @@ react {
 }
 
 /**
- * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
- */
-def enableProguardInReleaseBuilds = false
-
-/**
  * The preferred build flavor of JavaScriptCore (JSC)
  *
  * For example, to use the international variant, you can use:
@@ -101,6 +96,18 @@ android {
             }
         }
     }
+
+    /**
+    * cpu별로 apk 분리하여 용량 축소
+    */
+    def enableSeparateBuildPerCPUArchitecture = true
+
+    /**
+    * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
+    * Proguard를 활성화하여 코드 난독화 및 코드 사이즈 축소
+    */
+    def enableProguardInReleaseBuilds = true
+
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
@@ -108,7 +115,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
