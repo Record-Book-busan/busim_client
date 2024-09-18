@@ -1,6 +1,8 @@
+import { useEffect, useState } from 'react'
 import { View } from 'react-native'
 
 import { CATEGORY, type CategoryKey } from '@/constants'
+import { validateImageUris } from '@/services/image'
 import { type PlaceType, usePlaceDetail } from '@/services/place'
 import { SvgIcon, Typo, type IconName } from '@/shared'
 
@@ -14,15 +16,26 @@ interface MapDetailContentProps {
 
 export function MapDetailContent({ id, type }: MapDetailContentProps) {
   const { data } = usePlaceDetail(id, type)
+  const [imageUris, setImageUris] = useState<string[]>([])
 
-  const validImage = getValidImage(data.imageUrl || data.imageUrl2)
   const restaurantCat = formatCategoryData(data.restaurantCat2)
   const touristCat = formatCategoryData(data.touristCat2)
+
+  useEffect(() => {
+    const fetchImageUris = async () => {
+      const validImageUris = await getImageUrl(
+        (data.imageUrl || data.imageUrl2) as string | string[],
+      )
+      setImageUris(validImageUris)
+    }
+
+    fetchImageUris()
+  }, [data])
 
   return (
     <>
       <View className="w-full bg-white">
-        <ImageCarousel images={validImage} />
+        <ImageCarousel images={imageUris} />
       </View>
 
       <View className="bg-white px-4 pb-6">
@@ -82,39 +95,21 @@ const InfoSection = ({ content, children }: { content?: string; children?: React
   </View>
 )
 
-// FIXME: API 수정 후 지우기
-const DEFAULT_IMAGE_URL = 'https://example.com/default-image.jpg'
 /**
  * 유효한 이미지로 반환하는 함수
  */
-const getValidImage = (
-  imageUrl: string | (string | null)[] | string[] | null | undefined,
-): string => {
-  if (!imageUrl) {
-    return DEFAULT_IMAGE_URL
-  }
-  if (typeof imageUrl === 'string') {
-    return imageUrl
-  }
-  // 배열인 경우 (null 값을 걸러내고 첫 번째 값 사용)
-  if (Array.isArray(imageUrl)) {
-    const filteredArray = imageUrl.filter((img): img is string => img !== null)
-    if (filteredArray.length > 0) {
-      const firstImage = filteredArray[0] as string
-      try {
-        const parsedArray = JSON.parse(firstImage)
-        if (Array.isArray(parsedArray) && parsedArray.length > 0) {
-          return parsedArray[0] as string
-        }
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (error) {
-        return firstImage
-      }
-    }
+async function getImageUrl(uri: string | string[]): Promise<string[]> {
+  let imageUrls: string[] = []
+
+  if (Array.isArray(uri)) {
+    imageUrls = uri
+  } else {
+    imageUrls = [uri]
   }
 
-  // 문제가 있을 경우 디폴트 이미지 반환
-  return DEFAULT_IMAGE_URL
+  const validImageUrls = await validateImageUris(imageUrls)
+
+  return validImageUrls
 }
 
 /**
