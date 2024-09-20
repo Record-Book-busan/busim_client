@@ -17,7 +17,7 @@ export default function RecordMainScreen() {
   const handleSearchBarPress = () => navigation.navigate('RecordSearch')
 
   return (
-    <SafeScreen>
+    <SafeScreen excludeEdges={['bottom']}>
       {/* 검색바 */}
       <SearchHeader type="button" placeholder="장소 검색" onPress={handleSearchBarPress} />
       <View className="flex-1 bg-white">

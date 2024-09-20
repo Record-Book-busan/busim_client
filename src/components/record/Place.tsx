@@ -28,9 +28,9 @@ export function Place() {
     <View className="mt-1 flex-1">
       {/* 내 위치 버튼 */}
       <View
-        className="absolute bottom-6 right-4 z-[2] flex gap-4"
+        className="absolute bottom-4 right-4 z-[2] flex gap-4"
         style={{
-          paddingBottom: bottomTabBarHeight - 10,
+          paddingBottom: bottomTabBarHeight,
         }}
       >
         <MapFAB onPress={handleLocationPress} iconName="position" enabled={isLocationPressed} />

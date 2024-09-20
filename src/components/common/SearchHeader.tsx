@@ -1,4 +1,4 @@
-import { View } from 'react-native'
+import { Platform, View } from 'react-native'
 
 import { Header } from '@/shared'
 import { cn } from '@/utils/cn'
@@ -22,7 +22,11 @@ interface SearchHeaderProps extends SearchBarProps {
  */
 export function SearchHeader({ containerStyle, onBackPress, ...props }: SearchHeaderProps) {
   return (
-    <Header containerStyle="pt-3" center={false} onBackPress={onBackPress}>
+    <Header
+      containerStyle={Platform.OS === 'ios' ? 'pt-0' : 'pt-3'}
+      center={false}
+      onBackPress={onBackPress}
+    >
       <View className={cn('flex-1', containerStyle)}>
         <SearchBar {...props} containerStyle="p-0" />
       </View>

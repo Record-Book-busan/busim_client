@@ -1,7 +1,7 @@
 import { type BottomTabNavigationProp, useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { useNavigation } from '@react-navigation/native'
 import { useState, useRef, useCallback } from 'react'
-import { View, Alert } from 'react-native'
+import { View, Alert, Platform } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { SafeScreen, SearchBarView, Categories } from '@/components/common'
@@ -50,13 +50,18 @@ export default function MapScreen({ route }: MapScreenProps) {
 
   return (
     <SafeScreen
-      excludeEdges={['top']}
+      excludeEdges={['top', 'bottom']}
       statusBarColor={'transparent'}
       textColor={'dark-content'}
       isTranslucent={true}
     >
       {/* 검색바 */}
-      <View style={{ position: 'relative', marginTop: insets.top + 12 }}>
+      <View
+        style={{
+          position: 'relative',
+          marginTop: Platform.OS === 'ios' ? insets.top : insets.top + 12,
+        }}
+      >
         <View
           onLayout={event => {
             searchBarHeight.current = event.nativeEvent.layout.height
