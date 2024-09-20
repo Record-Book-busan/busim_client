@@ -13,7 +13,7 @@ export function MapFAB({ iconName, className, enabled, ...props }: MapFABProps) 
   return (
     <Pressable
       className={cn(
-        'aspect-square h-9 w-9 items-center justify-center rounded-full bg-white shadow-sm',
+        'aspect-square h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm',
         className,
       )}
       style={{

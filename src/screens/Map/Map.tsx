@@ -56,7 +56,7 @@ export default function MapScreen({ route }: MapScreenProps) {
       isTranslucent={true}
     >
       {/* 검색바 */}
-      <View style={{ position: 'relative', marginTop: insets.top }}>
+      <View style={{ position: 'relative', marginTop: insets.top + 12 }}>
         <View
           onLayout={event => {
             searchBarHeight.current = event.nativeEvent.layout.height
@@ -89,7 +89,7 @@ export default function MapScreen({ route }: MapScreenProps) {
 
       {/* 내 위치 버튼 */}
       <View
-        className="absolute bottom-6 right-4 z-[2] flex gap-4"
+        className="absolute bottom-4 right-4 z-[2] flex gap-4"
         style={{
           paddingBottom: bottomTabBarHeight,
         }}
@@ -97,7 +97,7 @@ export default function MapScreen({ route }: MapScreenProps) {
         <MapFAB onPress={handleLocationPress} iconName="position" enabled={isLocationPressed} />
       </View>
       <View
-        className="absolute bottom-6 left-4 z-[2] flex gap-4"
+        className="absolute bottom-4 left-4 z-[2] flex gap-4"
         style={{
           paddingBottom: bottomTabBarHeight,
         }}
