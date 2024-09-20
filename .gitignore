@@ -75,3 +75,6 @@ yarn-error.log
 
 # linting
 /.cache/.eslintcache
+
+# credential
+ios/certs/*
