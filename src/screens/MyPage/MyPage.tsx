@@ -4,7 +4,7 @@ import { Text, TouchableOpacity, View, ScrollView, Linking, Pressable } from 're
 
 import { SafeScreen } from '@/components/common'
 import { logoutAll } from '@/services/auth'
-import { Button, ImageVariant, SvgIcon } from '@/shared'
+import { Button, Header, ImageVariant, SvgIcon } from '@/shared'
 import { type RootStackParamList } from '@/types/navigation'
 
 export default function MyPageScreen() {
@@ -69,7 +69,8 @@ export default function MyPageScreen() {
   ]
 
   return (
-    <SafeScreen excludeEdges={['top']}>
+    <SafeScreen>
+      <Header title="마이페이지" LeftContent={<View className="w-10" />} />
       <ScrollView className="flex-1 bg-gray-100">
         <View className="mb-2 bg-white px-3 py-1">
           <ProfileHeader {...profileItem} />

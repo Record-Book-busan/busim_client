@@ -28,6 +28,7 @@ function MainTabNavigator() {
       initialRouteName="Map"
       detachInactiveScreens={false}
       screenOptions={{
+        headerShown: false,
         tabBarStyle: {
           position: 'absolute',
           borderTopLeftRadius: 20,
@@ -60,7 +61,6 @@ function MainTabNavigator() {
         name="Map"
         component={MapScreen}
         options={{
-          headerShown: false,
           tabBarLabel: '추천',
           tabBarIcon: props => <TabBarIcon name="recommend" {...props} />,
         }}
@@ -69,7 +69,6 @@ function MainTabNavigator() {
         name="Record"
         component={RecordStackNavigator}
         options={{
-          headerShown: false,
           tabBarLabel: '기록',
           tabBarIcon: props => <TabBarIcon name="cameraRoll" {...props} />,
         }}
@@ -77,10 +76,7 @@ function MainTabNavigator() {
       <Tab.Screen
         name="MyPage"
         component={PrepareScreen}
-        // component={MyPageScreen}
         options={{
-          headerShown: false,
-          headerTitle: '마이페이지',
           tabBarLabel: '마이페이지',
           tabBarIcon: props => <TabBarIcon name="my" {...props} />,
         }}

@@ -70,7 +70,9 @@ export default function DetailScreen({ route }: DetailScreenProps) {
             {isTourist(data) ? (
               <Tag category={data.touristCat2} />
             ) : (
-              data.restaurantCat2.map((cat, index) => <Tag key={index} category={cat} />)
+              data.restaurantCat2.map(
+                (cat, index) => cat.length > 0 && <Tag key={index} category={cat} />,
+              )
             )}
           </View>
 

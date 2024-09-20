@@ -270,7 +270,8 @@ const map = `<!DOCTYPE html>
      * 오버레이 클릭 함수
      */
     function handleOverlayClick({ lng, lat, level, category, id, type, types }) {
-    if(level > 1) {
+        if(category.indexOf(",") !== -1) {
+        // 클러스터된 오버레이일 경우 level 조정
         moveMap({ lng: lng, lat: lat, level: level-1 })
     } else {
         if(category !== 'TOILET' && category !== 'PARKING') {
