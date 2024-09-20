@@ -14,6 +14,7 @@ const Stack = createStackNavigator<RecordStackParamList>()
 function RecordStackNavigator() {
   return (
     <Stack.Navigator
+      initialRouteName="RecordMain"
       screenOptions={{
         headerShown: false,
       }}
