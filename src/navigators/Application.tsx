@@ -1,6 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack'
 
 import { ErrorScreen } from '@/screens'
+import { INTEREST_KEY, storage } from '@/utils/storage'
 
 import CreateRecordStackNavigator from './CreateRecordStack'
 import MainTabNavigator from './MainTab'
@@ -14,10 +15,20 @@ import type { RootStackParamList } from '@/types/navigation'
 const Stack = createStackNavigator<RootStackParamList>()
 
 function ApplicationNavigator() {
+  const interest = storage.getString(INTEREST_KEY)
+
+  const initialRouteName = interest ? 'MainTab' : 'OnBoardingStack'
+
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator initialRouteName={initialRouteName} screenOptions={{ headerShown: false }}>
       <Stack.Screen name="OnBoardingStack" component={OnboardingStackNavigator} />
-      <Stack.Screen name="MainTab" component={MainTabNavigator} />
+      <Stack.Screen
+        name="MainTab"
+        component={MainTabNavigator}
+        options={{
+          gestureEnabled: false,
+        }}
+      />
       <Stack.Screen name="MapStack" component={MapStackNavigator} />
       <Stack.Screen name="CreateRecordStack" component={CreateRecordStackNavigator} />
       <Stack.Screen name="MyPageStack" component={MyPageStackNavigator} />

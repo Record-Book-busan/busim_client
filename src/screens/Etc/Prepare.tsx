@@ -13,8 +13,8 @@ export default function PrepareScreen() {
       >
         <View className="items-center justify-center gap-2">
           <SvgIcon name="seagull" />
-          <Typo className="text-lg font-bold">끼록부는 지금</Typo>
-          <Typo className="py-2 text-6xl font-bold">준비 중</Typo>
+          <Typo className="font-Medium text-lg">끼록부는 지금</Typo>
+          <Typo className="py-2 font-Bold text-6xl">준비 중</Typo>
         </View>
       </LinearGradient>
     </SafeScreen>

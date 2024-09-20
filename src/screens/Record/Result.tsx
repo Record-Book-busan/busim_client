@@ -26,11 +26,18 @@ export default function RecordResultScreen({ route }: RecordResultScreenProps) {
 
   const allFeeds = data?.pages.flatMap(page => page) ?? []
 
-  const navigateToFeed = () => navigation.navigate('RecordMain')
+  const handleSearchBarPress = () => navigation.replace('RecordSearch')
+  const handleBackPress = () => navigation.navigate('RecordMain')
 
   return (
     <SafeScreen>
-      <SearchHeader type="button" value={query} onBackPress={() => navigateToFeed()} />
+      <SearchHeader
+        type="button"
+        value={query}
+        onPress={handleSearchBarPress}
+        onBackPress={handleBackPress}
+        disableClear
+      />
       <View style={{ flex: 1 }}>
         <Feed
           data={allFeeds}

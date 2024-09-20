@@ -35,6 +35,7 @@ export interface SearchBarProps extends TextInputProps {
   containerStyle?: string
   onPress?: () => void
   onCancel?: () => void
+  disableClear?: boolean
 }
 
 export function SearchBar({
@@ -45,6 +46,7 @@ export function SearchBar({
   onCancel,
   value: propValue,
   onChangeText: propOnChangeText,
+  disableClear,
   ...props
 }: SearchBarProps) {
   const [isFocused, setIsFocused] = useState(false)
@@ -88,6 +90,7 @@ export function SearchBar({
   )
 
   const handleClear = useCallback(() => {
+    console.log('호출!')
     handleChangeText('')
     inputRef.current?.focus()
   }, [handleChangeText])
@@ -145,9 +148,9 @@ export function SearchBar({
           onBlur={handleBlur}
           {...props}
         />
-        {value !== '' && (
+        {value !== '' && !disableClear && (
           <Pressable onPress={handleClear} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-            <SvgIcon name="xCircleFilled" className="mr-2.5 text-gray-200" />
+            <SvgIcon name="xCircleFilled" className="mr-2.5 text-neutral-300" />
           </Pressable>
         )}
       </WrapperComponent>
