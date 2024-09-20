@@ -1,4 +1,13 @@
 {
   "name": "busim",
-  "displayName": "끼록부"
+  "displayName": "끼록부",
+  "bundleIdentifier": "com.busim.recordbookbusan",
+  "expo": {
+    "slug": "busim",
+    "extra": {
+      "eas": {
+        "projectId": "9605ada6-fdc8-4720-873a-e4cb9c9255a6"
+      }
+    }
+  }
 }
