@@ -1,40 +1,15 @@
-import { useNavigation } from '@react-navigation/native'
-import { type StackNavigationProp } from '@react-navigation/stack'
 import { Platform, Text, View } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 
 import { logoWelcome } from '@/assets/images'
 import { LoginButton } from '@/components/auth'
-import { SafeScreen } from '@/components/common'
-import { type LoginProvider, handleSocialLogin, ROLE } from '@/services/auth'
+import { DebugFloatingButton, SafeScreen } from '@/components/common'
+import { type LoginProvider, handleSocialLogin } from '@/services/auth'
 import { ImageVariant } from '@/shared'
-import { RootStackParamList } from '@/types/navigation'
 
 export default function LoginScreen() {
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Login'>>()
-
   const handleSignIn = async (provider: LoginProvider) => {
-    try {
-      const role = await handleSocialLogin(provider)
-      switch (role) {
-        case ROLE.MEMBER:
-          navigation.navigate('MainTab', {
-            screen: 'Map',
-            params: { categories: [] },
-          })
-          break
-        case ROLE.GUEST:
-          navigation.navigate('OnBoardingStack', {
-            screen: 'OnBoarding',
-          })
-          break
-        case ROLE.PENDING_MEMBER:
-          navigation.navigate('PrivacyPolicy')
-          break
-      }
-    } catch (error) {
-      console.error(`[ERROR] ${provider} 로그인 중 오류 발생:`, error)
-    }
+    await handleSocialLogin(provider)
   }
 
   return (
@@ -61,6 +36,7 @@ export default function LoginScreen() {
           <LoginButton provider="guest" onPress={() => handleSignIn('guest')} />
         </View>
       </LinearGradient>
+      <DebugFloatingButton />
     </SafeScreen>
   )
 }

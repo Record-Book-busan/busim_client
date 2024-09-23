@@ -9,8 +9,7 @@ import { MMKV } from 'react-native-mmkv'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
 
-import ErrorBoundary from './common/ErrorBoundary'
-import { toastConfig } from './components/common'
+import { ErrorBoundary, toastConfig } from './components/common'
 import ApplicationNavigator from './navigators/Application'
 
 import './translations'

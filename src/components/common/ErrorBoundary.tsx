@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { Component, ReactNode } from 'react'
 
 import { RootStackParamList } from '@/types/navigation'
@@ -6,13 +7,13 @@ import type { StackNavigationProp } from '@react-navigation/stack'
 
 interface ErrorBoundaryProps {
   children: ReactNode
-  navigation: StackNavigationProp<RootStackParamList, 'Error'>
+  navigation?: StackNavigationProp<RootStackParamList, 'Error'>
 }
 
 interface ErrorBoundaryState {
   hasError: boolean
 }
-/* eslint-disable react/prop-types */
+
 class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props)
@@ -34,7 +35,9 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
   render() {
     if (this.state.hasError) {
-      this.props.navigation.navigate('Error')
+      if (this.props.navigation) {
+        this.props.navigation.navigate('Error')
+      }
 
       return null
     }

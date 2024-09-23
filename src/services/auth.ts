@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import appleAuth from '@invertase/react-native-apple-authentication'
-import { login, logout, isLogined, me } from '@react-native-kakao/user'
-import { getUniqueId } from 'react-native-device-info'
+import { login, logout, isLogined } from '@react-native-kakao/user'
 
 import { AuthSchema } from '@/types/schemas/auth'
 import { storage } from '@/utils/storage'
@@ -53,10 +53,14 @@ export const logoutAll = async (): Promise<void> => {
  * 카카오 로그인을 수행합니다.
  */
 const kakaoSignIn = async (): Promise<Role> => {
-  await login()
+  const auth = await login()
+  console.log(auth)
   if (await isLogined()) {
-    const userInfo = await me()
-    storage.set('userInfo', JSON.stringify(userInfo))
+    await Promise.all([
+      storage.set('code', auth.accessToken),
+      storage.set('idToken', auth.idToken ?? ''),
+    ])
+
     return getUserRole(false)
   }
   throw new Error('카카오 로그인 실패')
@@ -76,19 +80,23 @@ const appleSignIn = async (): Promise<Role> => {
     auth.identityToken &&
     auth.authorizationCode
   ) {
-    const deviceId = await getUniqueId()
-    const response = await post_signin_apple({
-      identityToken: auth.identityToken,
-      authorizationCode: auth.authorizationCode,
-      phoneIdentificationNumber: deviceId,
-    })
-
     await Promise.all([
-      storage.set('accessToken', response?.accessToken),
-      storage.set('refreshToken', response?.refreshToken),
-      storage.set('userId', response.userId.toString()),
-      storage.set('isLoggedIn', 'true'),
+      storage.set('code', auth.authorizationCode),
+      storage.set('idToken', auth.identityToken),
     ])
+
+    // const response = await post_signin_apple({
+    //   identityToken: auth.identityToken,
+    //   authorizationCode: auth.authorizationCode,
+    //   phoneIdentificationNumber: deviceId,
+    // })
+
+    // await Promise.all([
+    //   storage.set('accessToken', response?.accessToken),
+    //   storage.set('refreshToken', response?.refreshToken),
+    //   storage.set('userId', response.userId.toString()),
+    //   storage.set('isLoggedIn', 'true'),
+    // ])
 
     return getUserRole(false)
   }
