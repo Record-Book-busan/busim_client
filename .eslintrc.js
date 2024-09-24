@@ -94,5 +94,6 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/no-floating-promises': 'warn',
     'prettier/prettier': 'error',
+    '@typescript-eslint/no-require-imports': 'warn',
   },
 }
