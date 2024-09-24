@@ -24,8 +24,9 @@ export default function LoginScreen() {
           })
           break
         case ROLE.GUEST:
-          navigation.navigate('OnBoardingStack', {
-            screen: 'OnBoarding',
+          navigation.navigate('MainTab', {
+            screen: 'Map',
+            params: { categories: [] },
           })
           break
         case ROLE.PENDING_MEMBER:
@@ -40,8 +41,8 @@ export default function LoginScreen() {
   return (
     <SafeScreen
       excludeEdges={['bottom']}
-      bgColor={'#5e7dc0'}
-      statusBarColor={'light-content'}
+      statusBarColor={'#5e7dc0'}
+      textColor={'light-content'}
       isTranslucent={true}
     >
       <LinearGradient

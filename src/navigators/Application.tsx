@@ -1,7 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack'
 
-import { ErrorScreen } from '@/screens'
-import { INTEREST_KEY, storage } from '@/utils/storage'
+import { ErrorScreen, LoginScreen, PrivacyPolicyScreen } from '@/screens'
 
 import CreateRecordStackNavigator from './CreateRecordStack'
 import MainTabNavigator from './MainTab'
@@ -15,12 +14,10 @@ import type { RootStackParamList } from '@/types/navigation'
 const Stack = createStackNavigator<RootStackParamList>()
 
 function ApplicationNavigator() {
-  const interest = storage.getString(INTEREST_KEY)
-
-  const initialRouteName = interest ? 'MainTab' : 'OnBoardingStack'
-
   return (
-    <Stack.Navigator initialRouteName={initialRouteName} screenOptions={{ headerShown: false }}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
       <Stack.Screen name="OnBoardingStack" component={OnboardingStackNavigator} />
       <Stack.Screen
         name="MainTab"

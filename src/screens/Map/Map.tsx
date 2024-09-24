@@ -10,6 +10,8 @@ import { CategoryType } from '@/constants/data'
 import { useLocation } from '@/hooks/useLocation'
 import { RootStackParamList } from '@/types/navigation'
 
+import { RecommendSheet } from './RecommendSheet'
+
 type MapScreenProps = {
   route: { params?: { categories?: CategoryType[] } }
 }
@@ -132,6 +134,8 @@ export default function MapScreen({ route }: MapScreenProps) {
           isParkingPressed={isParkingPressed}
         />
       </View>
+
+      <RecommendSheet headerHeight={searchBarHeight.current + insets.top} />
     </SafeScreen>
   )
 }

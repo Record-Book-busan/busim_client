@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { Platform, View } from 'react-native'
+import { Platform, View, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { MapScreen, PrepareScreen } from '@/screens'
@@ -13,7 +13,7 @@ import type { MainTabParamList } from '@/types/navigation'
 const TabBarIcon = ({ name, size, color }: { name: IconName; size: number; color: string }) => {
   return (
     <View className="flex-1 items-center justify-center">
-      <SvgIcon name={name} size={size} style={{ color: color }} />
+      <SvgIcon name={name} size={size} style={{ color: color } as ViewStyle} />
     </View>
   )
 }
