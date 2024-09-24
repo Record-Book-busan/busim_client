@@ -1,4 +1,4 @@
-package com.busim.recordbookbusan
+package com.busim.kkilogbu
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
