@@ -2,7 +2,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Platform, View, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { MapScreen, PrepareScreen } from '@/screens'
+import { MapScreen, MyPageScreen } from '@/screens'
 import { SvgIcon } from '@/shared'
 
 import RecordStackNavigator from './RecordStack'
@@ -75,7 +75,7 @@ function MainTabNavigator() {
       />
       <Tab.Screen
         name="MyPage"
-        component={PrepareScreen}
+        component={MyPageScreen}
         options={{
           tabBarLabel: '마이페이지',
           tabBarIcon: props => <TabBarIcon name="my" {...props} />,
