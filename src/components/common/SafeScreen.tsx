@@ -1,5 +1,5 @@
 import { useFocusEffect } from '@react-navigation/native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ColorValue, Platform, StatusBar, StatusBarStyle } from 'react-native'
 import { SafeAreaView, type Edge } from 'react-native-safe-area-context'
 
@@ -27,16 +27,16 @@ export function SafeScreen({
         StatusBar.setBackgroundColor(statusBarColor)
         StatusBar.setTranslucent(isTranslucent)
       }
-
-      return () => {
-        if (Platform.OS === 'android') {
-          StatusBar.setBarStyle('dark-content')
-          StatusBar.setBackgroundColor('white')
-          StatusBar.setTranslucent(false)
-        }
-      }
     }, [textColor, statusBarColor, isTranslucent]),
   )
+
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      StatusBar.setBarStyle(textColor)
+      StatusBar.setBackgroundColor(statusBarColor)
+      StatusBar.setTranslucent(isTranslucent)
+    }
+  }, [textColor, statusBarColor, isTranslucent])
 
   return (
     <SafeAreaView
