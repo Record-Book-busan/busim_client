@@ -6,6 +6,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import { logoWelcome } from '@/assets/images'
 import { LoginButton } from '@/components/auth'
 import { SafeScreen } from '@/components/common'
+import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { type LoginProvider, handleSocialLogin, ROLE } from '@/services/auth'
 import { ImageVariant } from '@/shared'
 import { RootStackParamList } from '@/types/navigation'
@@ -18,19 +19,30 @@ export default function LoginScreen() {
       const role = await handleSocialLogin(provider)
       switch (role) {
         case ROLE.MEMBER:
-          navigation.navigate('MainTab', {
-            screen: 'Map',
-            params: { categories: [] },
+          navigateWithPermissionCheck({
+            navigation,
+            routeName: 'MainTab',
+            params: {
+              screen: 'Map',
+              params: { categories: [] },
+            },
           })
           break
         case ROLE.GUEST:
-          navigation.navigate('MainTab', {
-            screen: 'Map',
-            params: { categories: [] },
+          navigateWithPermissionCheck({
+            navigation,
+            routeName: 'MainTab',
+            params: {
+              screen: 'Map',
+              params: { categories: [] },
+            },
           })
           break
         case ROLE.PENDING_MEMBER:
-          navigation.navigate('PrivacyPolicy')
+          navigateWithPermissionCheck({
+            navigation,
+            routeName: 'PrivacyPolicy',
+          })
           break
       }
     } catch (error) {

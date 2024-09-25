@@ -8,6 +8,7 @@ import { SafeScreen, SearchBarView, Categories } from '@/components/common'
 import { PlaceMapView, EyeButton, MapFAB } from '@/components/map'
 import { CategoryType } from '@/constants/data'
 import { useLocation } from '@/hooks/useLocation'
+import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { RootStackParamList } from '@/types/navigation'
 
 import { RecommendSheet } from './RecommendSheet'
@@ -23,6 +24,7 @@ export default function MapScreen({ route }: MapScreenProps) {
   const [isLocationPressed, setIsLocationPressed] = useState(false)
   const [isToiletPressed, setIsToiletPressed] = useState(false)
   const [isParkingPressed, setIsTrafficPressed] = useState(false)
+  const [isBookMarkPressed, setIsBookMarkPressed] = useState(false)
   const searchBarHeight = useRef(0)
   const insets = useSafeAreaInsets()
   const navigation = useNavigation<BottomTabNavigationProp<RootStackParamList, 'MainTab'>>()
@@ -32,7 +34,11 @@ export default function MapScreen({ route }: MapScreenProps) {
   }, [])
 
   const handleSearchBarPress = () => {
-    navigation.navigate('SearchStack', { screen: 'Search' })
+    navigateWithPermissionCheck({
+      navigation,
+      routeName: 'SearchStack',
+      params: { screen: 'Search' },
+    })
   }
 
   const handleEyePress = () => {
@@ -94,17 +100,23 @@ export default function MapScreen({ route }: MapScreenProps) {
         </View>
       </View>
 
-      {/* 내 위치 버튼 */}
       <View
-        className="absolute bottom-4 right-4 z-[2] flex gap-4"
+        className="absolute bottom-10 right-4 z-[2] flex gap-4"
         style={{
           paddingBottom: bottomTabBarHeight,
         }}
       >
+        {/* 북마크 표시 버튼 */}
+        <MapFAB
+          onPress={() => setIsBookMarkPressed(!isBookMarkPressed)}
+          iconName="bookmark"
+          enabled={isBookMarkPressed}
+        />
+        {/* 내 위치 버튼 */}
         <MapFAB onPress={handleLocationPress} iconName="position" enabled={isLocationPressed} />
       </View>
       <View
-        className="absolute bottom-4 left-4 z-[2] flex gap-4"
+        className="absolute bottom-10 left-4 z-[2] flex gap-4"
         style={{
           paddingBottom: bottomTabBarHeight,
         }}

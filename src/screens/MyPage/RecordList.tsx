@@ -3,6 +3,7 @@ import { useSuspenseInfiniteQuery } from '@tanstack/react-query'
 import { ActivityIndicator, FlatList, Text, View } from 'react-native'
 
 import { ImagePlaceItem } from '@/components/search'
+import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import {
   type RecordList,
   type RecordListResponse,
@@ -37,11 +38,15 @@ export default function RecordListScreen() {
   const navigation = useNavigation<NavigationProps>()
 
   const handleItemPress = (id: number) => {
-    navigation.navigate('MainTab', {
-      screen: 'Record',
+    navigateWithPermissionCheck({
+      navigation,
+      routeName: 'MainTab',
       params: {
-        screen: 'ReadRecord',
-        params: { id },
+        screen: 'Record',
+        params: {
+          screen: 'ReadRecord',
+          params: { id },
+        },
       },
     })
   }

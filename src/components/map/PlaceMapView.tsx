@@ -4,6 +4,7 @@ import { useEffect, useCallback, useMemo, useRef, useState } from 'react'
 import { View } from 'react-native'
 import { WebView, type WebViewMessageEvent } from 'react-native-webview'
 
+import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import map from '@/services/map'
 import { type PlaceType, useMapPlace, useParking, useToilet } from '@/services/place'
 
@@ -158,11 +159,15 @@ export const PlaceMapView = ({
         break
       case 'overlayClick':
         console.log(eventData.data.type)
-        navigation.navigate('MapStack', {
-          screen: 'MapDetail',
+        navigateWithPermissionCheck({
+          navigation,
+          routeName: 'MapStack',
           params: {
-            id: eventData.data.id,
-            type: eventData.data.type as PlaceType,
+            screen: 'MapDetail',
+            params: {
+              id: eventData.data.id,
+              type: eventData.data.type as PlaceType,
+            },
           },
         })
         break

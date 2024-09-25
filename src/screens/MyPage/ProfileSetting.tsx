@@ -6,6 +6,7 @@ import { user } from '@/assets/images'
 import { SafeScreen } from '@/components/common'
 import { ProfilePickerSheet } from '@/components/user'
 import { useGallery } from '@/hooks/useGallery'
+import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { SvgIcon } from '@/shared'
 import { MyPageStackParamList } from '@/types/navigation'
 
@@ -34,7 +35,10 @@ export default function ProfileSettingScreen() {
   }
 
   const navigateToNicknameChange = () => {
-    navigation.navigate('MyPageNickName')
+    navigateWithPermissionCheck({
+      navigation,
+      routeName: 'MyPageNickName',
+    })
   }
 
   return (

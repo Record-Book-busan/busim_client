@@ -4,6 +4,7 @@ import { View } from 'react-native'
 
 import { SafeScreen, SearchHeader } from '@/components/common'
 import { SearchResults, RecentSearches } from '@/components/search'
+import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { useRecentSearch } from '@/services/search'
 import { Typo } from '@/shared'
 
@@ -30,7 +31,11 @@ export default function SearchScreen() {
 
   const navigateToDetail = (place: Place) => {
     addRecentSearch(place)
-    navigation.navigate('Detail', { id: place.id, type: getCategoryType(place.category) })
+    navigateWithPermissionCheck({
+      navigation,
+      routeName: 'Detail',
+      params: { id: place.id, type: getCategoryType(place.category) },
+    })
   }
 
   return (

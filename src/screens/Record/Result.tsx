@@ -3,6 +3,7 @@ import { View, ActivityIndicator } from 'react-native'
 
 import { SafeScreen, SearchHeader } from '@/components/common'
 import { Feed } from '@/components/record'
+import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { useFeedInfiniteSearch } from '@/services/search'
 import { RecordStackParamList } from '@/types/navigation'
 
@@ -27,7 +28,11 @@ export default function RecordResultScreen({ route }: RecordResultScreenProps) {
   const allFeeds = data?.pages.flatMap(page => page) ?? []
 
   const handleSearchBarPress = () => navigation.replace('RecordSearch')
-  const handleBackPress = () => navigation.navigate('RecordMain')
+  const handleBackPress = () =>
+    navigateWithPermissionCheck({
+      navigation,
+      routeName: 'RecordMain',
+    })
 
   return (
     <SafeScreen>

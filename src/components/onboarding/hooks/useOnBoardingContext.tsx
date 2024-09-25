@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState } from 'react'
 import { useSharedValue, withTiming, runOnJS, type SharedValue } from 'react-native-reanimated'
 
 import { CATEGORY, CategoryType } from '@/constants'
+import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { INTEREST_KEY, storage } from '@/utils/storage'
 
 import type { RootStackParamList } from '@/types/navigation'
@@ -73,9 +74,13 @@ export const OnBoardingProvider = ({ children }: { children: React.ReactNode }) 
   }
 
   const handleSkip = () => {
-    navigation.navigate('MainTab', {
-      screen: 'Map',
-      params: { categories: [] },
+    navigateWithPermissionCheck({
+      navigation,
+      routeName: 'MainTab',
+      params: {
+        screen: 'Map',
+        params: { categories: [] },
+      },
     })
   }
 

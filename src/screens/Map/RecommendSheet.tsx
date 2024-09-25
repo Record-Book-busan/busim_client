@@ -6,6 +6,7 @@ import { View, Dimensions, Platform, TouchableOpacity, Image, ImageURISource } f
 
 import { ImageCarousel } from '@/components/common'
 import DropBox from '@/components/common/DropBox'
+import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { validateImageUris, baseUri } from '@/services/image'
 import { SvgIcon, Typo } from '@/shared'
 import { RootStackParamList } from '@/types/navigation'
@@ -43,9 +44,16 @@ const ListItem = ({ name, category, explain, id }: ListItemProps) => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'SearchStack'>>()
 
   const handleButtonClick = (placeId: number) => {
-    navigation.navigate('SearchStack', {
-      screen: 'Detail',
-      params: { id: placeId, type: getCategoryType('맛집') },
+    navigateWithPermissionCheck({
+      navigation,
+      routeName: 'SearchStack',
+      params: {
+        screen: 'Detail',
+        params: {
+          id: placeId,
+          type: getCategoryType('맛집'),
+        },
+      },
     })
   }
 

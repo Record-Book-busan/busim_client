@@ -23,28 +23,15 @@ export type Role = (typeof ROLE)[keyof typeof ROLE]
 export type LoginProvider = 'kakao' | 'apple' | 'guest'
 
 /**
- * 이용약관 동의 여부를 확인합니다.
- * @todo 백엔드 로그인 로직 변경 시 제거하시면 됩니다.
- */
-const checkTermsAgreement = (): boolean => {
-  return storage.getBoolean('hasAgreedToTerms') ?? false
-}
-
-/**
- * 사용자 역할을 결정합니다.
- * @todo 백엔드 로그인 로직 변경 시 제거하시면 됩니다.
- */
-const getUserRole = (isGuest: boolean): Role => {
-  if (isGuest) return ROLE.GUEST
-  return checkTermsAgreement() ? ROLE.MEMBER : ROLE.PENDING_MEMBER
-}
-
-/**
  * 모든 로그인 세션을 로그아웃합니다.
  */
 export const logoutAll = async (): Promise<void> => {
   storage.delete('userInfo')
-  storage.delete('authHeader')
+  storage.delete('accessToken')
+  storage.delete('refreshToken')
+  storage.delete('userId')
+  storage.delete('isAgreed')
+  storage.delete('role')
 
   const logged = await isLogined()
 
@@ -65,12 +52,15 @@ const kakaoSignIn = async (): Promise<Role> => {
     const response = await post_signin_kakao({
       accessToken: loginInfo.accessToken,
     })
+    const role = response?.isAgreed ? ROLE.MEMBER : ROLE.PENDING_MEMBER
 
     storage.set('accessToken', response?.accessToken)
-    storage.set('refreshToken', response?.accessToken)
+    storage.set('refreshToken', response?.refreshToken)
     storage.set('userId', response.userId.toString())
+    storage.set('isAgreed', response?.isAgreed)
+    storage.set('role', role)
 
-    return getUserRole(false)
+    return role
   }
   throw new Error('카카오 로그인 실패')
 }
@@ -95,12 +85,15 @@ const appleSignIn = async (): Promise<Role> => {
       authorizationCode: auth.authorizationCode,
       phoneIdentificationNumber: deviceId,
     })
+    const role = response?.isAgreed ? ROLE.MEMBER : ROLE.PENDING_MEMBER
 
     storage.set('accessToken', response?.accessToken)
-    storage.set('refreshToken', response?.accessToken)
+    storage.set('refreshToken', response?.refreshToken)
     storage.set('userId', response.userId.toString())
+    storage.set('isAgreed', response?.isAgreed)
+    storage.set('role', role)
 
-    return getUserRole(false)
+    return role
   }
   throw new Error('애플 로그인 실패')
 }
@@ -117,10 +110,12 @@ const guestSignIn = async (): Promise<Role> => {
     })
 
     const response = await post_signin_guest()
+    const role = ROLE.GUEST
 
     storage.set('accessToken', response)
+    storage.set('role', role)
 
-    return ROLE.GUEST
+    return role
   } catch {
     throw new Error('비회원 로그인 실패')
   }
@@ -197,4 +192,19 @@ const post_consent = async (): Promise<string> => {
 
   const response = await instance('kkilogbu/').post(`users/signin/consent`, { json: body }).text()
   return response
+}
+
+const permissionMap = ['PrivacyPolicy', 'Record']
+
+/**
+ * 화면별 권한을 체크한다.
+ */
+export const checkPermission = (routeName: string) => {
+  console.log(routeName)
+  if (storage.getString('role') !== ROLE.GUEST) return true
+
+  const index = permissionMap.findIndex(map => map === routeName)
+
+  if (index === -1) return true
+  else return false
 }

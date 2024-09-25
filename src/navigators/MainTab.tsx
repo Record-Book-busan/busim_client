@@ -1,14 +1,20 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { Platform, View, ViewStyle } from 'react-native'
+import {
+  type BottomTabBarButtonProps,
+  type BottomTabNavigationProp,
+  createBottomTabNavigator,
+} from '@react-navigation/bottom-tabs'
+import { useNavigation } from '@react-navigation/native'
+import { Platform, TouchableOpacity, View, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { MapScreen, PrepareScreen } from '@/screens'
+import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
+import { MapScreen, MyPageScreen } from '@/screens'
 import { SvgIcon } from '@/shared'
 
 import RecordStackNavigator from './RecordStack'
 
 import type { IconName } from '@/shared/SvgIcon'
-import type { MainTabParamList } from '@/types/navigation'
+import type { MainTabParamList, RootStackParamList } from '@/types/navigation'
 
 const TabBarIcon = ({ name, size, color }: { name: IconName; size: number; color: string }) => {
   return (
@@ -22,6 +28,7 @@ const Tab = createBottomTabNavigator<MainTabParamList>()
 
 function MainTabNavigator() {
   const insets = useSafeAreaInsets()
+  const navigation = useNavigation<BottomTabNavigationProp<RootStackParamList, 'MainTab'>>()
 
   return (
     <Tab.Navigator
@@ -63,6 +70,19 @@ function MainTabNavigator() {
         options={{
           tabBarLabel: '추천',
           tabBarIcon: props => <TabBarIcon name="recommend" {...props} />,
+          tabBarButton: (props: BottomTabBarButtonProps) => (
+            <TouchableOpacity
+              {...props}
+              onPress={() => {
+                navigateWithPermissionCheck({
+                  navigation,
+                  routeName: 'Map',
+                })
+              }}
+            >
+              <View>{props.children}</View>
+            </TouchableOpacity>
+          ),
         }}
       />
       <Tab.Screen
@@ -71,14 +91,40 @@ function MainTabNavigator() {
         options={{
           tabBarLabel: '기록',
           tabBarIcon: props => <TabBarIcon name="cameraRoll" {...props} />,
+          tabBarButton: (props: BottomTabBarButtonProps) => (
+            <TouchableOpacity
+              {...props}
+              onPress={() => {
+                navigateWithPermissionCheck({
+                  navigation,
+                  routeName: 'Record',
+                })
+              }}
+            >
+              <View>{props.children}</View>
+            </TouchableOpacity>
+          ),
         }}
       />
       <Tab.Screen
         name="MyPage"
-        component={PrepareScreen}
+        component={MyPageScreen}
         options={{
           tabBarLabel: '마이페이지',
           tabBarIcon: props => <TabBarIcon name="my" {...props} />,
+          tabBarButton: (props: BottomTabBarButtonProps) => (
+            <TouchableOpacity
+              {...props}
+              onPress={() => {
+                navigateWithPermissionCheck({
+                  navigation,
+                  routeName: 'MyPage',
+                })
+              }}
+            >
+              <View>{props.children}</View>
+            </TouchableOpacity>
+          ),
         }}
       />
     </Tab.Navigator>

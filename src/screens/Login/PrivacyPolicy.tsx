@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { ScrollView, Text, TouchableOpacity, View, Linking } from 'react-native'
 
 import { SafeScreen } from '@/components/common'
+import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { usePostConsent } from '@/services/auth'
 import { SvgIcon } from '@/shared'
 import { RootStackParamList } from '@/types/navigation'
@@ -96,12 +97,18 @@ function PrivacyPolicyScreen() {
       const allChecked = PRIVACY_CONTENTS.every(item => checkedItems[item.id])
 
       if (allChecked) {
-        storage.set('hasAgreedToTerms', true)
+        storage.set('isAgreed', true)
 
         try {
           const response = await postConsent()
           console.log(response)
-          navigation.navigate('OnBoardingStack', { screen: 'OnBoarding' })
+          navigateWithPermissionCheck({
+            navigation,
+            routeName: 'OnBoardingStack',
+            params: {
+              screen: 'OnBoarding',
+            },
+          })
         } catch {
           throw new Error('이용 약관 동의 실패')
         }

@@ -172,7 +172,7 @@ export const get_feed_search = async ({
     }
 
     const response = await instance('kkilogbu/')
-      .get('record/images', {
+      .get('record/auth/images', {
         searchParams: params,
       })
       .json()

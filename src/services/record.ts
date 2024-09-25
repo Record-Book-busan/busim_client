@@ -111,7 +111,7 @@ export const patch_record = async (params: UpdateRecord) => {
  * @returns
  */
 const get_record_detail = async (params: { markId: number }) => {
-  const response = await instance('kkilogbu/').get(`record/images/${params.markId}`).json()
+  const response = await instance('kkilogbu/').get(`record/auth/images/${params.markId}`).json()
   return RecordDetailSchema.parse(response)
 }
 
@@ -122,7 +122,7 @@ const get_record_detail = async (params: { markId: number }) => {
  * @level level - 줌 레벨
  */
 const get_map_record = async (params: { lat: number; lng: number; level: string }) => {
-  const response = await instance('kkilogbu/').get('record', { searchParams: params }).json()
+  const response = await instance('kkilogbu/').get('record/auth', { searchParams: params }).json()
   return z.array(MapRecordSchema).parse(response)
 }
 

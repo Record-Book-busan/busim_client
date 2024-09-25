@@ -3,6 +3,7 @@ import { type StackNavigationProp } from '@react-navigation/stack'
 import { Text, TouchableOpacity, View, ScrollView, Linking, Pressable } from 'react-native'
 
 import { SafeScreen } from '@/components/common'
+import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { logoutAll } from '@/services/auth'
 import { Button, Header, ImageVariant, SvgIcon } from '@/shared'
 import { type RootStackParamList } from '@/types/navigation'
@@ -12,21 +13,49 @@ export default function MyPageScreen() {
 
   const profileItem = {
     title: '내 정보 관리',
-    onPress: () => navigation.navigate('MyPageStack', { screen: 'MyPageSettings' }),
+    onPress: () =>
+      navigateWithPermissionCheck({
+        navigation,
+        routeName: 'MyPageStack',
+        params: {
+          screen: 'MyPageSettings',
+        },
+      }),
   }
   const menuItems = [
     {
       title: '나의 여행 기록',
-      onPress: () => navigation.navigate('MyPageStack', { screen: 'RecordList' }),
+      onPress: () =>
+        navigateWithPermissionCheck({
+          navigation,
+          routeName: 'MyPageStack',
+          params: {
+            screen: 'RecordList',
+          },
+        }),
     },
     {
       title: '북마크',
-      onPress: () => navigation.navigate('MyPageStack', { screen: 'BookMarkList' }),
+      onPress: () =>
+        navigateWithPermissionCheck({
+          navigation,
+          routeName: 'MyPageStack',
+          params: {
+            screen: 'BookmarkList',
+          },
+        }),
     },
     {
       // FIXME: 배포 시 제거
       title: '테스트',
-      onPress: () => navigation.navigate('MyPageStack', { screen: 'Test' }),
+      onPress: () =>
+        navigateWithPermissionCheck({
+          navigation,
+          routeName: 'MyPageStack',
+          params: {
+            screen: 'Test',
+          },
+        }),
     },
   ]
 
@@ -58,7 +87,10 @@ export default function MyPageScreen() {
   const handleLogoutPress = () => {
     logoutAll()
       .then(() => {
-        navigation.navigate('Login')
+        navigateWithPermissionCheck({
+          navigation,
+          routeName: 'Login',
+        })
       })
       .catch(err => console.log(`로그아웃 오류가 발생했습니다.: ${err}`))
   }

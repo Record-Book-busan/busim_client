@@ -1,8 +1,7 @@
+import { type StackNavigationProp } from '@react-navigation/stack'
 import React, { Component, ReactNode } from 'react'
 
 import { RootStackParamList } from '@/types/navigation'
-
-import type { StackNavigationProp } from '@react-navigation/stack'
 
 interface ErrorBoundaryProps {
   children: ReactNode

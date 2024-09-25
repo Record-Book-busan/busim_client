@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { BookmarkButton, FlatList } from '@/components/common'
 import { CATEGORY, getCategoryText, type CategoryType } from '@/constants'
+import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { SegmentedControl } from '@/shared'
 import { ButtonPrimitive } from '@/shared/Button'
 
@@ -73,15 +74,29 @@ export default function BookmarkListScreen() {
   const handleItemPress = (item: Bookmark) => {
     if (index === 0) {
       /** 검색 디테일 화면으로 이동 */
-      navigation.navigate('SearchStack', {
-        screen: 'Detail',
-        params: { id: item.id, type: item.cat2 },
+      navigateWithPermissionCheck({
+        navigation,
+        routeName: 'SearchStack',
+        params: {
+          screen: 'Detail',
+          params: {
+            id: item.id,
+            type: item.cat2,
+          },
+        },
       })
     } else {
       /** 기록 디테일 화면으로 이동 */
-      navigation.navigate('RecordStack', {
-        screen: 'ReadRecord',
-        params: { id: item.id },
+      navigateWithPermissionCheck({
+        navigation,
+        routeName: 'MainTab',
+        params: {
+          screen: 'Record',
+          params: {
+            screen: 'ReadRecord',
+            params: { id: item.id },
+          },
+        },
       })
     }
   }
