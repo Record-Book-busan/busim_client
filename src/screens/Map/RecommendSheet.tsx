@@ -1,9 +1,18 @@
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
-import React, { useCallback, useMemo, useRef } from 'react'
-import { View, Text, Dimensions, Platform, TouchableOpacity } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { View, Dimensions, Platform, TouchableOpacity, Image } from 'react-native'
 
-import { SvgIcon } from '@/shared'
+import { ImageCarousel } from '@/components/common'
+import DropBox from '@/components/common/DropBox'
+import { validateImageUris, baseUri } from '@/services/image'
+import { SvgIcon, Typo } from '@/shared'
+import { RootStackParamList } from '@/types/navigation'
+
+import { getCategoryType } from '../Search/Search'
+
+import type { StackNavigationProp } from '@react-navigation/stack'
 
 const CustomHandle = () => {
   return (
@@ -24,28 +33,45 @@ const CustomHandle = () => {
 }
 
 type ListItemProps = {
-  index: number
   name: string
-  position?: string
-  count: number
+  category: string
+  explain: string
+  id: number
 }
 
-const ListItem = ({ index, name, position, count }: ListItemProps) => {
+const ListItem = ({ name, category, explain, id }: ListItemProps) => {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'SearchStack'>>()
+
+  const handleButtonClick = (placeId: number) => {
+    navigation.navigate('SearchStack', {
+      screen: 'Detail',
+      params: { id: placeId, type: getCategoryType('맛집') },
+    })
+  }
+
   return (
-    <TouchableOpacity className="flex-row items-center p-2">
-      <Text className="px-2 text-lg font-bold text-[#00339D]">{index}</Text>
-      <View className="h-20 w-20 bg-[#BECCE8]" />
-      <View className="h-20 justify-between px-2">
-        <View>
-          <Text className="text-md font-bold">{name}</Text>
-          <View className="flex-row items-center gap-2">
-            <SvgIcon name="marker" className="text-[#929292]" size={14} />
-            <Text className="text-sm text-[#929292]">{position || '위치 정보 제공 칸입니다'}</Text>
-          </View>
+    <View className="h-28 flex-row items-center py-2">
+      <Image className="h-full w-20 rounded-lg" src={baseUri} />
+      <View className="flex h-full flex-1 gap-y-1 px-2">
+        <Typo className="font-bold">{name}</Typo>
+        <View className="flex-row items-center gap-1">
+          <SvgIcon name="category" className="text-black" size={14} />
+          <Typo className="text-xs">{category}</Typo>
         </View>
-        <Text className="text-sm text-[#929292]">조회 {count > 999 ? '999+' : count}</Text>
+        <View className="flex-row items-center gap-1">
+          <SvgIcon name="explain" className="text-black" size={14} />
+          <Typo className="text-xs">{explain}</Typo>
+        </View>
       </View>
-    </TouchableOpacity>
+      <View className="px-2">
+        <TouchableOpacity
+          className="flex h-6 w-6 items-center justify-center rounded-full bg-[#00339D]"
+          onPress={() => handleButtonClick(id)}
+        >
+          <SvgIcon name="arrowRightWhite" />
+        </TouchableOpacity>
+      </View>
+    </View>
   )
 }
 
@@ -57,22 +83,20 @@ type ListViewItemProps = {
 
 const ListViewItem = ({ name, selectItems, listItemProps }: ListViewItemProps) => {
   return (
-    <View className="items-center bg-white px-4 py-4">
-      <View className="mt-8 w-full flex-row">
-        <Text className="flex-1 text-left text-lg">{name}</Text>
-        <View className="rounded-full bg-[#00339D] px-2 py-1">
-          <Text className="text-white">{selectItems[0]} ▽</Text>
-        </View>
+    <View className="items-center border-t-2 border-[#DBDCE5] bg-white px-4 py-2">
+      <View className="mt-2 w-full flex-row items-center">
+        <Typo className="flex-1 text-left text-lg">{name}</Typo>
+        <DropBox items={selectItems} />
       </View>
       <View className="w-full">
-        {listItemProps.map(item => {
+        {listItemProps.map((listItemProp, index) => {
           return (
             <ListItem
-              key={item.index}
-              index={item.index}
-              name={item.name}
-              position={item.position}
-              count={item.count}
+              key={index}
+              name={listItemProp.name}
+              category={listItemProp.category}
+              explain={listItemProp.explain}
+              id={listItemProp.id}
             />
           )
         })}
@@ -112,6 +136,17 @@ export const RecommendSheet: React.FC<RecommendSheetProps> = ({ headerHeight }) 
   //   <BottomSheetBackdrop {...props} appearsOnIndex={1} disappearsOnIndex={0} />
   // )
 
+  const [imageUris, setImageUris] = useState<string[]>(['test1', 'test2'])
+
+  useEffect(() => {
+    const setValidateUris = async () => {
+      const validateUris = await validateImageUris(imageUris)
+      setImageUris(validateUris)
+    }
+
+    setValidateUris()
+  }, [])
+
   return (
     <BottomSheet
       ref={bottomSheetRef}
@@ -142,70 +177,46 @@ export const RecommendSheet: React.FC<RecommendSheetProps> = ({ headerHeight }) 
       bottomInset={50}
     >
       <BottomSheetScrollView className="z-50 flex-1">
-        <View className="items-center bg-white px-4">
-          <Text className="mt-8 w-full text-left text-lg">시장님이 다녀간 맛집 리스트</Text>
-          <View className="my-2 h-24 w-full bg-red-400" />
-          <Text className="text-md w-full text-left">사장님, 준비갈완~</Text>
+        <View className="mb-4 items-center bg-white px-4">
+          <Typo className="mt-8 w-full text-left text-lg">시장님이 다녀간 맛집 리스트</Typo>
+          <View className="my-2 flex h-[180px] w-full items-center justify-center rounded-2xl bg-BUSIM-slate">
+            <ImageCarousel height={180} resizeMode="contain" images={imageUris} />
+          </View>
+          <Typo className="text-md w-full text-left">사장님, 여기 맛집이에요!</Typo>
         </View>
         <ListViewItem
-          name="관광 지도 TOP 5"
-          selectItems={['관광지도']}
+          name="추천 맛집"
+          selectItems={['오션뷰', '맛집', '테마']}
           listItemProps={[
             {
-              index: 1,
               name: '장소명',
-              count: 1000,
+              category: '오션뷰',
+              explain: '장소1 설명입니다',
+              id: 1,
             },
             {
-              index: 2,
               name: '장소명',
-              count: 1000,
+              category: '오션뷰',
+              explain: '장소2 설명입니다',
+              id: 1,
             },
             {
-              index: 3,
               name: '장소명',
-              count: 1000,
+              category: '오션뷰',
+              explain: '장소3 설명입니다',
+              id: 1,
             },
             {
-              index: 4,
               name: '장소명',
-              count: 1000,
+              category: '오션뷰',
+              explain: '장소4 설명입니다',
+              id: 1,
             },
             {
-              index: 5,
               name: '장소명',
-              count: 1000,
-            },
-          ]}
-        />
-        <ListViewItem
-          name="맛집 지도 TOP 5"
-          selectItems={['관광지도']}
-          listItemProps={[
-            {
-              index: 1,
-              name: '장소명',
-              count: 1000,
-            },
-            {
-              index: 2,
-              name: '장소명',
-              count: 1000,
-            },
-            {
-              index: 3,
-              name: '장소명',
-              count: 1000,
-            },
-            {
-              index: 4,
-              name: '장소명',
-              count: 1000,
-            },
-            {
-              index: 5,
-              name: '장소명',
-              count: 1000,
+              category: '오션뷰',
+              explain: '장소5 설명입니다',
+              id: 1,
             },
           ]}
         />

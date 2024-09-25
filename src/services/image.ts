@@ -17,7 +17,7 @@ type getImageProps = {
   name: string
 }
 
-const baseUri = require('@/assets/icons/default-image-white-ggilogbu.svg') as string
+export const baseUri = 'https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg'
 
 /**
  * 이미지를 가져옵니다.

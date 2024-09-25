@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { Image, View, TouchableOpacity } from 'react-native'
+import { Image, View, TouchableOpacity, ImageResizeMode } from 'react-native'
 import Lightbox from 'react-native-lightbox-v2'
 import Animated, {
   useAnimatedReaction,
@@ -21,9 +21,10 @@ interface ImageCarouselProps {
   width?: number
   /** 캐로셀 높이 */
   height?: number
+  resizeMode?: ImageResizeMode
 }
 
-export function ImageCarousel({ images, width, height }: ImageCarouselProps) {
+export function ImageCarousel({ images, width, height, resizeMode }: ImageCarouselProps) {
   const progressValue = useSharedValue<number>(0)
   const ref = useRef<ICarouselInstance>(null)
   const [lightboxOpen, setLightboxOpen] = useState(false)
@@ -74,7 +75,9 @@ export function ImageCarousel({ images, width, height }: ImageCarouselProps) {
           onProgressChange={(_, absoluteProgress) => {
             progressValue.value = absoluteProgress
           }}
-          renderItem={({ item, index }) => <ImageItem key={index} item={item} index={index} />}
+          renderItem={({ item, index }) => (
+            <ImageItem key={index} item={item} index={index} resizeMode={resizeMode || 'cover'} />
+          )}
         />
       </Lightbox>
       {imageArray.length > 1 && (
@@ -87,12 +90,13 @@ export function ImageCarousel({ images, width, height }: ImageCarouselProps) {
 interface ItemProps {
   index: number
   item: string
+  resizeMode: ImageResizeMode
 }
 
-function ImageItem({ item }: ItemProps) {
+function ImageItem({ item, resizeMode }: ItemProps) {
   return (
     <TouchableOpacity activeOpacity={0.9}>
-      <ImageVariant className="h-full w-full" source={{ uri: item }} resizeMode="cover" />
+      <ImageVariant className="h-full w-full" source={{ uri: item }} resizeMode={resizeMode} />
     </TouchableOpacity>
   )
 }
