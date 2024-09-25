@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { ScrollView, Text, TouchableOpacity, View, Linking } from 'react-native'
 
 import { SafeScreen } from '@/components/common'
+import { usePostConsent } from '@/services/auth'
 import { SvgIcon } from '@/shared'
 import { RootStackParamList } from '@/types/navigation'
 import { storage } from '@/utils/storage'
@@ -64,6 +65,7 @@ const handlerClickWhole = (type: string) => {
 
 function PrivacyPolicyScreen() {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'OnBoardingStack'>>()
+  const postConsent = usePostConsent()
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({})
   const [notice, setNotice] = useState('')
 
@@ -90,14 +92,25 @@ function PrivacyPolicyScreen() {
   }
 
   const moveInterestTourHandler = () => {
-    const allChecked = PRIVACY_CONTENTS.every(item => checkedItems[item.id])
+    const moverInterestTour = async () => {
+      const allChecked = PRIVACY_CONTENTS.every(item => checkedItems[item.id])
 
-    if (allChecked) {
-      storage.set('hasAgreedToTerms', true)
-      navigation.navigate('OnBoardingStack', { screen: 'OnBoarding' })
-    } else {
-      void makeAlert('모든 이용 약관에 대한 동의가 필요합니다.')
+      if (allChecked) {
+        storage.set('hasAgreedToTerms', true)
+
+        try {
+          const response = await postConsent()
+          console.log(response)
+          navigation.navigate('OnBoardingStack', { screen: 'OnBoarding' })
+        } catch {
+          throw new Error('이용 약관 동의 실패')
+        }
+      } else {
+        void makeAlert('모든 이용 약관에 대한 동의가 필요합니다.')
+      }
     }
+
+    moverInterestTour()
   }
 
   const allChecked = PRIVACY_CONTENTS.every(item => checkedItems[item.id])

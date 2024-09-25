@@ -1,8 +1,9 @@
 import appleAuth from '@invertase/react-native-apple-authentication'
 import { login, logout, isLogined, me } from '@react-native-kakao/user'
+import { useMutation } from '@tanstack/react-query'
 import { getUniqueId } from 'react-native-device-info'
 
-import { AppleAuthSchema, KakaoAuthSchema, GuestAuthSchema } from '@/types/schemas/auth'
+import { AppleAuthSchema, KakaoAuthSchema } from '@/types/schemas/auth'
 import { storage } from '@/utils/storage'
 import { showToast } from '@/utils/toast'
 
@@ -42,11 +43,13 @@ const getUserRole = (isGuest: boolean): Role => {
  * 모든 로그인 세션을 로그아웃합니다.
  */
 export const logoutAll = async (): Promise<void> => {
-  const tasks = [
-    storage.delete('userInfo'),
-    isLogined().then(logged => (logged ? logout() : Promise.resolve())),
-  ]
-  await Promise.all(tasks)
+  storage.delete('userInfo')
+  storage.delete('authHeader')
+
+  const logged = await isLogined()
+
+  if (logged) logout()
+  else Promise.resolve()
 }
 
 /**
@@ -54,6 +57,7 @@ export const logoutAll = async (): Promise<void> => {
  */
 const kakaoSignIn = async (): Promise<Role> => {
   const loginInfo = await login()
+  console.log(loginInfo)
   if (await isLogined()) {
     const userInfo = await me()
     storage.set('userInfo', JSON.stringify(userInfo))
@@ -62,14 +66,9 @@ const kakaoSignIn = async (): Promise<Role> => {
       accessToken: loginInfo.accessToken,
     })
 
-    storage.set(
-      'authHeader',
-      JSON.stringify({
-        accessToken: response?.accessToken,
-        refreshToken: response?.refreshToken,
-        userId: response.userId.toString(),
-      }),
-    )
+    storage.set('accessToken', response?.accessToken)
+    storage.set('refreshToken', response?.accessToken)
+    storage.set('userId', response.userId.toString())
 
     return getUserRole(false)
   }
@@ -97,14 +96,9 @@ const appleSignIn = async (): Promise<Role> => {
       phoneIdentificationNumber: deviceId,
     })
 
-    storage.set(
-      'authHeader',
-      JSON.stringify({
-        accessToken: response?.accessToken,
-        refreshToken: response?.refreshToken,
-        userId: response.userId.toString(),
-      }),
-    )
+    storage.set('accessToken', response?.accessToken)
+    storage.set('refreshToken', response?.accessToken)
+    storage.set('userId', response.userId.toString())
 
     return getUserRole(false)
   }
@@ -124,12 +118,7 @@ const guestSignIn = async (): Promise<Role> => {
 
     const response = await post_signin_guest()
 
-    storage.set(
-      'authHeader',
-      JSON.stringify({
-        accessToken: response,
-      }),
-    )
+    storage.set('accessToken', response)
 
     return ROLE.GUEST
   } catch {
@@ -163,7 +152,7 @@ const post_signin_apple = async (params: {
   authorizationCode: string
   phoneIdentificationNumber: string
 }) => {
-  const response = await instance('kkilogbu/').post('user/signin/apple', { json: params }).json()
+  const response = await instance('kkilogbu/').post('users/signin/apple', { json: params }).json()
   return AppleAuthSchema.parse(response)
 }
 
@@ -171,14 +160,41 @@ const post_signin_apple = async (params: {
  * 카카오 계정으로 로그인 요청을 합니다.
  */
 const post_signin_kakao = async (params: { accessToken: string }) => {
-  const response = await instance('kkilogbu/').post('user/signin/kakao', { json: params }).json()
+  const response = await instance('kkilogbu/')
+    .post('users/signin/kakao', { searchParams: params })
+    .json()
+  console.log(response)
   return KakaoAuthSchema.parse(response)
 }
 
 /**
  * 비회원으로 로그인 요청을 합니다.
  */
-const post_signin_guest = async () => {
-  const response = await instance('kkilogbu/').post('user/signin/anonymous').json()
-  return GuestAuthSchema.parse(response)
+const post_signin_guest = async (): Promise<string> => {
+  const response = await instance('kkilogbu/').post('users/signin/anonymous').text()
+  return response
+}
+
+/**
+ * 이용 약관 동의 훅입니다.
+ */
+export const usePostConsent = () => {
+  const { mutateAsync } = useMutation({
+    mutationFn: post_consent,
+  })
+
+  return mutateAsync
+}
+
+/**
+ * 이용 약관 동의 요청을 합니다.
+ */
+const post_consent = async (): Promise<string> => {
+  const body = {
+    termsAgreed: true,
+    privacyAgreed: true,
+  }
+
+  const response = await instance('kkilogbu/').post(`users/signin/consent`, { json: body }).text()
+  return response
 }

@@ -40,16 +40,16 @@ const kyExtend = ({ prefixUrl, headers }: kyExtendProps) =>
     },
   })
 
+export const getAuthorization = () => storage.getString('accessToken')
+
 export const instance = (path: string) => {
   const prefixUrl = url + path
-
-  const authHeader = JSON.parse(storage.getString('authHeader') || '{}')
 
   return kyExtend({
     prefixUrl: prefixUrl,
     headers: {
       Accept: 'application/json',
-      ...authHeader,
+      Authorization: getAuthorization(),
     },
   })
 }

@@ -11,5 +11,3 @@ export const KakaoAuthSchema = z.object({
   refreshToken: z.string().min(1),
   userId: z.number(),
 })
-
-export const GuestAuthSchema = z.string()
