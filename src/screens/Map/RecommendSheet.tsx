@@ -2,7 +2,7 @@ import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { useNavigation } from '@react-navigation/native'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { View, Dimensions, Platform, TouchableOpacity, Image } from 'react-native'
+import { View, Dimensions, Platform, TouchableOpacity, Image, ImageURISource } from 'react-native'
 
 import { ImageCarousel } from '@/components/common'
 import DropBox from '@/components/common/DropBox'
@@ -51,7 +51,7 @@ const ListItem = ({ name, category, explain, id }: ListItemProps) => {
 
   return (
     <View className="h-28 flex-row items-center py-2">
-      <Image className="h-full w-20 rounded-lg" src={baseUri} />
+      <Image className="h-full w-20 rounded-lg" source={baseUri} />
       <View className="flex h-full flex-1 gap-y-1 px-2">
         <Typo className="font-bold">{name}</Typo>
         <View className="flex-row items-center gap-1">
@@ -136,12 +136,13 @@ export const RecommendSheet: React.FC<RecommendSheetProps> = ({ headerHeight }) 
   //   <BottomSheetBackdrop {...props} appearsOnIndex={1} disappearsOnIndex={0} />
   // )
 
-  const [imageUris, setImageUris] = useState<string[]>(['test1', 'test2'])
+  const imageUrls = ['test1', 'test2']
+  const [imageUris, setImageUris] = useState<ImageURISource[]>([])
 
   useEffect(() => {
     const setValidateUris = async () => {
-      const validateUris = await validateImageUris(imageUris)
-      setImageUris(validateUris)
+      const validateUrls = await validateImageUris(imageUrls)
+      setImageUris(validateUrls)
     }
 
     setValidateUris()
@@ -180,7 +181,7 @@ export const RecommendSheet: React.FC<RecommendSheetProps> = ({ headerHeight }) 
         <View className="mb-4 items-center bg-white px-4">
           <Typo className="mt-8 w-full text-left text-lg">시장님이 다녀간 맛집 리스트</Typo>
           <View className="my-2 flex h-[180px] w-full items-center justify-center rounded-2xl bg-BUSIM-slate">
-            <ImageCarousel height={180} resizeMode="contain" images={imageUris} />
+            <ImageCarousel height={180} images={imageUris} />
           </View>
           <Typo className="text-md w-full text-left">사장님, 여기 맛집이에요!</Typo>
         </View>

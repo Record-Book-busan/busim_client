@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import ky from 'ky'
+import { ImageURISource } from 'react-native'
 
 import { showToast } from '@/utils/toast'
 
@@ -17,7 +18,7 @@ type getImageProps = {
   name: string
 }
 
-export const baseUri = 'https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg'
+export const baseUri: ImageURISource = require('@/assets/images/logo-blue.png')
 
 /**
  * 이미지를 가져옵니다.
@@ -91,13 +92,13 @@ export const delImage = async (params: DelImageProps) =>
  * 이미지 유효성을 체크하고, 유효하지 않을 시 ImageUri를 리턴합니다.
  * @param uri - 이미지 URI
  */
-export const validateImageUri = async (uri?: string): Promise<string> => {
+export const validateImageUri = async (uri?: string): Promise<ImageURISource> => {
   if (uri) {
     try {
       const response = await ky.get(uri)
 
       if (response.ok) {
-        return uri
+        return { uri: uri }
       } else {
         console.error('[ERROR] 유효하지 않은 이미지:', response.status)
 
@@ -117,15 +118,15 @@ export const validateImageUri = async (uri?: string): Promise<string> => {
  * 이미지들 유효성을 체크하고, 유효하지 않을 시 ImageUri를 리턴합니다.
  * @param uri - 이미지 URI
  */
-export const validateImageUris = async (uris: string[]): Promise<string[]> => {
-  const validUris: string[] = []
+export const validateImageUris = async (uris: string[]): Promise<ImageURISource[]> => {
+  const validUris: ImageURISource[] = []
 
   for (const imageUrl of uris) {
     try {
       const response = await ky.head(imageUrl)
 
       if (response.ok) {
-        validUris.push(imageUrl)
+        validUris.push({ uri: imageUrl })
       } else {
         console.error('[ERROR] 유효하지 않은 이미지:', response.status)
         validUris.push(baseUri)

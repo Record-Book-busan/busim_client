@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { Image, View, TouchableOpacity, ImageResizeMode } from 'react-native'
+import { Image, View, TouchableOpacity, ImageResizeMode, ImageURISource } from 'react-native'
 import Lightbox from 'react-native-lightbox-v2'
 import Animated, {
   useAnimatedReaction,
@@ -16,7 +16,7 @@ const SCREEN_WIDTH = window.width
 
 interface ImageCarouselProps {
   /** 이미지 배열 또는 단일 값 */
-  images: string[] | string
+  images: ImageURISource[] | ImageURISource
   /** 캐로셀 너비 */
   width?: number
   /** 캐로셀 높이 */
@@ -43,7 +43,7 @@ export function ImageCarousel({ images, width, height, resizeMode }: ImageCarous
       data={imageArray}
       renderItem={({ item }) => (
         <Image
-          source={{ uri: item }}
+          source={item}
           style={{ width: SCREEN_WIDTH, height: SCREEN_WIDTH, resizeMode: 'contain' }}
         />
       )}
@@ -89,14 +89,14 @@ export function ImageCarousel({ images, width, height, resizeMode }: ImageCarous
 
 interface ItemProps {
   index: number
-  item: string
+  item: ImageURISource
   resizeMode: ImageResizeMode
 }
 
 function ImageItem({ item, resizeMode }: ItemProps) {
   return (
     <TouchableOpacity activeOpacity={0.9}>
-      <ImageVariant className="h-full w-full" source={{ uri: item }} resizeMode={resizeMode} />
+      <ImageVariant className="h-full w-full" source={item} resizeMode={resizeMode} />
     </TouchableOpacity>
   )
 }

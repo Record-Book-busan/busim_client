@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
   type FlatListProps,
+  ImageURISource,
 } from 'react-native'
 
 import { validateImageUri } from '@/services/image'
@@ -57,7 +58,7 @@ export function Feed(props: FeedProps) {
 const Item = ({ item, onPress }: { item: FeedType; onPress: () => void }) => {
   const { width } = useWindowDimensions()
   const size = width / NUM_COLUMNS
-  const [imageUri, setImageUri] = useState<string>()
+  const [imageUri, setImageUri] = useState<ImageURISource>()
 
   useEffect(() => {
     const fetchImageUri = async () => {
@@ -71,7 +72,7 @@ const Item = ({ item, onPress }: { item: FeedType; onPress: () => void }) => {
   return (
     <TouchableOpacity onPress={onPress} className="p-[1.25px]">
       <Image
-        source={{ uri: imageUri }}
+        source={imageUri}
         className="h-full w-full"
         style={{ width: size - 4, height: size - 4 }}
         resizeMode="cover"

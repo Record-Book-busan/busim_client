@@ -1,6 +1,6 @@
 import { type RouteProp } from '@react-navigation/native'
 import React, { useEffect, useState } from 'react'
-import { ScrollView, View } from 'react-native'
+import { ImageURISource, ScrollView, View } from 'react-native'
 
 import { ImageCarousel, SafeScreen, Tag } from '@/components/common'
 import { MapDetail } from '@/components/map'
@@ -20,7 +20,7 @@ interface DetailScreenProps {
 export default function DetailScreen({ route }: DetailScreenProps) {
   const { id, type } = route.params
   const { data } = useSearchDetail(type, id)
-  const [imageUris, setImageUris] = useState<string[]>([])
+  const [imageUris, setImageUris] = useState<ImageURISource[]>([])
 
   const { scrollY, handleScroll } = useAnimatedHeader()
 
@@ -122,7 +122,7 @@ const InfoSection: React.FC<{ content?: string; children?: React.ReactNode }> = 
   </View>
 )
 
-async function getImageUrl(detail: SearchDetail): Promise<string[]> {
+async function getImageUrl(detail: SearchDetail): Promise<ImageURISource[]> {
   let imageUrls: string[] = []
 
   if (isTourist(detail)) {

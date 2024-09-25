@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { TouchableOpacity, View } from 'react-native'
+import { ImageURISource, TouchableOpacity, View } from 'react-native'
 
 import { validateImageUri } from '@/services/image'
 import { ImageVariant, SvgIcon, Typo } from '@/shared'
@@ -30,7 +30,7 @@ export function ImagePlaceItem({
   isBookMarked,
   imageUrl,
 }: ImagePlaceItemProps) {
-  const [imageUri, setImageUri] = useState<string>()
+  const [imageUri, setImageUri] = useState<ImageURISource>()
 
   useEffect(() => {
     const fetchImageUri = async () => {
@@ -46,7 +46,10 @@ export function ImagePlaceItem({
       <ButtonPrimitive animationConfig={{ toValue: 0.99 }} onPress={() => onPressMove(id)}>
         <View className="flex-row">
           <View className="mr-3">
-            <ImageVariant className="aspect-3/4 h-24 w-20 rounded-lg" source={{ uri: imageUri }} />
+            <ImageVariant
+              className="aspect-3/4 h-24 w-20 rounded-lg"
+              source={imageUri as ImageURISource}
+            />
             {isBookMarked && onPressBookMark && (
               <View className="absolute left-1 top-1">
                 <BookmarkButton

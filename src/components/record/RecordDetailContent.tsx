@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Image, ScrollView, Text, View } from 'react-native'
+import { Image, ImageURISource, ScrollView, Text, View } from 'react-native'
 import Lightbox from 'react-native-lightbox-v2'
 
 import { window } from '@/constants'
@@ -11,7 +11,7 @@ const { width } = window
 
 export function RecordDetailContent({ id }: { id: number }) {
   const { data: record } = useRecordDetail(id)
-  const [imageUri, setImageUri] = useState<string>()
+  const [imageUri, setImageUri] = useState<ImageURISource>()
 
   useEffect(() => {
     const fetchImageUri = async () => {
@@ -34,7 +34,7 @@ export function RecordDetailContent({ id }: { id: number }) {
             resizeMode: 'contain',
           }}
         >
-          <Image source={{ uri: imageUri }} className="h-full w-full" />
+          <Image source={imageUri} className="h-full w-full" />
         </Lightbox>
       </View>
 

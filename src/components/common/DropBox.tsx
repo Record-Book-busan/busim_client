@@ -35,12 +35,12 @@ export default function DropBox({ items, selected, width, height }: DropBoxProps
           <Typo className="text-xs text-white">{selectedItem}</Typo>
         </View>
         <TouchableOpacity onPress={handleToggleButtonClick}>
-          <SvgIcon name="chevronRight" className="text-black" />
+          <SvgIcon name="chevronRight" className="rotate-90 text-black" />
         </TouchableOpacity>
       </View>
       {isOpen && items.length > 1 && (
         <View
-          className="absolute z-50 rounded-2xl bg-BUSIM-slate-light"
+          className="absolute z-50 rounded-2xl bg-BUSIM-slate-light py-1"
           style={{ top: currentHeight + 10, width: currentWidth }}
         >
           {items.map((item, index) => {

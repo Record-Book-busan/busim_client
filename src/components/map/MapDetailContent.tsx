@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { View } from 'react-native'
+import { ImageURISource, View } from 'react-native'
 
 import { CATEGORY, type CategoryKey } from '@/constants'
 import { validateImageUris } from '@/services/image'
@@ -16,14 +16,14 @@ interface MapDetailContentProps {
 
 export function MapDetailContent({ id, type }: MapDetailContentProps) {
   const { data } = usePlaceDetail(id, type)
-  const [imageUris, setImageUris] = useState<string[]>([])
+  const [imageUris, setImageUris] = useState<ImageURISource[]>([])
 
   const restaurantCat = formatCategoryData(data.restaurantCat2)
   const touristCat = formatCategoryData(data.touristCat2)
 
   useEffect(() => {
     const fetchImageUris = async () => {
-      const validImageUris = await getImageUrl(
+      const validImageUris = await getImageUri(
         (data.imageUrl || data.imageUrl2) as string | string[],
       )
       setImageUris(validImageUris)
@@ -98,18 +98,18 @@ const InfoSection = ({ content, children }: { content?: string; children?: React
 /**
  * 유효한 이미지로 반환하는 함수
  */
-async function getImageUrl(uri: string | string[]): Promise<string[]> {
+async function getImageUri(url: string | string[]): Promise<ImageURISource[]> {
   let imageUrls: string[] = []
 
-  if (Array.isArray(uri)) {
-    imageUrls = uri
+  if (Array.isArray(url)) {
+    imageUrls = url
   } else {
-    imageUrls = [uri]
+    imageUrls = [url]
   }
 
-  const validImageUrls = await validateImageUris(imageUrls)
+  const validImageUris = await validateImageUris(imageUrls)
 
-  return validImageUrls
+  return validImageUris
 }
 
 /**
