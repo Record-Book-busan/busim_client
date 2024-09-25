@@ -1,5 +1,7 @@
 import ky from 'ky'
 
+import { storage } from '@/utils/storage'
+
 const url = `${process.env.API_URL ? process.env.API_URL : ''}`
 
 interface kyExtendProps {
@@ -41,10 +43,13 @@ const kyExtend = ({ prefixUrl, headers }: kyExtendProps) =>
 export const instance = (path: string) => {
   const prefixUrl = url + path
 
+  const authHeader = JSON.parse(storage.getString('authHeader') || '{}')
+
   return kyExtend({
     prefixUrl: prefixUrl,
     headers: {
       Accept: 'application/json',
+      ...authHeader,
     },
   })
 }

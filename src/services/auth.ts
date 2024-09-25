@@ -2,7 +2,7 @@ import appleAuth from '@invertase/react-native-apple-authentication'
 import { login, logout, isLogined, me } from '@react-native-kakao/user'
 import { getUniqueId } from 'react-native-device-info'
 
-import { AuthSchema } from '@/types/schemas/auth'
+import { AppleAuthSchema, KakaoAuthSchema, GuestAuthSchema } from '@/types/schemas/auth'
 import { storage } from '@/utils/storage'
 import { showToast } from '@/utils/toast'
 
@@ -53,10 +53,24 @@ export const logoutAll = async (): Promise<void> => {
  * 카카오 로그인을 수행합니다.
  */
 const kakaoSignIn = async (): Promise<Role> => {
-  await login()
+  const loginInfo = await login()
   if (await isLogined()) {
     const userInfo = await me()
     storage.set('userInfo', JSON.stringify(userInfo))
+
+    const response = await post_signin_kakao({
+      accessToken: loginInfo.accessToken,
+    })
+
+    storage.set(
+      'authHeader',
+      JSON.stringify({
+        accessToken: response?.accessToken,
+        refreshToken: response?.refreshToken,
+        userId: response.userId.toString(),
+      }),
+    )
+
     return getUserRole(false)
   }
   throw new Error('카카오 로그인 실패')
@@ -83,12 +97,14 @@ const appleSignIn = async (): Promise<Role> => {
       phoneIdentificationNumber: deviceId,
     })
 
-    await Promise.all([
-      storage.set('accessToken', response?.accessToken),
-      storage.set('refreshToken', response?.refreshToken),
-      storage.set('userId', response.userId.toString()),
-      storage.set('isLoggedIn', 'true'),
-    ])
+    storage.set(
+      'authHeader',
+      JSON.stringify({
+        accessToken: response?.accessToken,
+        refreshToken: response?.refreshToken,
+        userId: response.userId.toString(),
+      }),
+    )
 
     return getUserRole(false)
   }
@@ -98,13 +114,27 @@ const appleSignIn = async (): Promise<Role> => {
 /**
  * 비회원 로그인을 수행합니다.
  */
-const guestSignIn = (): Role => {
-  showToast({
-    text: '비회원 로그인 시, 일부 기능들이 제한됩니다.',
-    type: 'notice',
-    position: 'top',
-  })
-  return ROLE.GUEST
+const guestSignIn = async (): Promise<Role> => {
+  try {
+    showToast({
+      text: '비회원 로그인 시, 일부 기능들이 제한됩니다.',
+      type: 'notice',
+      position: 'top',
+    })
+
+    const response = await post_signin_guest()
+
+    storage.set(
+      'authHeader',
+      JSON.stringify({
+        accessToken: response,
+      }),
+    )
+
+    return ROLE.GUEST
+  } catch {
+    throw new Error('비회원 로그인 실패')
+  }
 }
 
 /**
@@ -134,5 +164,21 @@ const post_signin_apple = async (params: {
   phoneIdentificationNumber: string
 }) => {
   const response = await instance('kkilogbu/').post('user/signin/apple', { json: params }).json()
-  return AuthSchema.parse(response)
+  return AppleAuthSchema.parse(response)
+}
+
+/**
+ * 카카오 계정으로 로그인 요청을 합니다.
+ */
+const post_signin_kakao = async (params: { accessToken: string }) => {
+  const response = await instance('kkilogbu/').post('user/signin/kakao', { json: params }).json()
+  return KakaoAuthSchema.parse(response)
+}
+
+/**
+ * 비회원으로 로그인 요청을 합니다.
+ */
+const post_signin_guest = async () => {
+  const response = await instance('kkilogbu/').post('user/signin/anonymous').json()
+  return GuestAuthSchema.parse(response)
 }
