@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Image, ImageURISource, ScrollView, Text, View } from 'react-native'
+import { Image, ImageURISource, ScrollView, View } from 'react-native'
 import Lightbox from 'react-native-lightbox-v2'
 
 import { window } from '@/constants'
 import { validateImageUri } from '@/services/image'
 import { useRecordDetail } from '@/services/record'
-import { SvgIcon } from '@/shared'
+import { SvgIcon, Typo } from '@/shared'
 
 const { width } = window
 
@@ -16,13 +16,13 @@ export function RecordDetailContent({ id }: { id: number }) {
   useEffect(() => {
     const fetchImageUri = async () => {
       const validImageUri = await validateImageUri(
-        record.thumbnailUrl !== null ? record.thumbnailUrl : undefined,
+        record.imageUrl !== null ? record.imageUrl : undefined,
       )
       setImageUri(validImageUri)
     }
 
     fetchImageUri()
-  }, [record.thumbnailUrl])
+  }, [record.imageUrl])
 
   return (
     <ScrollView className="flex-1">
@@ -42,10 +42,10 @@ export function RecordDetailContent({ id }: { id: number }) {
         {/* 위치 정보 */}
         <View className="mb-4 flex-row items-center">
           <SvgIcon name="marker" size={16} className="mr-3 text-neutral-400" />
-          <Text className="text-sm text-gray-500">{record.address}</Text>
+          <Typo className="text-sm text-gray-500">{record.address}</Typo>
         </View>
         {/* 내용 */}
-        {/* <Text className="mb-6 text-base text-gray-700">{record.content}</Text> */}
+        <Typo className="text-base text-gray-700">{record.content}</Typo>
       </View>
     </ScrollView>
   )

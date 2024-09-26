@@ -1,19 +1,43 @@
 import { useMemo } from 'react'
-import WebView from 'react-native-webview'
+import WebView, { type WebViewMessageEvent } from 'react-native-webview'
 
 const KAKAO_SDK_URL = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.KakaoJsApiKey}`
 
+interface Geometry {
+  lat: number
+  lng: number
+}
 interface MapDetailProps {
   geometry: {
     lon: number
     lat: number
   }
+  onCenterChange?: ({ lat, lng }: Geometry) => void
   /** 장소명 */
   title?: string
 }
 
-function MapDetail({ geometry, title }: MapDetailProps) {
+type ReturnProps = {
+  type: string
+  data: {
+    zoomLevel: string
+    lat: number
+    lng: number
+    type: string
+    id: number
+  }
+}
+
+function MapDetail({ geometry, title, onCenterChange }: MapDetailProps) {
   const { lat, lon } = geometry
+
+  const handleMessage = (event: WebViewMessageEvent) => {
+    const eventData: ReturnProps = JSON.parse(event.nativeEvent.data)
+
+    if (!!onCenterChange && eventData.type === 'dragend') {
+      onCenterChange({ lat: eventData.data.lat, lng: eventData.data.lng })
+    }
+  }
 
   const htmlContent = useMemo(
     () => `
@@ -56,16 +80,29 @@ function MapDetail({ geometry, title }: MapDetailProps) {
               position: new kakao.maps.LatLng(${lat}, ${lon})
             });
             marker.setMap(map);
-            var content = '<div class="custom-overlay">' +
-                            '<span class="label">${title}</span>' +
-                          '</div>';
-            var customOverlay = new kakao.maps.CustomOverlay({
-              map: map,
-              position: markerPosition,
-              content: content,
-              yAnchor: 1 
+            ${
+              !!title &&
+              `
+              var content = '<div class="custom-overlay">' +
+                              '<span class="label">${title}</span>' +
+                            '</div>';
+              var customOverlay = new kakao.maps.CustomOverlay({
+                map: map,
+                position: markerPosition,
+                content: content,
+                yAnchor: 1 
+              });
+            `
+            }
+            
+            ${!onCenterChange && 'map.setDraggable(false);'}
+
+            kakao.maps.event.addListener(map, 'dragend', function() {
+                const data = map.getCenter();
+                marker.setPosition(data);
+                ${!!title && 'customOverlay.setPosition(data);'}
+                window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'dragend', data: { lat: data.getLat(), lng: data.getLng() } }));
             });
-            map.setDraggable(false);
           }
           kakao.maps.load(initMap);
         </script>
@@ -81,6 +118,7 @@ function MapDetail({ geometry, title }: MapDetailProps) {
       style={{ flex: 1 }}
       javaScriptEnabled={true}
       domStorageEnabled={true}
+      onMessage={handleMessage}
       onError={syntheticEvent => {
         const { nativeEvent } = syntheticEvent
         console.error('[ERROR] WebView 에러: ', nativeEvent)

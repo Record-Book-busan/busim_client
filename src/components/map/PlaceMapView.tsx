@@ -195,7 +195,6 @@ export const PlaceMapView = ({
         onMessage={handleMessage}
         javaScriptEnabled={true}
         domStorageEnabled={true}
-        cacheEnabled={false}
       />
       {isRefreshNeeded && (
         <View className="flex-row items-center justify-center">

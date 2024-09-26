@@ -62,7 +62,11 @@ export default function RecordCreateScreen() {
             inputRef={inputRefs.current[0]}
             onSubmitEditing={() => focusNextInput(0)}
           />
-          <RecordLocation location={state.location} isLoading={isLocationLoading} />
+          <RecordLocation
+            location={state.location}
+            dispatch={dispatch}
+            isLoading={isLocationLoading}
+          />
           <RecordImage
             uri={state.image?.uri}
             onImageSelected={uri => updateRecordData('image', uri)}
