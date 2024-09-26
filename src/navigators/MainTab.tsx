@@ -99,6 +99,9 @@ function MainTabNavigator() {
                 navigateWithPermissionCheck({
                   navigation,
                   routeName: 'Record',
+                  params: {
+                    screen: 'RecordMain',
+                  },
                 })
               }}
             >

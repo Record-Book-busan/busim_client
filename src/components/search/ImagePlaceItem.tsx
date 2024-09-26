@@ -27,7 +27,7 @@ export function ImagePlaceItem({
   content,
   onPressBookMark,
   onPressMove,
-  isBookMarked,
+  isBookMarked = false,
   imageUrl,
 }: ImagePlaceItemProps) {
   const [imageUri, setImageUri] = useState<ImageURISource>()
@@ -50,9 +50,10 @@ export function ImagePlaceItem({
               className="aspect-3/4 h-24 w-20 rounded-lg"
               source={imageUri as ImageURISource}
             />
-            {isBookMarked && onPressBookMark && (
+            {onPressBookMark && (
               <View className="absolute left-1 top-1">
                 <BookmarkButton
+                  id={id}
                   size={24}
                   isBookMarked={isBookMarked}
                   onPress={() => onPressBookMark(id)}

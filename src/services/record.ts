@@ -12,9 +12,10 @@ import {
   RecordDetailSchema,
   type UpdateRecord,
   UpdateRecordSchema,
-  RecordListResponseSchema,
-  RecordListResponse,
   MapRecordSchema,
+  RecordDetail,
+  RecordListArraySchema,
+  RecordDetailArraySchema,
 } from '@/types/schemas/record'
 
 import { instance, kakaoMap } from './instance'
@@ -55,16 +56,12 @@ export const useMapRecord = (lat: number, lng: number, level: string) => {
 
 /** 나의 여행 기록 리스트를 가져오는 훅입니다. */
 export const useInfiniteRecordList = () => {
-  return useSuspenseInfiniteQuery<RecordListResponse>({
+  return useSuspenseInfiniteQuery<RecordDetail[]>({
     queryKey: ['recordList'],
-    queryFn: ({ pageParam = 0 }) => get_record_list({ page: pageParam as number, size: 10 }),
+    queryFn: ({ pageParam = 0 }) => get_record_list({ offset: pageParam as number, limit: 10 }),
     getNextPageParam: (lastPage, allPages) => {
-      if (lastPage.last) return undefined // 마지막 페이지면 undefined 반환
-      return allPages.length // 다음 페이지 번호
-    },
-    getPreviousPageParam: (firstPage, allPages) => {
-      if (firstPage.first) return undefined // 첫 페이지면 undefined 반환
-      return allPages.length - 2 // 이전 페이지 번호
+      if (lastPage.length === 0) return undefined
+      return allPages.length * 10
     },
     initialPageParam: 0,
   })
@@ -131,16 +128,22 @@ const get_map_record = async (params: { lat: number; lng: number; level: string 
  * @param page
  * @param size
  */
-const get_record_list = async (params: { page: number; size: number }) => {
+const get_record_list = async (params: { offset: number; limit: number }) => {
+  console.log(params.offset)
+
   const response = await instance('kkilogbu/')
-    .get('user/record', {
-      searchParams: {
-        page: params.page,
-        size: params.size,
-      },
+    .get('record/images', {
+      searchParams: params,
     })
     .json()
-  return RecordListResponseSchema.parse(response)
+  const parsedResponses = RecordListArraySchema.parse(response)
+
+  const details = await Promise.all(
+    parsedResponses.map(async parsedResponse => {
+      return get_record_detail({ markId: parsedResponse.id })
+    }),
+  )
+  return RecordDetailArraySchema.parse(details)
 }
 
 type RoadAddress = {
@@ -192,4 +195,40 @@ type getLocationToAddrProps = {
  */
 const get_location_to_addr = async (params: getLocationToAddrProps): Promise<LocationToAddr> => {
   return await kakaoMap().get('geo/coord2address.json', { searchParams: params }).json()
+}
+
+/**
+ * 기록을 북마크하는 훅입니다.
+ */
+export const usePostRecordBookMark = () => {
+  const { mutateAsync } = useMutation({
+    mutationFn: post_record_bookmark,
+  })
+
+  return mutateAsync
+}
+
+/**
+ * 기록을 북마크합니다.
+ */
+const post_record_bookmark = async (id: number): Promise<string> => {
+  return await instance('kkilogbu/').post(`record/auth/${id}/bookmark`).text()
+}
+
+/**
+ * 기록 북마크를 삭제하는 훅입니다.
+ */
+export const useDeleteRecordBookMark = () => {
+  const { mutateAsync } = useMutation({
+    mutationFn: delete_record_bookmark,
+  })
+
+  return mutateAsync
+}
+
+/**
+ * 기록 북마크를 삭제합니다.
+ */
+const delete_record_bookmark = async (id: number): Promise<string> => {
+  return await instance('kkilogbu/').delete(`record/auth/${id}/bookmark`).text()
 }
