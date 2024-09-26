@@ -25,6 +25,10 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('ErrorBoundary Error:', error, errorInfo)
+
+    if (this.state.hasError) {
+      this.props.navigation.navigate('Error')
+    }
   }
 
   handleRetry = () => {
@@ -33,8 +37,6 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
   render() {
     if (this.state.hasError) {
-      this.props.navigation.navigate('Error')
-
       return null
     }
 
