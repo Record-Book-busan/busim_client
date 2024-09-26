@@ -1,7 +1,10 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { View } from 'react-native'
 
+import { ROLE } from '@/services/auth'
+import { useGetInterest } from '@/services/service'
 import { Chip } from '@/shared'
+import { storage } from '@/utils/storage'
 
 import { CATEGORY, CategoryType } from '../../constants/data'
 
@@ -37,6 +40,17 @@ interface CategoriesProps {
 }
 
 export function Categories({ initCategories = [], onCategoryChange }: CategoriesProps) {
+  const getInterest = useGetInterest()
+
+  useEffect(() => {
+    if (storage.getString('role') === ROLE.MEMBER && initCategories.length === 0) {
+      getInterest().then(response => {
+        const categories = [...response.restaurantCategories, ...response.touristCategories]
+        setSelectedCategories(categories as CategoryType[])
+      })
+    }
+  }, [])
+
   const initialMapType =
     initCategories.length > 0
       ? initCategories.some(

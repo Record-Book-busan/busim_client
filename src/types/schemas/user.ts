@@ -9,3 +9,9 @@ export const UserInfoSchema = z.object({
   profileImage: z.string().optional(),
 })
 export type UserInfo = z.infer<typeof UserInfoSchema>
+
+export const InterestsSchema = z.object({
+  touristCategories: z.array(z.string()),
+  restaurantCategories: z.array(z.string()),
+})
+export type InterestsSchema = z.infer<typeof InterestsSchema>

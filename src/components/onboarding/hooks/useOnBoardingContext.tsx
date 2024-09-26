@@ -4,6 +4,7 @@ import { useSharedValue, withTiming, runOnJS, type SharedValue } from 'react-nat
 
 import { CATEGORY, CategoryType } from '@/constants'
 import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
+import { usePostInterest } from '@/services/service'
 import { INTEREST_KEY, storage } from '@/utils/storage'
 
 import type { RootStackParamList } from '@/types/navigation'
@@ -35,6 +36,7 @@ export const OnBoardingProvider = ({ children }: { children: React.ReactNode }) 
   const [isAnimating, setIsAnimating] = useState(false)
   const animationProgress = useSharedValue(0)
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'MainTab'>>()
+  const postInterest = usePostInterest()
 
   const [tourSelections, setTourSelections] = useState<Selection[]>([
     { id: CATEGORY.관광지, title: '관광지', icon: '🏖', isSelected: false },
@@ -74,13 +76,25 @@ export const OnBoardingProvider = ({ children }: { children: React.ReactNode }) 
   }
 
   const handleSkip = () => {
-    navigateWithPermissionCheck({
-      navigation,
-      routeName: 'MainTab',
-      params: {
-        screen: 'Map',
-        params: { categories: [] },
+    const params = {
+      allSkip: true,
+      categories: {
+        touristCategories: [],
+        restaurantCategories: [],
       },
+    }
+
+    postInterest(params).then(response => {
+      console.log(response)
+
+      navigateWithPermissionCheck({
+        navigation,
+        routeName: 'MainTab',
+        params: {
+          screen: 'Map',
+          params: { categories: [] },
+        },
+      })
     })
   }
 
@@ -106,11 +120,26 @@ export const OnBoardingProvider = ({ children }: { children: React.ReactNode }) 
         runOnJS(setIsAnimating)(false)
       })
     } else {
-      storage.set(INTEREST_KEY, JSON.stringify(getCheckedCategories()))
+      const checkedCategories = getCheckedCategories()
+      storage.set(INTEREST_KEY, JSON.stringify(checkedCategories))
 
-      navigation.replace('MainTab', {
-        screen: 'Map',
-        params: { categories: getCheckedCategories() },
+      const restaurantTypes = new Set(['NORMAL_RESTAURANT', 'SPECIAL_RESTAURANT'])
+      const params = {
+        allSkip: false,
+        categories: {
+          touristCategories: checkedCategories.filter(category => !restaurantTypes.has(category)),
+          restaurantCategories: checkedCategories.filter(category => restaurantTypes.has(category)),
+        },
+      }
+      console.log(params)
+
+      postInterest(params).then(response => {
+        console.log(response)
+
+        navigation.replace('MainTab', {
+          screen: 'Map',
+          params: { categories: checkedCategories },
+        })
       })
     }
   }
