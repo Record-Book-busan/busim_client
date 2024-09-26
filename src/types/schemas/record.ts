@@ -6,6 +6,7 @@ export const PostRecordSchema = z.object({
   title: z.string().min(1).max(100),
   content: z.string().min(1).max(501),
   imageUrl: z.string(),
+  address: z.string(),
 })
 export type PostRecord = z.infer<typeof PostRecordSchema>
 

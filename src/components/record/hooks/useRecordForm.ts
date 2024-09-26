@@ -194,6 +194,7 @@ export const useCreateRecordForm = (
         lng: state.location.lng,
         content: state.content,
         imageUrl: uploadedImageUrl,
+        address: state.location.name,
       }
 
       mutateRecord(postRecord, {
