@@ -4,12 +4,13 @@ import { Text, TouchableOpacity, View, ScrollView, Linking, Pressable } from 're
 
 import { SafeScreen } from '@/components/common'
 import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
-import { logoutAll } from '@/services/auth'
+import { logoutAll, useCacelMemberShip } from '@/services/auth'
 import { Button, Header, ImageVariant, SvgIcon } from '@/shared'
 import { type RootStackParamList } from '@/types/navigation'
 
 export default function MyPageScreen() {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'MainTab'>>()
+  const cancelMembership = useCacelMemberShip()
 
   const profileItem = {
     title: '내 정보 관리',
@@ -41,7 +42,7 @@ export default function MyPageScreen() {
           navigation,
           routeName: 'MyPageStack',
           params: {
-            screen: 'BookmarkList',
+            screen: 'BookMarkList',
           },
         }),
     },
@@ -60,8 +61,8 @@ export default function MyPageScreen() {
   ]
 
   const settingsItems = [
-    { title: '문의 및 지원', onPress: () => {} },
-    { title: '도움말', onPress: () => {} },
+    // { title: '문의 및 지원', onPress: () => {} },
+    // { title: '도움말', onPress: () => {} },
     {
       title: '개인 정보 동의',
       onPress: () => {
@@ -95,9 +96,18 @@ export default function MyPageScreen() {
       .catch(err => console.log(`로그아웃 오류가 발생했습니다.: ${err}`))
   }
 
+  const handleCancelMembershipPress = () => {
+    try {
+      const response = cancelMembership()
+      console.log(response)
+    } catch {
+      throw new Error('회원 탈퇴에 실패했습니다.')
+    }
+  }
+
   const footerItems = [
     { title: '로그아웃', onPress: handleLogoutPress },
-    { title: '회원탈퇴', onPress: () => {} },
+    { title: '회원탈퇴', onPress: handleCancelMembershipPress },
   ]
 
   return (
@@ -161,6 +171,6 @@ const MenuItem = ({ title, onPress }: MenuItemProps) => (
 
 const FooterButton = ({ title, onPress }: MenuItemProps) => (
   <TouchableOpacity onPress={onPress} className="py-4">
-    <Text className="text-gray-500">{title}</Text>
+    <Text className="text-[#00339D] underline">{title}</Text>
   </TouchableOpacity>
 )
