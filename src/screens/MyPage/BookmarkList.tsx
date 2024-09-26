@@ -1,13 +1,13 @@
 import { type CompositeNavigationProp, useNavigation } from '@react-navigation/native'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { useState } from 'react'
-import { View, Text } from 'react-native'
+import { useEffect, useState } from 'react'
+import { View, Text, Platform, TouchableOpacity } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { BookmarkButton, FlatList } from '@/components/common'
+import { Categories, FlatList } from '@/components/common'
 import { CATEGORY, getCategoryText, type CategoryType } from '@/constants'
 import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
-import { SegmentedControl } from '@/shared'
+import { SegmentedControl, SvgIcon } from '@/shared'
 import { ButtonPrimitive } from '@/shared/Button'
 
 import type { MyPageStackParamList, RootStackParamList } from '@/types/navigation'
@@ -101,14 +101,49 @@ export default function BookmarkListScreen() {
     }
   }
 
+  const [filiteredDatas, setFiliteredDatas] = useState<Bookmark[]>([])
+  const [activeCategories, setActiveCategories] = useState<CategoryType[]>([])
+
+  const handleCategoryChange = (categories: CategoryType[]) => {
+    setActiveCategories(categories)
+  }
+
+  useEffect(() => {
+    data?.pages.flatMap(page => {
+      const filteredCategories =
+        activeCategories.length === 0
+          ? page.content
+          : page.content.filter(c => {
+              return activeCategories.some(activeCategory => activeCategory === c.cat2)
+            })
+
+      setFiliteredDatas(filteredCategories)
+    })
+  }, [data, activeCategories])
+
   return (
     <View className="bg-white">
       <FlatList
-        data={data?.pages.flatMap(page => page.content)}
-        HeaderComponent={<View className="pt-3" />}
+        data={filiteredDatas}
+        HeaderComponent={
+          <View className="mt-4 w-full border-t-8 border-[#F5F5F5] pt-4">
+            <Categories
+              initCategories={['TOURIST_SPOT']}
+              onCategoryChange={handleCategoryChange}
+              isBookmark={true}
+            />
+          </View>
+        }
         StickyElementComponent={
-          <View className="items-center justify-center bg-white px-5">
-            <SegmentedControl tabs={['장소', '기록']} value={index} onChange={setIndex} size="md" />
+          <View className="mb-8 items-center justify-center bg-white px-5">
+            <SegmentedControl
+              tabs={['장소', '기록']}
+              value={index}
+              onChange={setIndex}
+              size="sm"
+              textStyle="text-xs"
+              containerStyle="w-36 rounded-full"
+            />
           </View>
         }
         renderItem={({ item }: { item: Bookmark }) => (
@@ -116,21 +151,31 @@ export default function BookmarkListScreen() {
             animationConfig={{ toValue: 0.99 }}
             onPress={() => handleItemPress(item)}
           >
-            <View className="mx-5 flex-row items-center justify-between border-b border-neutral-100 py-3.5">
+            <View className="flex-row items-center justify-between border-y border-[#DBDCE5] px-5 py-4">
               <View className="flex-1">
                 <Text className="mb-1 text-base font-semibold text-gray-800">{item.title}</Text>
                 <View className="flex-row items-center">
-                  <Text className="text-sm leading-[0px] text-gray-500">
+                  <SvgIcon name="marker" className="mr-2 text-[#00339D]" />
+                  <Text
+                    className={`text-sm text-[#00339D] ${Platform.OS === 'ios' && 'leading-[0px]'}`}
+                  >
                     {getCategoryText(item.cat2)}
                   </Text>
-                  <Text className="text-sm leading-[0px] text-gray-500">⎜</Text>
-                  <Text className="text-sm leading-[0px] text-gray-500">{item.address}</Text>
+                  <Text
+                    className={`text-sm text-[#00339D] ${Platform.OS === 'ios' && 'leading-[0px]'}`}
+                  >
+                    ⎜
+                  </Text>
+                  <Text
+                    className={`text-sm text-[#00339D] ${Platform.OS === 'ios' && 'leading-[0px]'}`}
+                  >
+                    {item.address}
+                  </Text>
                 </View>
               </View>
-              <BookmarkButton
-                onPress={() => console.log('Toggle bookmark for', item.id)}
-                isBookMarked={item.isBookmarked}
-              />
+              <TouchableOpacity className="-top-4 rounded-full">
+                <SvgIcon name="xCircle" className="text-black" />
+              </TouchableOpacity>
             </View>
           </ButtonPrimitive>
         )}

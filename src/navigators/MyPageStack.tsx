@@ -36,7 +36,7 @@ function MyPageStackNavigator() {
           name="BookMarkList"
           component={BookmarkListScreen}
           options={{
-            header: () => <Header title="북마크" />,
+            header: () => <Header title="저장 목록" />,
           }}
         />
         <Stack.Screen

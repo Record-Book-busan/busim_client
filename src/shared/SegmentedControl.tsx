@@ -1,11 +1,11 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import React, { useCallback, useEffect, useState } from 'react'
-import { View, Text, Animated, TouchableOpacity, LayoutChangeEvent } from 'react-native'
+import { View, Text, Animated, TouchableOpacity, LayoutChangeEvent, Platform } from 'react-native'
 
 import { cn } from '../utils/cn'
 
 const segmentedControlVariants = cva(
-  'flex flex-row items-center justify-center rounded-lg bg-BUSIM-slate-light',
+  'flex flex-row items-center justify-center rounded-lg bg-[#00339d]',
   {
     variants: {
       size: {
@@ -33,11 +33,11 @@ const tabVariants = cva('flex-1 items-center justify-center', {
   },
 })
 
-const textVariants = cva('text-md font-semibold leading-[0px]', {
+const textVariants = cva(`text-md font-semibold ${Platform.OS === 'ios' && 'leading-[0px]'}`, {
   variants: {
     active: {
-      true: 'text-BUSIM-blue',
-      false: 'text-BUSIM-slate-dark',
+      true: 'text-black',
+      false: 'text-[#00339d]',
     },
   },
   defaultVariants: {
@@ -99,7 +99,7 @@ export const SegmentedControl: React.FC<SegmentedControlProps> = ({
       onLayout={handleLayout}
     >
       <Animated.View
-        className="absolute bottom-1 left-1 top-1 rounded-md bg-white"
+        className="absolute bottom-1 left-1 top-1 rounded-full bg-white"
         style={{
           width: width / tabs.length - 8,
           transform: [{ translateX: slideAnimation }],

@@ -10,8 +10,8 @@ const chipVariants = cva(
   {
     variants: {
       isSelected: {
-        true: 'bg-BUSIM-blue border-BUSIM-blue',
-        false: 'bg-white border-BUSIM-blue',
+        true: 'bg-[#00339d] border-[#00339d]',
+        false: 'bg-white border-[#00339d]',
       },
     },
     defaultVariants: {
@@ -42,7 +42,7 @@ export function Chip({ title, isSelected, onPress, className, ...props }: ChipPr
       type="button"
       animationConfig={{ toValue: 0.97 }}
       buttonStyle={cn(chipVariants({ isSelected }), className)}
-      pressedColor={cn(isSelected ? 'bg-BUSIM-blue' : 'bg-white')}
+      pressedColor={cn(isSelected ? 'bg-[#00339d]' : 'bg-white')}
       onPress={onPress}
       {...props}
     >

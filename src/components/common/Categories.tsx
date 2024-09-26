@@ -37,9 +37,10 @@ const CATEGORIES = {
 interface CategoriesProps {
   initCategories?: CategoryType[]
   onCategoryChange: (categories: CategoryType[]) => void
+  isBookmark?: boolean
 }
 
-export function Categories({ initCategories = [], onCategoryChange }: CategoriesProps) {
+export function Categories({ initCategories = [], onCategoryChange, isBookmark }: CategoriesProps) {
   const getInterest = useGetInterest()
 
   useEffect(() => {
@@ -64,6 +65,8 @@ export function Categories({ initCategories = [], onCategoryChange }: Categories
   const [selectedCategories, setSelectedCategories] = useState<CategoryType[]>(initCategories)
 
   const handleMapTypeChange = (type: MapType) => {
+    if (isBookmark && activeMapType === type) return
+
     setActiveMapType(prevType => (prevType === type ? null : type))
     setSelectedCategories([])
     onCategoryChange([])
