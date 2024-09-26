@@ -57,7 +57,7 @@ const kakaoSignIn = async (): Promise<Role> => {
     storage.set('accessToken', response?.accessToken)
     storage.set('refreshToken', response?.refreshToken)
     storage.set('userId', response.userId.toString())
-    storage.set('isAgreed', response?.isAgreed)
+    storage.set('isAgreed', response?.isAgreed || false)
     storage.set('role', role)
 
     return role
@@ -185,12 +185,15 @@ export const usePostConsent = () => {
  * 이용 약관 동의 요청을 합니다.
  */
 const post_consent = async (): Promise<string> => {
+  const userId = storage.getString('userId')
   const body = {
     termsAgreed: true,
     privacyAgreed: true,
   }
 
-  const response = await instance('kkilogbu/').post(`users/signin/consent`, { json: body }).text()
+  const response = await instance('kkilogbu/')
+    .post(`users/signin/${userId}/consent`, { json: body })
+    .text()
   return response
 }
 
@@ -221,7 +224,7 @@ const delete_user_membership = async (): Promise<string> => {
   }
 }
 
-const permissionMap = ['PrivacyPolicy', 'Record']
+const permissionMap = ['PrivacyPolicy', 'Record', 'MyPage']
 
 /**
  * 화면별 권한을 체크한다.

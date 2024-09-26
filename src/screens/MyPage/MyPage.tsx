@@ -3,13 +3,14 @@ import { type StackNavigationProp } from '@react-navigation/stack'
 import { Text, TouchableOpacity, View, ScrollView, Linking, Pressable } from 'react-native'
 
 import { SafeScreen } from '@/components/common'
-import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
+import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { logoutAll, useCacelMemberShip } from '@/services/auth'
 import { Button, Header, ImageVariant, SvgIcon } from '@/shared'
 import { type RootStackParamList } from '@/types/navigation'
 
 export default function MyPageScreen() {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'MainTab'>>()
+  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
   const cancelMembership = useCacelMemberShip()
 
   const profileItem = {

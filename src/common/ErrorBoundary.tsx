@@ -5,7 +5,7 @@ import { RootStackParamList } from '@/types/navigation'
 
 interface ErrorBoundaryProps {
   children: ReactNode
-  navigation: StackNavigationProp<RootStackParamList, 'Error'>
+  navigation: StackNavigationProp<RootStackParamList>
 }
 
 interface ErrorBoundaryState {

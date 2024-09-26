@@ -4,7 +4,7 @@ import { View } from 'react-native'
 
 import { SafeScreen, SearchHeader } from '@/components/common'
 import { SearchResults, RecentSearches } from '@/components/search'
-import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
+import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { useRecentSearch } from '@/services/search'
 import { Typo } from '@/shared'
 
@@ -14,6 +14,7 @@ import type { StackNavigationProp } from '@react-navigation/stack'
 
 export default function SearchScreen() {
   const navigation = useNavigation<StackNavigationProp<SearchStackParamList, 'Search'>>()
+  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
   const [query, setQuery] = useState('')
   const [isSearching, setIsSearching] = useState(false)
   const { recentSearches, addRecentSearch, removeRecentSearch } = useRecentSearch()

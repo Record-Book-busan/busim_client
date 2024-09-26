@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native'
 import React, { useEffect, useCallback, useRef, useState } from 'react'
 import { WebView, type WebViewMessageEvent } from 'react-native-webview'
 
-import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
+import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import map from '@/services/map'
 import { useMapRecord } from '@/services/record'
 
@@ -40,6 +40,7 @@ export const RecordMapView = React.memo(({ location, isLocationPressed }: MapVie
   const [zoomLevel, setZoomLevel] = useState('LEVEL_3')
 
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>()
+  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
   const { data: recordData } = useMapRecord(nowLat, nowLng, zoomLevel)
 
   const updateOverlays = useCallback(() => {

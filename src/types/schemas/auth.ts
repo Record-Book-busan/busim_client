@@ -11,5 +11,5 @@ export const KakaoAuthSchema = z.object({
   accessToken: z.string().min(1),
   refreshToken: z.string().min(1),
   userId: z.number(),
-  isAgreed: z.boolean(),
+  isAgreed: z.boolean().optional(),
 })

@@ -5,7 +5,7 @@ import { View } from 'react-native'
 import { SafeScreen, SearchHeader } from '@/components/common'
 import { Place } from '@/components/record'
 import { FeedMain } from '@/components/record/FeedMain'
-import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
+import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { Tab, TabView } from '@/shared'
 
 import type { RecordStackParamList } from '@/types/navigation'
@@ -14,6 +14,7 @@ import type { StackNavigationProp } from '@react-navigation/stack'
 export default function RecordMainScreen() {
   const [index, setIndex] = useState(0)
   const navigation = useNavigation<StackNavigationProp<RecordStackParamList, 'RecordMain'>>()
+  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   const handleSearchBarPress = () =>
     navigateWithPermissionCheck({

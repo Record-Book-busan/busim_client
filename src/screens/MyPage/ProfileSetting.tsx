@@ -6,7 +6,7 @@ import { user } from '@/assets/images'
 import { SafeScreen } from '@/components/common'
 import { ProfilePickerSheet } from '@/components/user'
 import { useGallery } from '@/hooks/useGallery'
-import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
+import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { SvgIcon } from '@/shared'
 import { MyPageStackParamList } from '@/types/navigation'
 
@@ -14,6 +14,7 @@ import type { StackNavigationProp } from '@react-navigation/stack'
 
 export default function ProfileSettingScreen() {
   const navigation = useNavigation<StackNavigationProp<MyPageStackParamList, 'MyPageSettings'>>()
+  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
   const { getPhoto } = useGallery()
   const [isOpenProfilePicker, setIsOpenProfilePicker] = useState(false)
 

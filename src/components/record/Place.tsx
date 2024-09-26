@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { Alert, TouchableOpacity, View } from 'react-native'
 
 import { useLocation } from '@/hooks/useLocation'
-import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
+import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { SvgIcon, Typo } from '@/shared'
 import { RootStackParamList } from '@/types/navigation'
 
@@ -13,6 +13,7 @@ import { MapFAB, RecordMapView } from '../map'
 
 export function Place() {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'CreateRecordStack'>>()
+  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
   const { location, myPositionValid, refreshLocation } = useLocation()
   const [isBookMarkPressed, setIsBookMarkPressed] = useState(false)
   const [isLocationPressed, setIsLocationPressed] = useState(false)

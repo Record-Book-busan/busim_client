@@ -6,13 +6,14 @@ import LinearGradient from 'react-native-linear-gradient'
 import { logoWelcome } from '@/assets/images'
 import { LoginButton } from '@/components/auth'
 import { SafeScreen } from '@/components/common'
-import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
+import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { type LoginProvider, handleSocialLogin, ROLE } from '@/services/auth'
 import { ImageVariant } from '@/shared'
 import { RootStackParamList } from '@/types/navigation'
 
 export default function LoginScreen() {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Login'>>()
+  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   const handleSignIn = async (provider: LoginProvider) => {
     try {

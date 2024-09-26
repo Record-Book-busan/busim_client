@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { Categories, FlatList } from '@/components/common'
 import { CATEGORY, getCategoryText, type CategoryType } from '@/constants'
-import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
+import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { SegmentedControl, SvgIcon } from '@/shared'
 import { ButtonPrimitive } from '@/shared/Button'
 
@@ -60,6 +60,7 @@ export default function BookmarkListScreen() {
   const [index, setIndex] = useState(0)
   const { bottom } = useSafeAreaInsets()
   const navigation = useNavigation<BookMarkListNavigationProps>()
+  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   const { data, fetchNextPage, hasNextPage, isLoading, isFetchingNextPage } = useInfiniteQuery({
     queryKey: ['bookmarks', index === 0 ? 'PLACE' : 'RECORD'] as const,

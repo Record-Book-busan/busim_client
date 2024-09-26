@@ -2,6 +2,7 @@ import { useNavigation } from '@react-navigation/native'
 import { createStackNavigator, type StackNavigationProp } from '@react-navigation/stack'
 
 import ErrorBoundary from '@/common/ErrorBoundary'
+import { NeedLoginPopup } from '@/components/common/NeedLoginPopup'
 import { ErrorScreen, LoginScreen, PrivacyPolicyScreen } from '@/screens'
 
 import CreateRecordStackNavigator from './CreateRecordStack'
@@ -16,10 +17,11 @@ import type { RootStackParamList } from '@/types/navigation'
 const Stack = createStackNavigator<RootStackParamList>()
 
 function ApplicationNavigator() {
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Error'>>()
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>()
 
   return (
     <ErrorBoundary navigation={navigation}>
+      <NeedLoginPopup navigation={navigation} />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />

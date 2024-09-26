@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native'
 import { Platform, TouchableOpacity, View, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { navigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
+import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { MapScreen, MyPageScreen } from '@/screens'
 import { SvgIcon } from '@/shared'
 
@@ -29,6 +29,7 @@ const Tab = createBottomTabNavigator<MainTabParamList>()
 function MainTabNavigator() {
   const insets = useSafeAreaInsets()
   const navigation = useNavigation<BottomTabNavigationProp<RootStackParamList, 'MainTab'>>()
+  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   return (
     <Tab.Navigator
