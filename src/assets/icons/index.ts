@@ -52,3 +52,4 @@ export { default as defaultImageBlueGgilogbu } from './default-image-blue-ggilog
 export { default as defaultImageWhiteGgilogbu } from './default-image-white-ggilogbu.svg'
 export { default as defaultImageBlueSeagull } from './default-image-blue-seagull.svg'
 export { default as defaultImageWhiteSeagull } from './default-image-white-seagull.svg'
+export { default as findWay } from './find-way.svg'

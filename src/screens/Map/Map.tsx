@@ -57,6 +57,14 @@ export default function MapScreen({ route }: MapScreenProps) {
 
   const bottomTabBarHeight = useBottomTabBarHeight()
 
+  const handleClickFindWay = () => {
+    navigateWithPermissionCheck({
+      navigation,
+      routeName: 'SearchStack',
+      params: { screen: 'FindWay' },
+    })
+  }
+
   return (
     <SafeScreen
       excludeEdges={['top', 'bottom']}
@@ -122,6 +130,8 @@ export default function MapScreen({ route }: MapScreenProps) {
           paddingBottom: bottomTabBarHeight,
         }}
       >
+        {/* 길찾기 표시 버튼 */}
+        <MapFAB onPress={handleClickFindWay} iconName="findWay" />
         {/* 주차장 표시 버튼 */}
         <MapFAB
           onPress={() => setIsTrafficPressed(!isParkingPressed)}

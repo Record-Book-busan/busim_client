@@ -21,6 +21,7 @@ export { default as MapDetailScreen } from './Map/Detail'
 
 export { default as SearchScreen } from './Search/Search'
 export { default as DetailScreen } from './Search/Detail'
+export { default as FindWayScreen } from './Search/FindWay'
 
 export { default as PrepareScreen } from './Etc/Prepare'
 export { default as ErrorScreen } from './Etc/Error'

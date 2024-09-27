@@ -1,6 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack'
 
-import { SearchScreen, DetailScreen } from '@/screens'
+import { SearchScreen, DetailScreen, FindWayScreen } from '@/screens'
 
 import type { SearchStackParamList } from '@/types/navigation'
 
@@ -45,6 +45,13 @@ function SearchStackNavigator() {
           gestureEnabled: true,
           gestureDirection: 'vertical',
           gestureResponseDistance: 1500,
+        }}
+      />
+      <Stack.Screen
+        name="FindWay"
+        component={FindWayScreen}
+        options={{
+          animationEnabled: false,
         }}
       />
     </Stack.Navigator>
