@@ -123,7 +123,7 @@ export const validateImageUris = async (uris: string[]): Promise<ImageURISource[
 
   for (const imageUrl of uris) {
     try {
-      const response = await ky.head(imageUrl)
+      const response = await ky.get(imageUrl)
 
       if (response.ok) {
         validUris.push({ uri: imageUrl })

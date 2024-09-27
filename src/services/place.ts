@@ -210,9 +210,12 @@ const get_spcial_place = async (params: {
   const response = await instance('kkilogbu/').get('place', { searchParams: params }).json()
   const places = z.array(MapPlaceSchema).parse(response)
 
-  const placeDetails = Promise.all(
-    places.splice(0, 41).map(async place => {
-      return await instance('kkilogbu/').get(`place/${place.type}/${place.id}`).json()
+  const placeDetails = await Promise.all(
+    places.slice(0, 41).map(async place => {
+      const detailResponse = await instance('kkilogbu/')
+        .get(`place/${place.type}/${place.id}`)
+        .json()
+      return detailResponse
     }),
   )
 

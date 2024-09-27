@@ -199,7 +199,7 @@ export const PlaceMapView = ({
       {isRefreshNeeded && (
         <View className="flex-row items-center justify-center">
           <View
-            className="absolute bottom-4 z-[2]"
+            className="absolute bottom-10 z-[2]"
             style={{
               paddingBottom: bottomTabBarHeight,
             }}

@@ -117,7 +117,7 @@ const InfoSection: React.FC<{ content?: string; children?: React.ReactNode }> = 
   content,
   children,
 }) => (
-  <View className="w-full rounded-xl bg-BUSIM-slate-light px-3 py-3">
+  <View className="w-full rounded-xl bg-BUSIM-slate-light py-3 pl-3 pr-6">
     {content ? <Typo className="text-[15px] leading-6 text-gray-700">{content}</Typo> : children}
   </View>
 )

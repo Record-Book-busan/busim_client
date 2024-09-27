@@ -56,14 +56,9 @@ export function MapDetailContent({ id, type }: MapDetailContentProps) {
           ))}
         </View>
 
-        {data.report ||
-          (data.content && (
-            <>
-              <Typo className="mb-3 font-Medium text-lg text-gray-700">장소 소개</Typo>
-              <InfoSection content={data.report || data.content} />
-            </>
-          ))}
-        <Typo className="mb-3 font-Medium text-lg text-gray-700">정보</Typo>
+        <Typo className="mb-3 font-Medium text-lg text-gray-700">장소 소개</Typo>
+        <InfoSection content={data.report || data.content || '소개정보 미제공'} />
+        <Typo className="my-3 font-Medium text-lg text-gray-700">정보</Typo>
         <InfoSection>
           <InfoItem icon="marker" text={data.address} />
           <InfoItem icon="time" text={data.operatingTime || '운영시간 미제공'} />
@@ -85,7 +80,7 @@ export function MapDetailContent({ id, type }: MapDetailContentProps) {
 const InfoItem = ({ icon, text }: { icon: IconName; text: string }) => (
   <View className="flex-row items-center py-1.5">
     <SvgIcon name={icon} size={16} className="text-BUSIM-slate" />
-    <Typo className="ml-2 text-[15px] leading-5 text-gray-700">{text}</Typo>
+    <Typo className="ml-2 text-[15px] leading-5">{text}</Typo>
   </View>
 )
 

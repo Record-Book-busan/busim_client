@@ -110,7 +110,11 @@ export function RecordEditContent({ id }: RecordEditContentProps) {
           inputRef={inputRefs.current[0]}
           onSubmitEditing={() => focusNextInput(0)}
         />
-        <RecordLocation location={state.location} isLoading={isLocationLoading} />
+        <RecordLocation
+          location={state.location}
+          isLoading={isLocationLoading}
+          dispatch={dispatch}
+        />
         <RecordImage
           uri={state.image?.uri}
           onImageSelected={image => updateRecordData('image', image)}

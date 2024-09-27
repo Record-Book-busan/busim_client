@@ -20,6 +20,8 @@ interface ImageCarouselProps {
   height?: number
   resizeMode?: ImageResizeMode
   rounded?: number
+  isAuto?: boolean
+  autoInterval?: number
 }
 
 export function ImageCarousel({
@@ -28,6 +30,8 @@ export function ImageCarousel({
   height,
   resizeMode,
   rounded = 0,
+  isAuto = false,
+  autoInterval = 2000,
 }: ImageCarouselProps) {
   const progressValue = useSharedValue<number>(0)
   const ref = useRef<ICarouselInstance>(null)
@@ -77,7 +81,8 @@ export function ImageCarousel({
           }}
           enabled={!lightboxOpen}
           ref={ref}
-          autoPlay={false}
+          autoPlay={isAuto}
+          autoPlayInterval={autoInterval}
           data={imageArray}
           onProgressChange={(_, absoluteProgress) => {
             progressValue.value = absoluteProgress
