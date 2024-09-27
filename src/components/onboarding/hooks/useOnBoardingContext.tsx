@@ -37,7 +37,7 @@ export const OnBoardingProvider = ({ children }: { children: React.ReactNode }) 
   const animationProgress = useSharedValue(0)
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'MainTab'>>()
   const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
-  const postInterest = usePostInterest()
+  const { mutateInterest } = usePostInterest()
 
   const [tourSelections, setTourSelections] = useState<Selection[]>([
     { id: CATEGORY.관광지, title: '관광지', icon: '🏖', isSelected: false },
@@ -85,17 +85,16 @@ export const OnBoardingProvider = ({ children }: { children: React.ReactNode }) 
       },
     }
 
-    postInterest(params).then(response => {
-      console.log(response)
-
-      navigateWithPermissionCheck({
-        navigation,
-        routeName: 'MainTab',
-        params: {
-          screen: 'Map',
-          params: { categories: [] },
-        },
-      })
+    mutateInterest(params, {
+      onSuccess: () =>
+        navigateWithPermissionCheck({
+          navigation,
+          routeName: 'MainTab',
+          params: {
+            screen: 'Map',
+            params: { categories: [] },
+          },
+        }),
     })
   }
 
@@ -132,15 +131,13 @@ export const OnBoardingProvider = ({ children }: { children: React.ReactNode }) 
           restaurantCategories: checkedCategories.filter(category => restaurantTypes.has(category)),
         },
       }
-      console.log(params)
 
-      postInterest(params).then(response => {
-        console.log(response)
-
-        navigation.replace('MainTab', {
-          screen: 'Map',
-          params: { categories: checkedCategories },
-        })
+      mutateInterest(params, {
+        onSuccess: () =>
+          navigation.replace('MainTab', {
+            screen: 'Map',
+            params: { categories: checkedCategories },
+          }),
       })
     }
   }
