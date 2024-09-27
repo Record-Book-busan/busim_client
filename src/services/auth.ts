@@ -185,15 +185,12 @@ export const usePostConsent = () => {
  * 이용 약관 동의 요청을 합니다.
  */
 const post_consent = async (): Promise<string> => {
-  const userId = storage.getString('userId')
   const body = {
     termsAgreed: true,
     privacyAgreed: true,
   }
 
-  const response = await instance('kkilogbu/')
-    .post(`users/signin/${userId}/consent`, { json: body })
-    .text()
+  const response = await instance('kkilogbu/').post(`users/signin/consent`, { json: body }).text()
   return response
 }
 

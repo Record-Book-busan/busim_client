@@ -2,7 +2,6 @@ import { useMutation } from '@tanstack/react-query'
 
 import { CategoryType } from '@/constants'
 import { InterestsSchema } from '@/types/schemas/user'
-import { storage } from '@/utils/storage'
 
 import { instance } from './instance'
 
@@ -367,11 +366,11 @@ const getParking = async (params: getParkingProps): Promise<getParkingResponseTy
   await instance('api/').get('parking', { searchParams: params }).json()
 
 export const usePostInterest = () => {
-  const { mutateAsync } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: postInterest,
   })
 
-  return mutateAsync
+  return { mutateInterest: mutate }
 }
 
 type postInterestProps = {
@@ -383,16 +382,9 @@ type postInterestProps = {
 }
 
 const postInterest = async ({ allSkip, categories }: postInterestProps): Promise<string> => {
-  const userId = storage.getString('userId')
-
-  if (userId) {
-    const response = await instance('kkilogbu/')
-      .post(`interests/my/${userId}`, { searchParams: { allSkip: allSkip }, json: categories })
-      .text()
-    return response
-  } else {
-    throw new Error('storage에 userId가 없습니다.')
-  }
+  return await instance('kkilogbu/')
+    .post(`interests/my`, { searchParams: { allSkip: allSkip }, json: categories })
+    .text()
 }
 
 export const useGetInterest = () => {
@@ -403,20 +395,9 @@ export const useGetInterest = () => {
   return mutateAsync
 }
 
-type getInterestResponseType = {
-  touristCategories: string[]
-  restaurantCategories: string[]
-}
-
-const getInterest = async (): Promise<getInterestResponseType> => {
-  const userId = storage.getString('userId')
-
-  if (userId) {
-    const response = await instance('kkilogbu/').get(`interests/${userId}`).json()
-    return InterestsSchema.parse(response)
-  } else {
-    throw new Error('storage에 userId가 없습니다.')
-  }
+const getInterest = async () => {
+  const response = await instance('kkilogbu/').get(`interests/my/get`).json()
+  return InterestsSchema.parse(response)
 }
 
 export {
