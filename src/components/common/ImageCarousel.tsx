@@ -1,16 +1,13 @@
 import React, { useRef, useState } from 'react'
 import { Image, View, TouchableOpacity, ImageResizeMode, ImageURISource } from 'react-native'
 import Lightbox from 'react-native-lightbox-v2'
-import Animated, {
-  useAnimatedReaction,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated'
+import { useSharedValue } from 'react-native-reanimated'
 import Carousel, { type ICarouselInstance } from 'react-native-reanimated-carousel'
 
 import { window } from '@/constants'
 import { ImageVariant } from '@/shared'
+
+import Indicator from './CarouselIndicator'
 
 const SCREEN_WIDTH = window.width
 
@@ -22,9 +19,16 @@ interface ImageCarouselProps {
   /** 캐로셀 높이 */
   height?: number
   resizeMode?: ImageResizeMode
+  rounded?: number
 }
 
-export function ImageCarousel({ images, width, height, resizeMode }: ImageCarouselProps) {
+export function ImageCarousel({
+  images,
+  width,
+  height,
+  resizeMode,
+  rounded = 0,
+}: ImageCarouselProps) {
   const progressValue = useSharedValue<number>(0)
   const ref = useRef<ICarouselInstance>(null)
   const [lightboxOpen, setLightboxOpen] = useState(false)
@@ -68,6 +72,9 @@ export function ImageCarousel({ images, width, height, resizeMode }: ImageCarous
           width={carouselWidth}
           height={carouselHeight}
           loop
+          style={{
+            borderRadius: rounded,
+          }}
           enabled={!lightboxOpen}
           ref={ref}
           autoPlay={false}
@@ -91,6 +98,7 @@ interface ItemProps {
   index: number
   item: ImageURISource
   resizeMode: ImageResizeMode
+  onClickImage?: (id: string) => void
 }
 
 function ImageItem({ item, resizeMode }: ItemProps) {
@@ -98,67 +106,5 @@ function ImageItem({ item, resizeMode }: ItemProps) {
     <TouchableOpacity activeOpacity={0.9}>
       <ImageVariant className="h-full w-full" source={item} resizeMode={resizeMode} />
     </TouchableOpacity>
-  )
-}
-
-interface IndicatorProps {
-  count: number
-  progressValue: Animated.SharedValue<number>
-}
-
-function Indicator({ count, progressValue }: IndicatorProps) {
-  const activeDotIndex = useSharedValue(0)
-
-  useAnimatedReaction(
-    () => progressValue.value,
-    progress => {
-      const newIndex = Math.round(progress) % count
-      if (newIndex !== activeDotIndex.value) {
-        activeDotIndex.value = newIndex
-      }
-    },
-    [progressValue, count],
-  )
-
-  return (
-    <View className="absolute bottom-3 mt-2 w-full flex-row justify-center">
-      {Array.from({ length: count }).map((_, index) => (
-        <Dot key={index} index={index} activeDotIndex={activeDotIndex} />
-      ))}
-    </View>
-  )
-}
-
-interface DotProps {
-  index: number
-  activeDotIndex: Animated.SharedValue<number>
-}
-
-function Dot({ index, activeDotIndex }: DotProps) {
-  const animatedStyle = useAnimatedStyle(() => {
-    const isActive = index === activeDotIndex.value
-    return {
-      width: withTiming(isActive ? 16 : 6, { duration: 150 }),
-      opacity: withTiming(isActive ? 1 : 0.6, { duration: 150 }),
-    }
-  })
-
-  return (
-    <Animated.View
-      style={[
-        {
-          height: 6,
-          borderRadius: 3,
-          backgroundColor: 'white',
-          marginHorizontal: 3,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: 0.22,
-          shadowRadius: 2.22,
-          elevation: 3,
-        },
-        animatedStyle,
-      ]}
-    />
   )
 }

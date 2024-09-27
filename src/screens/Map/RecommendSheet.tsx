@@ -1,3 +1,4 @@
+/* eslint-disable */
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { useNavigation } from '@react-navigation/native'
@@ -14,6 +15,10 @@ import { RootStackParamList } from '@/types/navigation'
 import { getCategoryType } from '../Search/Search'
 
 import type { StackNavigationProp } from '@react-navigation/stack'
+import { useSpecialPlace } from '@/services/place'
+import Carousel from 'react-native-reanimated-carousel'
+import Indicator from '@/components/common/CarouselIndicator'
+import { useSharedValue } from 'react-native-reanimated'
 
 const CustomHandle = () => {
   return (
@@ -84,32 +89,62 @@ const ListItem = ({ name, category, explain, id }: ListItemProps) => {
   )
 }
 
-type ListViewItemProps = {
-  name: string
-  selectItems: string[]
-  listItemProps: ListItemProps[]
+type ListViewCarouselProps = {
+  items: ListItemProps[]
+  height?: number
+  width?: number
 }
 
-const ListViewItem = ({ name, selectItems, listItemProps }: ListViewItemProps) => {
+const ListViewCarousel: React.FC<ListViewCarouselProps> = ({
+  items,
+  height = 590,
+  width = 400,
+}) => {
+  const carouselRef = useRef(null)
+  const progressValue = useSharedValue<number>(0)
+
+  const chunkArray = (array: ListItemProps[], size: number) => {
+    return Array.from({ length: Math.ceil(array.length / size) }, (_, i) =>
+      array.slice(i * size, i * size + size),
+    )
+  }
+
+  const chunkedItems = useMemo(() => chunkArray(items, 5), [items])
+
   return (
-    <View className="items-center border-t-2 border-[#DBDCE5] bg-white px-4 py-2">
-      <View className="mt-2 w-full flex-row items-center">
-        <Typo className="flex-1 text-left text-lg">{name}</Typo>
-        <DropBox items={selectItems} />
-      </View>
-      <View className="w-full">
-        {listItemProps.map((listItemProp, index) => {
-          return (
-            <ListItem
-              key={index}
-              name={listItemProp.name}
-              category={listItemProp.category}
-              explain={listItemProp.explain}
-              id={listItemProp.id}
-            />
-          )
-        })}
-      </View>
+    <View className="relative">
+      <Carousel
+        ref={carouselRef}
+        width={width}
+        height={height}
+        data={chunkedItems}
+        autoPlay={true}
+        autoPlayInterval={10000}
+        onProgressChange={(_, absoluteProgress) => {
+          progressValue.value = absoluteProgress
+        }}
+        renderItem={({ item }) => (
+          <View className="mx-4 flex-1">
+            {item.map((listItemProp, index) => (
+              <ListItem
+                key={index}
+                name={listItemProp.name}
+                category={listItemProp.category}
+                explain={listItemProp.explain}
+                id={listItemProp.id}
+              />
+            ))}
+          </View>
+        )}
+      />
+      {chunkedItems.length > 1 && (
+        <Indicator
+          count={chunkedItems.length}
+          progressValue={progressValue}
+          style={{ bottom: 25 }}
+          dotStyle={{ backgroundColor: '#999999' }}
+        />
+      )}
     </View>
   )
 }
@@ -145,17 +180,72 @@ export const RecommendSheet: React.FC<RecommendSheetProps> = ({ headerHeight }) 
   //   <BottomSheetBackdrop {...props} appearsOnIndex={1} disappearsOnIndex={0} />
   // )
 
-  const imageUrls = ['test1', 'test2']
-  const [imageUris, setImageUris] = useState<ImageURISource[]>([])
+  const [imageUris, setImageUris] = useState<ImageURISource[]>([
+    require('@/assets/images/logo-blue.png'),
+    require('@/assets/images/logo-blue.png'),
+    require('@/assets/images/logo-blue.png'),
+    require('@/assets/images/logo-blue.png'),
+    require('@/assets/images/logo-blue.png'),
+  ])
+  const [listViewItems, setListViewItems] = useState<ListItemProps[]>([
+    { name: '장소명', category: '오션뷰', explain: '장소1 설명입니다', id: 1 },
+    { name: '장소명', category: '오션뷰', explain: '장소2 설명입니다', id: 1 },
+    { name: '장소명', category: '맛집', explain: '장소3 설명입니다', id: 1 },
+    { name: '장소명', category: '테스트', explain: '장소4 설명입니다', id: 1 },
+    { name: '장소명', category: '맛집', explain: '장소5 설명입니다', id: 1 },
+    { name: '장소명', category: '오션뷰', explain: '장소6 설명입니다', id: 1 },
+    { name: '장소명', category: '맛집', explain: '장소7 설명입니다', id: 1 },
+    { name: '장소명', category: '오션뷰', explain: '장소8 설명입니다', id: 1 },
+    { name: '장소명', category: '오션뷰', explain: '장소9 설명입니다', id: 1 },
+    { name: '장소명', category: '오션뷰', explain: '장소10 설명입니다', id: 1 },
+  ])
+  const [filteredListViewItems, setFilteredListViewItems] = useState<ListItemProps[]>([])
+  const [categories, setCategories] = useState<string[]>(['오션뷰', '맛집', '테스트'])
+  const [activeCategory, setActiveCategory] = useState<string>(categories[0])
 
   useEffect(() => {
-    const setValidateUris = async () => {
-      const validateUrls = await validateImageUris(imageUrls)
-      setImageUris(validateUrls)
-    }
+    const filtered = listViewItems.filter(listViewItem => {
+      return listViewItem.category === activeCategory
+    })
 
-    setValidateUris()
-  }, [])
+    setFilteredListViewItems(filtered)
+  }, [activeCategory])
+
+  // const { data: placeData } = useSpecialPlace({
+  //   lat: 35.2002495716857,
+  //   lng: 129.16,
+  //   level: 'LEVEL_10',
+  //   restaurantCategories: 'SPECIAL_RESTAURANT',
+  //   touristCategories: '',
+  //   isEnabled: true,
+  // })
+
+  // useEffect(() => {
+  //   const placeUrls: string[] = []
+
+  //   placeData?.map((place) => {
+  //     if(placeUrls.length < 5 && !!place.imageUrl && place.imageUrl.length > 0) placeUrls.push((place.imageUrl as string[])[0].replace("_tti", ""))
+  //   })
+
+  //   const listItems = placeData?.map((place) => ({
+  //     name: place?.title,
+  //     category: '특별한_맛집',
+  //     explain: place?.content,
+  //     id: place.id,
+  //   }))
+
+  //   setValidateUris(placeUrls)
+  //   setListViewItems(listItems as ListItemProps[])
+  // }, [placeData])
+
+  // const setValidateUris = async (imageUrls: string[]) => {
+  //   const validateUrls = await validateImageUris(imageUrls)
+  //   setImageUris(validateUrls)
+  // }
+
+  const handleItemClick = (item: string) => {
+    setActiveCategory(item)
+  }
 
   return (
     <BottomSheet
@@ -186,50 +276,27 @@ export const RecommendSheet: React.FC<RecommendSheetProps> = ({ headerHeight }) 
       handleComponent={CustomHandle}
       bottomInset={50}
     >
-      <BottomSheetScrollView className="z-50 flex-1">
+      <BottomSheetScrollView className="z-50 flex-1" nestedScrollEnabled={true}>
         <View className="mb-4 items-center bg-white px-4">
           <Typo className="mt-8 w-full text-left text-lg">시장님이 다녀간 맛집 리스트</Typo>
-          <View className="my-2 flex h-[180px] w-full items-center justify-center rounded-2xl bg-BUSIM-slate">
-            <ImageCarousel height={180} images={imageUris} />
+          <View className="my-2 flex h-[180px] items-center justify-center rounded-2xl">
+            <ImageCarousel height={180} width={350} rounded={20} images={imageUris} />
           </View>
           <Typo className="text-md w-full text-left">사장님, 여기 맛집이에요!</Typo>
         </View>
-        <ListViewItem
-          name="추천 맛집"
-          selectItems={['오션뷰', '맛집', '테마']}
-          listItemProps={[
-            {
-              name: '장소명',
-              category: '오션뷰',
-              explain: '장소1 설명입니다',
-              id: 1,
-            },
-            {
-              name: '장소명',
-              category: '오션뷰',
-              explain: '장소2 설명입니다',
-              id: 1,
-            },
-            {
-              name: '장소명',
-              category: '오션뷰',
-              explain: '장소3 설명입니다',
-              id: 1,
-            },
-            {
-              name: '장소명',
-              category: '오션뷰',
-              explain: '장소4 설명입니다',
-              id: 1,
-            },
-            {
-              name: '장소명',
-              category: '오션뷰',
-              explain: '장소5 설명입니다',
-              id: 1,
-            },
-          ]}
-        />
+        <View className="items-center border-t-2 border-[#DBDCE5] bg-white px-4 py-2">
+          <Typo className="w-full py-2 text-center text-lg font-bold">추천 맛집</Typo>
+          <View className="mt-2 w-full flex-row items-center justify-end">
+            <DropBox items={categories} selected={activeCategory} onItemClick={handleItemClick} />
+            {/* <TouchableOpacity className="flex flex-row items-center justify-start w-16">
+              <Typo className="flex-1 text-left text-xs text-[#96979E]">전체 보기</Typo>
+              <SvgIcon name="arrowRightBlack" size={14} className="text-[#96979E]" />
+            </TouchableOpacity> */}
+          </View>
+          <View className="relative mx-4 mt-4 flex-1">
+            <ListViewCarousel items={filteredListViewItems} />
+          </View>
+        </View>
       </BottomSheetScrollView>
     </BottomSheet>
   )
