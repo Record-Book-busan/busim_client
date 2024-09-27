@@ -110,9 +110,7 @@ export const get_search_detail = async (param: {
   type: string
   placeId: number
 }): Promise<SearchDetail> => {
-  return await instance('kkilogbu/')
-    .get(`place/search/${param.type}/images/${param.placeId}`)
-    .json()
+  return await instance('kkilogbu/').get(`place/search/${param.type}/${param.placeId}`).json()
 }
 
 /**
