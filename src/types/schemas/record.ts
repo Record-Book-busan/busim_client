@@ -20,15 +20,26 @@ export const UpdateRecordSchema = z.object({
 })
 export type UpdateRecord = z.infer<typeof UpdateRecordSchema>
 
+export const RecordSchma = z.object({
+  lat: z.number().min(-90).max(90),
+  lng: z.number().min(-180).max(180),
+  id: z.number(),
+  title: z.string().min(1).max(100),
+  content: z.string().min(1).max(501),
+  imageUrl: z.string(),
+  createdAt: z.string(),
+})
+export type Record = z.infer<typeof RecordSchma>
+
 export const RecordDetailSchema = z.object({
   id: z.number(),
   title: z.string().min(1).max(100),
-  imageUrl: z.string().url().nullable(),
+  thumbnailUrl: z.string().url().nullable(),
   address: z.string(),
   lat: z.number().min(-90).max(90),
   lng: z.number().min(-180).max(180),
-  createdAt: z.string(),
-  content: z.string(),
+  touristCategory: z.string(),
+  content: z.string().optional(),
 })
 export type RecordDetail = z.infer<typeof RecordDetailSchema>
 export const RecordDetailArraySchema = z.array(RecordDetailSchema)
@@ -36,12 +47,12 @@ export const RecordDetailArraySchema = z.array(RecordDetailSchema)
 export const RecordListSchema = z.object({
   id: z.number(),
   title: z.string().min(1).max(100),
-  imageUrl: z.string().url().nullable(),
+  thumbnailUrl: z.string().url().nullable(),
   address: z.string(),
   lat: z.number().min(-90).max(90),
   lng: z.number().min(-180).max(180),
-  createdAt: z.string(),
-  content: z.string(),
+  touristCategory: z.string(),
+  content: z.string().optional(),
 })
 export type RecordList = z.infer<typeof RecordListSchema>
 

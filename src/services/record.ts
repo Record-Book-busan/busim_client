@@ -16,6 +16,7 @@ import {
   RecordDetail,
   RecordListArraySchema,
   RecordDetailArraySchema,
+  // RecordSchma,
 } from '@/types/schemas/record'
 
 import { instance, kakaoMap } from './instance'
@@ -40,7 +41,7 @@ export const useUpdateRecord = () => {
 export const useRecordDetail = (id: number) => {
   return useSuspenseQuery({
     queryKey: ['recordDetail', id],
-    queryFn: () => get_record_detail({ markId: id }),
+    queryFn: () => get_record_image_detail({ markId: id }),
   })
 }
 
@@ -58,7 +59,8 @@ export const useMapRecord = (lat: number, lng: number, level: string) => {
 export const useInfiniteRecordList = () => {
   return useSuspenseInfiniteQuery<RecordDetail[]>({
     queryKey: ['recordList'],
-    queryFn: ({ pageParam = 0 }) => get_record_list({ offset: pageParam as number, limit: 10 }),
+    queryFn: ({ pageParam = 0 }) =>
+      get_record_list({ query: '', offset: pageParam as number, limit: 10 }),
     getNextPageParam: (lastPage, allPages) => {
       if (lastPage.length === 0) return undefined
       return allPages.length * 10
@@ -102,12 +104,22 @@ export const patch_record = async (params: UpdateRecord) => {
     .json()
 }
 
+// /**
+//  * 기록 상세 정보를 가져옵니다.
+//  * @param markId - 기록 식별자
+//  * @returns
+//  */
+// const get_record_detail = async (params: { markId: number }) => {
+//   const response = await instance('kkilogbu/').get(`record/${params.markId}`).json()
+//   return RecordSchma.parse(response)
+// }
+
 /**
- * 기록 상세 정보를 가져옵니다.
+ * 기록 이미지 상세 정보를 가져옵니다.
  * @param markId - 기록 식별자
  * @returns
  */
-const get_record_detail = async (params: { markId: number }) => {
+const get_record_image_detail = async (params: { markId: number }) => {
   const response = await instance('kkilogbu/').get(`record/images/${params.markId}`).json()
   return RecordDetailSchema.parse(response)
 }
@@ -128,7 +140,7 @@ const get_map_record = async (params: { lat: number; lng: number; level: string 
  * @param page
  * @param size
  */
-const get_record_list = async (params: { offset: number; limit: number }) => {
+const get_record_list = async (params: { query: string; offset: number; limit: number }) => {
   console.log(params.offset)
 
   const response = await instance('kkilogbu/')
@@ -140,9 +152,16 @@ const get_record_list = async (params: { offset: number; limit: number }) => {
 
   const details = await Promise.all(
     parsedResponses.map(async parsedResponse => {
-      return get_record_detail({ markId: parsedResponse.id })
+      return get_record_image_detail({ markId: parsedResponse.id })
     }),
   )
+
+  // const contents = await Promise.all(
+  //   details.map(async detail => {
+  //     return get_record_detail({ markId: detail.id })
+  //   })
+  // )
+
   return RecordDetailArraySchema.parse(details)
 }
 

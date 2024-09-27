@@ -16,13 +16,13 @@ export function RecordDetailContent({ id }: { id: number }) {
   useEffect(() => {
     const fetchImageUri = async () => {
       const validImageUri = await validateImageUri(
-        record.imageUrl !== null ? record.imageUrl : undefined,
+        record.thumbnailUrl !== null ? record.thumbnailUrl : undefined,
       )
       setImageUri(validImageUri)
     }
 
     fetchImageUri()
-  }, [record.imageUrl])
+  }, [record.thumbnailUrl])
 
   return (
     <ScrollView className="flex-1">

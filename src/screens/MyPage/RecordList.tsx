@@ -2,6 +2,7 @@ import { type CompositeNavigationProp, useNavigation } from '@react-navigation/n
 import { ActivityIndicator, FlatList, Text, View } from 'react-native'
 
 import { ImagePlaceItem } from '@/components/search'
+import { CategoryType, getCategoryText } from '@/constants'
 import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { useInfiniteRecordList } from '@/services/record'
 import { type RecordList } from '@/types/schemas/record'
@@ -42,9 +43,10 @@ export default function RecordListScreen() {
     <ImagePlaceItem
       id={item.id}
       title={item.title}
-      content={item.content}
+      category={getCategoryText(item.touristCategory as CategoryType)}
+      content={item?.content}
       onPressMove={() => handleItemPress(item.id)}
-      imageUrl={item.imageUrl || ''}
+      imageUrl={item.thumbnailUrl || ''}
       isBookMarked={false}
       onPressBookMark={handleBookmarkPress}
     />

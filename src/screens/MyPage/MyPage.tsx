@@ -47,18 +47,17 @@ export default function MyPageScreen() {
           },
         }),
     },
-    {
-      // FIXME: 배포 시 제거
-      title: '테스트',
-      onPress: () =>
-        navigateWithPermissionCheck({
-          navigation,
-          routeName: 'MyPageStack',
-          params: {
-            screen: 'Test',
-          },
-        }),
-    },
+    // {
+    //   title: '테스트',
+    //   onPress: () =>
+    //     navigateWithPermissionCheck({
+    //       navigation,
+    //       routeName: 'MyPageStack',
+    //       params: {
+    //         screen: 'Test',
+    //       },
+    //     }),
+    // },
   ]
 
   const settingsItems = [
