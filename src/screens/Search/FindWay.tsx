@@ -1,5 +1,5 @@
 import { Suspense, useState } from 'react'
-import { Linking, TouchableOpacity, View } from 'react-native'
+import { Alert, Linking, TouchableOpacity, View } from 'react-native'
 
 import { SafeScreen, SearchBar, SearchHeader } from '@/components/common'
 import { SearchResults, RecentSearches } from '@/components/search'
@@ -16,9 +16,9 @@ type LocationType = {
 export default function SearchScreen() {
   const [query, setQuery] = useState('')
   const [query2, setQuery2] = useState('')
-  const [location2, setLocation2] = useState<LocationType>()
+  const [location2, setLocation2] = useState<LocationType | null>(null)
   const [query3, setQuery3] = useState('')
-  const [location3, setLocation3] = useState<LocationType>()
+  const [location3, setLocation3] = useState<LocationType | null>(null)
   const [isSearching, setIsSearching] = useState(false)
   const { recentSearches, addRecentSearch, removeRecentSearch } = useRecentSearch()
   const [selectedQuery, setSelectedQuery] = useState<number>()
@@ -35,28 +35,14 @@ export default function SearchScreen() {
     setIsSearching(false)
   }
 
-  const handleSearch2 = () => {
-    setSelectedQuery(2)
-    if (query2.trim()) {
-      setIsSearching(true)
-    }
-  }
-
   const handleInputChange2 = (text: string) => {
     setQuery2(text)
-    setIsSearching(false)
-  }
-
-  const handleSearch3 = () => {
-    setSelectedQuery(3)
-    if (query3.trim()) {
-      setIsSearching(true)
-    }
+    setLocation2(null)
   }
 
   const handleInputChange3 = (text: string) => {
     setQuery3(text)
-    setIsSearching(false)
+    setLocation3(null)
   }
 
   const navigateFillInput = (place: Place) => {
@@ -68,24 +54,48 @@ export default function SearchScreen() {
     } else if (selectedQuery === 3) {
       setQuery3(place.name)
       setLocation3({ lat: place.latitude, lon: place.longitude })
+    } else {
+      if (!query2.trim()) {
+        setQuery2(place.name)
+        setLocation2({ lat: place.latitude, lon: place.longitude })
+      } else if (!query3.trim()) {
+        setQuery3(place.name)
+        setLocation3({ lat: place.latitude, lon: place.longitude })
+      }
     }
   }
 
   const navigateKakaoMap = () => {
-    const kakaoAppKey = `${process.env.KakaoNativeApiKey}`
-    const url = `kakao${kakaoAppKey}://route?sp=${location2?.lat},${location2?.lon}&ep=${location3?.lat},${location3?.lon}&by=CAR`
+    if (!location2?.lat || !location2?.lon) {
+      Alert.alert('출발지를 입력해주세요!')
+      return
+    } else if (!location3?.lat || !location3?.lon) {
+      Alert.alert('도착지를 입력해주세요!')
+      return
+    }
 
-    Linking.canOpenURL(url)
-      .then(supported => {
-        if (!supported) {
-          throw new Error('카카오 지도 앱을 열 수 없습니다. 앱이 설치되어 있는지 확인하세요.')
+    const navigateToKakao = async () => {
+      try {
+        const appUrl = `kakaomap://route?sp=${location2?.lat},${location2?.lon}&ep=${location3?.lat},${location3?.lon}&by=PUBLICTRANSIT`
+        const webUrl = 'https://map.kakao.com/link/to'
+
+        if (await Linking.canOpenURL(appUrl)) {
+          await Linking.openURL(appUrl)
         } else {
-          return Linking.openURL(url)
+          Alert.alert('카카오 지도 앱이 설치되어 있지 않습니다. 웹으로 이동하시겠습니까?.', '', [
+            { text: '취소', style: 'cancel' },
+            {
+              text: '웹으로 이동',
+              onPress: () => Linking.openURL(webUrl),
+            },
+          ])
         }
-      })
-      .catch(() => {
-        throw new Error('카카오맵 이동에 실패했습니다.')
-      })
+      } catch {
+        console.error('카카오맵 이동에 실패했습니다.')
+      }
+    }
+
+    navigateToKakao()
   }
 
   return (
@@ -100,20 +110,16 @@ export default function SearchScreen() {
       />
       <View className="flex h-[210px] justify-between border-t-2 border-[#dadada] px-4 py-4">
         <SearchBar
-          type="input"
+          type="button"
           placeholder="출발지를 입력해주세요."
           onChangeText={handleInputChange2}
           value={query2}
-          onPress={handleSearch2}
-          onSubmitEditing={handleSearch2}
         />
         <SearchBar
-          type="input"
+          type="button"
           placeholder="도착지를 입력해주세요."
           onChangeText={handleInputChange3}
           value={query3}
-          onPress={handleSearch3}
-          onSubmitEditing={handleSearch3}
         />
         <TouchableOpacity
           className="mt-3 flex h-12 justify-center rounded-2xl bg-[#00339d]"
