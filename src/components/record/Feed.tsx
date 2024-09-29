@@ -43,7 +43,7 @@ export function Feed(props: FeedProps) {
   if (!props.data || props.data.length === 0) {
     return (
       <View className="flex-1 items-center justify-center">
-        <Typo className="font-SemiBold">기록이 없습니다.</Typo>
+        <Typo className="font-SemiBold">여행 기록이 없습니다.</Typo>
       </View>
     )
   }

@@ -4533,6 +4533,7 @@ __metadata:
     react-i18next: "npm:^15.0.1"
     react-native: "npm:0.75.2"
     react-native-device-info: "npm:^13.0.0"
+    react-native-file-access: "npm:^3.1.1"
     react-native-geolocation-service: "npm:^5.3.1"
     react-native-gesture-handler: "npm:^2.18.1"
     react-native-image-picker: "npm:^7.1.2"
@@ -10937,6 +10938,16 @@ __metadata:
   peerDependencies:
     react-native: "*"
   checksum: 10c0/4ca9fa36c2f578c993cbf2c5bb22f30d0b05e5d1fd74b6d0f65b6a922ef0ce0f3be7d2816f9a860c7a4b2da6e16474fb80c8ed56428dec391d811c23b2287f89
+  languageName: node
+  linkType: hard
+
+"react-native-file-access@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "react-native-file-access@npm:3.1.1"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/f31a4a2f74824f6b2308a521c9be6bd13ad9e6cd59f18f33a5fbe991e9d242facafa2073c87b61ce79bcbda7e2f249504e9202bb880c2cf65a7b99424a7e0dd7
   languageName: node
   linkType: hard
 
