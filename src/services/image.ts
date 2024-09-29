@@ -2,8 +2,6 @@ import { useMutation } from '@tanstack/react-query'
 import ky from 'ky'
 import { ImageURISource } from 'react-native'
 
-import { showToast } from '@/utils/toast'
-
 import { instance } from './instance'
 
 export type ImageAsset = {
@@ -39,33 +37,27 @@ export type PostImageProps = {
  * @returns 업로드된 이미지의 URL
  */
 export const post_image = async ({ type, image }: PostImageProps) => {
-  try {
-    const formData = new FormData()
-    formData.append('type', type)
-    formData.append('image', {
-      uri: image.uri,
-      type: image.type || 'image/jpeg',
-      name: image.fileName || 'image.jpg',
+  const formData = new FormData()
+  formData.append('type', type)
+  formData.append('image', {
+    uri: image.uri,
+    type: image.type || 'image/jpeg',
+    name: image.fileName || 'image.jpg',
+  })
+  const response = await instance('api/')
+    .post('image', {
+      body: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     })
-    const response = await instance('api/')
-      .post('image', {
-        body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .text()
+    .text()
 
-    const path = type === 'post' ? 'postImage' : 'profileImage'
+  const path = type === 'post' ? 'postImage' : 'profileImage'
 
-    const imageUrl = `https://busan-image-bucket.s3.ap-northeast-2.amazonaws.com/${path}${response}`
+  const imageUrl = `https://busan-image-bucket.s3.ap-northeast-2.amazonaws.com/${path}${response}`
 
-    return imageUrl
-  } catch (error) {
-    showToast({ text: '20mb 미만까지만 업로드 가능합니다.' })
-    console.error('[ERROR] 이미지 업로드 실패:', error)
-    throw error
-  }
+  return imageUrl
 }
 
 /** 이미지 업로드 훅입니다. */
