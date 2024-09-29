@@ -15,7 +15,18 @@ import ApplicationNavigator from './navigators/Application'
 
 import './translations'
 
-export const queryClient = new QueryClient()
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 0,
+      throwOnError: true,
+    },
+    mutations: {
+      retry: 0,
+      throwOnError: false,
+    },
+  },
+})
 
 export const storage = new MMKV()
 

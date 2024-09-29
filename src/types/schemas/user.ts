@@ -1,12 +1,9 @@
 import { z } from 'zod'
 
-export const userSchema = z.object({
-  name: z.string(),
-})
-
 export const UserInfoSchema = z.object({
-  nickName: z.string(),
+  nickname: z.string(),
   profileImage: z.string().optional(),
+  email: z.string().nullable(),
 })
 export type UserInfo = z.infer<typeof UserInfoSchema>
 

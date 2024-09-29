@@ -199,11 +199,11 @@ export const useCreateRecordForm = (
 
       mutateRecord(postRecord, {
         onSuccess: () => {
-          showToast({ text: '기록이 저장되었습니다.', type: 'info' })
+          showToast({ text: '기록을 업로드했어요.', type: 'info' })
           dispatch({ type: 'RESET_FORM' })
         },
         onError: err => {
-          showToast({ text: '기록 저장에 실패했습니다.', type: 'info' })
+          showToast({ text: '기록 업로드가 실패했어요.', type: 'info' })
           console.error('[ERROR] 기록 저장 실패:', err)
         },
       })
@@ -268,10 +268,10 @@ export const useEditRecordForm = (
 
       mutateUpdate(updateRecord, {
         onSuccess: () => {
-          showToast({ text: '기록이 수정되었습니다.', type: 'info' })
+          showToast({ text: '기록을 변경했어요.', type: 'info' })
         },
         onError: err => {
-          showToast({ text: '기록 수정에 실패했습니다.', type: 'info' })
+          showToast({ text: '기록 변경이 실패했어요.', type: 'info' })
           console.error('[ERROR] 기록 수정 실패:', err)
         },
       })
