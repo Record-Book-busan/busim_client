@@ -15,7 +15,7 @@ module.exports = {
         SemiBold: ['Pretendard-SemiBold'],
       },
       colors: {
-        'BUSIM-blue': '#1753e3',
+        'BUSIM-blue': '#004fec',
         'BUSIM-blue-light': '#f4f8ff',
         'BUSIM-blue-dark': '#1243b6',
         'BUSIM-slate': '#b2bfd1',

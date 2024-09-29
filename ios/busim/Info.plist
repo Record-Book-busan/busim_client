@@ -53,6 +53,12 @@
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
+			<key>img1.kakaocdn.net</key>
+			<dict/>
+			<key>NSIncludesSubdomains</key>
+			<true/>
+			<key>NSExceptionAllowsInsecureHTTPLoads</key>
+			<true/>
 			<key>tong.visitkorea.or.kr</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
