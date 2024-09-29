@@ -1,11 +1,12 @@
 import { useNavigation } from '@react-navigation/native'
 import { type StackNavigationProp } from '@react-navigation/stack'
-import { Text, TouchableOpacity, View, ScrollView, Linking, Pressable } from 'react-native'
+import { Text, View, ScrollView, Linking, Pressable } from 'react-native'
 
 import { SafeScreen } from '@/components/common'
+import { UserInfoItem } from '@/components/user'
 import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { logoutAll, useCacelMemberShip } from '@/services/auth'
-import { Button, Header, ImageVariant, SvgIcon } from '@/shared'
+import { Button, Header, SvgIcon } from '@/shared'
 import { type RootStackParamList } from '@/types/navigation'
 
 export default function MyPageScreen() {
@@ -13,17 +14,6 @@ export default function MyPageScreen() {
   const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
   const cancelMembership = useCacelMemberShip()
 
-  const profileItem = {
-    title: '내 정보 관리',
-    onPress: () =>
-      navigateWithPermissionCheck({
-        navigation,
-        routeName: 'MyPageStack',
-        params: {
-          screen: 'MyPageSettings',
-        },
-      }),
-  }
   const menuItems = [
     {
       title: '나의 여행 기록',
@@ -47,22 +37,9 @@ export default function MyPageScreen() {
           },
         }),
     },
-    // {
-    //   title: '테스트',
-    //   onPress: () =>
-    //     navigateWithPermissionCheck({
-    //       navigation,
-    //       routeName: 'MyPageStack',
-    //       params: {
-    //         screen: 'Test',
-    //       },
-    //     }),
-    // },
   ]
 
   const settingsItems = [
-    // { title: '문의 및 지원', onPress: () => {} },
-    // { title: '도움말', onPress: () => {} },
     {
       title: '개인 정보 동의',
       onPress: () => {
@@ -114,13 +91,13 @@ export default function MyPageScreen() {
     <SafeScreen>
       <Header title="마이페이지" LeftContent={<View className="w-10" />} />
       <ScrollView className="flex-1 bg-gray-100">
+        <View className="mb-2 bg-white px-3 pb-2 pt-1">
+          <UserInfoItem />
+        </View>
         <View className="mb-2 bg-white px-3 py-1">
-          <ProfileHeader {...profileItem} />
           {menuItems.map((item, index) => (
             <MenuItem key={index} {...item} />
           ))}
-        </View>
-        <View className="mb-2 flex-col bg-white px-3 py-1">
           {settingsItems.map((item, index) => (
             <MenuItem key={index} {...item} />
           ))}
@@ -140,26 +117,6 @@ type MenuItemProps = {
   onPress: () => void
 }
 
-const ProfileHeader = ({ onPress }: Pick<MenuItemProps, 'onPress'>) => (
-  <Pressable onPress={onPress}>
-    <View className="mb-2 mt-4 flex-row items-center justify-between">
-      <View className="flex-row items-center">
-        <ImageVariant
-          className="mr-4 h-16 w-16 rounded-full bg-gray-300"
-          source={{
-            uri: 'https://avatars.githubusercontent.com/u/139189221?v=4',
-          }}
-          resizeMode="cover"
-        />
-        <Text className="text-xl font-semibold text-gray-950">ssunn113</Text>
-      </View>
-      <Pressable className="pr-1" onPress={onPress}>
-        <SvgIcon name="setting" className="text-gray-400" />
-      </Pressable>
-    </View>
-  </Pressable>
-)
-
 const MenuItem = ({ title, onPress }: MenuItemProps) => (
   <View className="flex-row items-center justify-between py-1">
     <Button onPress={onPress} type="text" variant="ghost">
@@ -170,7 +127,7 @@ const MenuItem = ({ title, onPress }: MenuItemProps) => (
 )
 
 const FooterButton = ({ title, onPress }: MenuItemProps) => (
-  <TouchableOpacity onPress={onPress} className="py-4">
-    <Text className="text-[#00339D] underline">{title}</Text>
-  </TouchableOpacity>
+  <Pressable onPress={onPress} className="py-4">
+    <Text className="text-gray-500">{title}</Text>
+  </Pressable>
 )
