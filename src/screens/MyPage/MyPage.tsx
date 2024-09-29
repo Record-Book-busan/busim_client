@@ -26,17 +26,17 @@ export default function MyPageScreen() {
           },
         }),
     },
-    {
-      title: '북마크',
-      onPress: () =>
-        navigateWithPermissionCheck({
-          navigation,
-          routeName: 'MyPageStack',
-          params: {
-            screen: 'BookMarkList',
-          },
-        }),
-    },
+    // {
+    //   title: '북마크',
+    //   onPress: () =>
+    //     navigateWithPermissionCheck({
+    //       navigation,
+    //       routeName: 'MyPageStack',
+    //       params: {
+    //         screen: 'BookMarkList',
+    //       },
+    //     }),
+    // },
   ]
 
   const settingsItems = [
@@ -75,8 +75,14 @@ export default function MyPageScreen() {
 
   const handleCancelMembershipPress = () => {
     try {
-      const response = cancelMembership()
-      console.log(response)
+      cancelMembership().then(response => {
+        console.log(response)
+
+        navigateWithPermissionCheck({
+          navigation,
+          routeName: 'Login',
+        })
+      })
     } catch {
       throw new Error('회원 탈퇴에 실패했습니다.')
     }

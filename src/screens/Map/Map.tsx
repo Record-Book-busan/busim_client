@@ -110,7 +110,7 @@ export default function MapScreen({ route }: MapScreenProps) {
       </View>
 
       <View
-        className="absolute bottom-10 right-4 z-[2] flex gap-4"
+        className="absolute bottom-12 right-4 z-[2] flex gap-4"
         style={{
           paddingBottom: bottomTabBarHeight,
         }}
@@ -127,7 +127,7 @@ export default function MapScreen({ route }: MapScreenProps) {
         <MapFAB onPress={handleLocationPress} iconName="position" enabled={isLocationPressed} />
       </View>
       <View
-        className="absolute bottom-10 left-4 z-[2] flex gap-4"
+        className="absolute bottom-12 left-4 z-[2] flex gap-4"
         style={{
           paddingBottom: bottomTabBarHeight,
         }}

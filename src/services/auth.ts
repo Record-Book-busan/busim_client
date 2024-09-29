@@ -208,19 +208,8 @@ export const useCacelMemberShip = () => {
  * 탈퇴합니다.
  */
 const delete_user_membership = async (): Promise<string> => {
-  const userId = storage.getString('userId')
-  const accessToken = storage.getString('accessToken')
-
-  if (!!userId && !!accessToken) {
-    const response = (
-      await instance('kkilogbu/').delete(`users/${userId}`, {
-        searchParams: { accessToken: accessToken },
-      })
-    ).text()
-    return response
-  } else {
-    throw new Error('storage에 userId 혹은 accessToken이 없습니다.')
-  }
+  const response = await instance('kkilogbu/').delete('users/withdrawal/kakao').text()
+  return response
 }
 
 const permissionMap = ['PrivacyPolicy', 'Record', 'MyPage']

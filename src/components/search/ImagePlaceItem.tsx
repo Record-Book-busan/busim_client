@@ -5,7 +5,7 @@ import { validateImageUri } from '@/services/image'
 import { ImageVariant, SvgIcon, Typo } from '@/shared'
 import { ButtonPrimitive } from '@/shared/Button'
 
-import { BookmarkButton } from '../common'
+// import { BookmarkButton } from '../common'
 
 type ImagePlaceItemProps = {
   id: number
@@ -17,6 +17,7 @@ type ImagePlaceItemProps = {
   onPressMove: (id: number) => void
   isBookMarked?: boolean
   imageUrl?: string
+  isNextButton?: boolean
 }
 
 export function ImagePlaceItem({
@@ -25,10 +26,11 @@ export function ImagePlaceItem({
   category,
   address,
   content,
-  onPressBookMark,
+  // onPressBookMark,
   onPressMove,
-  isBookMarked = false,
+  // isBookMarked = false,
   imageUrl,
+  isNextButton = true,
 }: ImagePlaceItemProps) {
   const [imageUri, setImageUri] = useState<ImageURISource>()
 
@@ -50,7 +52,7 @@ export function ImagePlaceItem({
               className="aspect-3/4 h-24 w-20 rounded-lg"
               source={imageUri as ImageURISource}
             />
-            {onPressBookMark && (
+            {/* {onPressBookMark && (
               <View className="absolute left-1 top-1">
                 <BookmarkButton
                   id={id}
@@ -59,7 +61,7 @@ export function ImagePlaceItem({
                   onPress={() => onPressBookMark(id)}
                 />
               </View>
-            )}
+            )} */}
           </View>
           <View className="mt-2 flex-1 justify-start">
             <Typo className="font-SemiBold text-base text-gray-800">{title}</Typo>
@@ -86,14 +88,16 @@ export function ImagePlaceItem({
               </View>
             )}
           </View>
-          <View className="items-center justify-center">
-            <TouchableOpacity
-              className="ml-2 h-7 w-7 items-center justify-center rounded-full bg-BUSIM-blue-dark"
-              onPress={() => onPressMove(id)}
-            >
-              <SvgIcon name="arrowRightWhite" size={20} />
-            </TouchableOpacity>
-          </View>
+          {isNextButton && (
+            <View className="items-center justify-center">
+              <TouchableOpacity
+                className="ml-2 h-7 w-7 items-center justify-center rounded-full bg-BUSIM-blue-dark"
+                onPress={() => onPressMove(id)}
+              >
+                <SvgIcon name="arrowRightWhite" size={20} />
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </ButtonPrimitive>
     </View>

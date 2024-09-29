@@ -48,6 +48,8 @@ export default function SearchScreen() {
   const navigateFillInput = (place: Place) => {
     addRecentSearch(place)
 
+    console.log(`lat: ${place.latitude}, lon: ${place.longitude}`)
+
     if (selectedQuery === 2) {
       setQuery2(place.name)
       setLocation2({ lat: place.latitude, lon: place.longitude })
@@ -77,21 +79,18 @@ export default function SearchScreen() {
     const navigateToKakao = async () => {
       try {
         const appUrl = `kakaomap://route?sp=${location2?.lat},${location2?.lon}&ep=${location3?.lat},${location3?.lon}&by=PUBLICTRANSIT`
-        const webUrl = 'https://map.kakao.com/link/to'
 
-        if (await Linking.canOpenURL(appUrl)) {
-          await Linking.openURL(appUrl)
-        } else {
-          Alert.alert('카카오 지도 앱이 설치되어 있지 않습니다. 웹으로 이동하시겠습니까?.', '', [
-            { text: '취소', style: 'cancel' },
-            {
-              text: '웹으로 이동',
-              onPress: () => Linking.openURL(webUrl),
-            },
-          ])
-        }
+        await Linking.openURL(appUrl)
       } catch {
         console.error('카카오맵 이동에 실패했습니다.')
+
+        Alert.alert('카카오 지도 앱이 설치되어 있지 않습니다. 웹으로 이동하시겠습니까?', '', [
+          { text: '취소', style: 'cancel' },
+          {
+            text: '웹으로 이동',
+            onPress: () => Linking.openURL('https://map.kakao.com/link/to'),
+          },
+        ])
       }
     }
 
@@ -111,13 +110,13 @@ export default function SearchScreen() {
       <View className="flex h-[210px] justify-between border-t-2 border-[#dadada] px-4 py-4">
         <SearchBar
           type="button"
-          placeholder="출발지를 입력해주세요."
+          placeholder="출발지를 선택해주세요."
           onChangeText={handleInputChange2}
           value={query2}
         />
         <SearchBar
           type="button"
-          placeholder="도착지를 입력해주세요."
+          placeholder="도착지를 선택해주세요."
           onChangeText={handleInputChange3}
           value={query3}
         />
@@ -137,7 +136,9 @@ export default function SearchScreen() {
           />
         ) : (
           <Suspense fallback={<Typo>Loading...</Typo>}>
-            {query.trim() !== '' && <SearchResults query={query} onItemPress={navigateFillInput} />}
+            {query.trim() !== '' && (
+              <SearchResults query={query} onItemPress={navigateFillInput} isNextButton={false} />
+            )}
           </Suspense>
         )}
       </View>

@@ -4,6 +4,8 @@
 #import <React/RCTLinkingManager.h>
 #import <RNCKakaoUser/RNCKakaoUserUtil.h>
 
+#import <KakaoOpenSDK/KakaoOpenSDK.h>
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -12,6 +14,8 @@
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
+
+  [KOSession sharedSession].appKey = @"572d2540a7893d0c189b2b872193effb";
 
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
@@ -37,6 +41,12 @@
     return [RNCKakaoUserUtil handleOpenUrl:url];
   }
 
+  // 카카오 세션 처리
+  if ([[KOSession sharedSession] handleOpenURL:url]) {
+    return YES;
+  }
+
+  // React Native Linking 처리
   return [super application:application openURL:url options:options] || [RCTLinkingManager application:application openURL:url options:options];
 }
 

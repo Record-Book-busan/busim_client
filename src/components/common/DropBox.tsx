@@ -11,7 +11,7 @@ interface DropBoxProps {
   onItemClick: (item: string) => void
 }
 
-const DropBox = memo(({ items, onItemClick, selected, width = 96, height = 24 }: DropBoxProps) => {
+const DropBox = memo(({ items, onItemClick, selected, width = 112, height = 28 }: DropBoxProps) => {
   const [selectedItem, setSelectedItem] = useState<string>(selected || items[0])
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
@@ -36,7 +36,7 @@ const DropBox = memo(({ items, onItemClick, selected, width = 96, height = 24 }:
     <View className="relative flex gap-y-2">
       <TouchableOpacity
         onPress={handleToggleButtonClick}
-        className="flex flex-row items-center justify-between rounded-full bg-[#00339D] px-4"
+        className="flex flex-row items-center justify-between rounded-full bg-[#00339D] px-7"
         style={{ width, height }}
       >
         <Typo className="text-xs text-white">{selectedItem}</Typo>

@@ -16,7 +16,7 @@ import {
 import { ImageCarousel } from '@/components/common'
 import DropBox from '@/components/common/DropBox'
 import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
-import { validateImageUris, baseUri, validateImageUri } from '@/services/image'
+import { validateImageUris, validateImageUri } from '@/services/image'
 import { SvgIcon, Typo } from '@/shared'
 import { RootStackParamList } from '@/types/navigation'
 
@@ -62,9 +62,9 @@ const ListItem = ({ name, category, explain, id, uri }: ListItemProps) => {
   const handleButtonClick = useCallback((placeId: number) => {
     navigateWithPermissionCheck({
       navigation,
-      routeName: 'SearchStack',
+      routeName: 'MapStack',
       params: {
-        screen: 'Detail',
+        screen: 'MapDetail',
         params: {
           id: placeId,
           type: getCategoryType('투어'),
@@ -74,10 +74,10 @@ const ListItem = ({ name, category, explain, id, uri }: ListItemProps) => {
   }, [])
 
   return (
-    <View className="h-28 flex-row items-center py-2">
-      <Image className="h-full w-20 rounded-lg" source={uri} />
+    <View className="my-2 h-[100px] flex-row items-center">
+      <Image className="h-full w-20 rounded-[5px]" source={uri} />
       <View className="flex h-full flex-1 gap-y-1 px-2">
-        <Typo className="font-bold">{name}</Typo>
+        <Typo className="text-base font-bold">{name}</Typo>
         <View className="flex-row items-center gap-1">
           <SvgIcon name="category" className="text-black" size={14} />
           <Typo className="text-xs">{category}</Typo>
@@ -107,8 +107,8 @@ type ListViewCarouselProps = {
 
 const ListViewCarousel: React.FC<ListViewCarouselProps> = ({
   items,
-  height = 590,
-  width = 400,
+  height = 477,
+  width = 350,
 }) => {
   const carouselRef = useRef(null)
   const progressValue = useSharedValue<number>(0)
@@ -301,7 +301,7 @@ export const RecommendSheet: React.FC<RecommendSheetProps> = ({ headerHeight }) 
     >
       <BottomSheetScrollView className="z-50 flex-1" nestedScrollEnabled={true}>
         <View className="mb-4 items-center bg-white px-8">
-          <Typo className="mt-4 w-full text-left text-lg">부산 관광지 리스트</Typo>
+          <Typo className="mt-4 w-full text-left text-2xl">시장님이 다녀간 맛집 리스트</Typo>
           <View className="my-2 flex h-[180px] w-[350px] items-center justify-center">
             {isLoadingImageCarousel ? (
               <ActivityIndicator
@@ -318,21 +318,21 @@ export const RecommendSheet: React.FC<RecommendSheetProps> = ({ headerHeight }) 
               />
             )}
           </View>
-          <Typo className="text-md w-full text-left">부산의 다양한 명소를 둘러보세요!</Typo>
+          <Typo className="w-full text-left text-base">사장님, 여기 맛집이에요!</Typo>
         </View>
         <View className="items-center border-t-2 border-[#DBDCE5] bg-white px-4 py-2">
           <Typo className="w-full py-2 text-center text-lg font-bold">추천 관광지</Typo>
-          <View className="mt-2 w-full flex-row items-center justify-end">
+          <View className="mt-2 w-[350px] flex-row items-center justify-between px-2">
             <DropBox items={categories} selected={activeCategory} onItemClick={handleItemClick} />
-            {/* <TouchableOpacity className="flex flex-row items-center justify-start w-16">
+            <TouchableOpacity className="flex w-16 flex-row items-center justify-start">
               <Typo className="flex-1 text-left text-xs text-[#96979E]">전체 보기</Typo>
               <SvgIcon name="arrowRightBlack" size={14} className="text-[#96979E]" />
-            </TouchableOpacity> */}
+            </TouchableOpacity>
           </View>
           <View className="relative mx-8 mt-4 flex-1 rounded-2xl">
             {isLoadingContent ? (
               <ActivityIndicator
-                className="h-[320px] w-[380px] rounded-[20px] bg-BUSIM-slate-light"
+                className="h-[180px] w-[335px] rounded-[20px] bg-BUSIM-slate-light"
                 size="large"
               />
             ) : (

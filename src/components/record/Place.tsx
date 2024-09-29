@@ -43,7 +43,7 @@ export function Place() {
   return (
     <View className="mt-1 flex-1">
       <View
-        className="absolute bottom-4 right-4 z-[2] flex gap-4"
+        className="absolute bottom-6 right-4 z-[2] flex gap-4"
         style={{
           paddingBottom: bottomTabBarHeight,
         }}
@@ -60,7 +60,7 @@ export function Place() {
         <MapFAB onPress={handleLocationPress} iconName="position" enabled={isLocationPressed} />
       </View>
 
-      <View className={`absolute bottom-20 left-4 z-[2px] flex w-3/4 gap-4`}>
+      <View className={`absolute bottom-24 left-4 z-[2px] flex w-3/4 gap-4`}>
         <TouchableOpacity
           style={{
             shadowColor: '#000',

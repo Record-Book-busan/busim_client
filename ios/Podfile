@@ -58,6 +58,11 @@ target 'busim' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  # Kakao SDK 추가
+  pod 'KakaoSDKCommon'
+  pod 'KakaoSDKAuth'
+  pod 'KakaoSDKUser'
+
   target 'busimTests' do
     inherit! :complete
     # Pods for testing

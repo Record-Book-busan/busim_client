@@ -69,7 +69,7 @@ export function MapDetailContent({ id, type }: MapDetailContentProps) {
       <View className="mt-3 bg-white px-4 py-6">
         <Typo className="mb-3 font-Medium text-lg text-gray-700">지도</Typo>
         <View className="mb-4 h-40 w-full overflow-hidden rounded-xl">
-          <MapDetail title={data.title} geometry={{ lon: data.lng, lat: data.lat }} />
+          <MapDetail title={data.title} geometry={{ lon: data.lat, lat: data.lng }} />
         </View>
         <InfoItem icon="marker" text={data.address} />
       </View>
