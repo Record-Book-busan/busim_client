@@ -300,18 +300,18 @@ export const RecommendSheet: React.FC<RecommendSheetProps> = ({ headerHeight }) 
       bottomInset={50}
     >
       <BottomSheetScrollView className="z-50 flex-1" nestedScrollEnabled={true}>
-        <View className="mb-4 items-center bg-white px-4">
+        <View className="mb-4 items-center bg-white px-8">
           <Typo className="mt-4 w-full text-left text-lg">부산 관광지 리스트</Typo>
-          <View className="my-2 flex h-[180px] w-[380px] items-center justify-center">
+          <View className="my-2 flex h-[180px] w-[350px] items-center justify-center">
             {isLoadingImageCarousel ? (
               <ActivityIndicator
-                className="h-[180px] w-[380px] rounded-[20px] bg-BUSIM-slate-light"
+                className="h-[180px] w-[350px] rounded-[20px] bg-BUSIM-slate-light"
                 size="large"
               />
             ) : (
               <ImageCarousel
                 height={180}
-                width={380}
+                width={350}
                 rounded={20}
                 images={imageUris}
                 isAuto={true}
@@ -329,10 +329,10 @@ export const RecommendSheet: React.FC<RecommendSheetProps> = ({ headerHeight }) 
               <SvgIcon name="arrowRightBlack" size={14} className="text-[#96979E]" />
             </TouchableOpacity> */}
           </View>
-          <View className="relative mx-4 mt-4 flex-1 rounded-2xl">
+          <View className="relative mx-8 mt-4 flex-1 rounded-2xl">
             {isLoadingContent ? (
               <ActivityIndicator
-                className="h-[280px] w-[380px] rounded-[20px] bg-BUSIM-slate-light"
+                className="h-[320px] w-[380px] rounded-[20px] bg-BUSIM-slate-light"
                 size="large"
               />
             ) : (

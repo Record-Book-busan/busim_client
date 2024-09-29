@@ -24,7 +24,7 @@ export default function MapScreen({ route }: MapScreenProps) {
   const [isLocationPressed, setIsLocationPressed] = useState(false)
   const [isToiletPressed, setIsToiletPressed] = useState(false)
   const [isParkingPressed, setIsTrafficPressed] = useState(false)
-  const [isBookMarkPressed, setIsBookMarkPressed] = useState(false)
+  // const [isBookMarkPressed, setIsBookMarkPressed] = useState(false)
   const searchBarHeight = useRef(0)
   const insets = useSafeAreaInsets()
   const navigation = useNavigation<BottomTabNavigationProp<RootStackParamList, 'MainTab'>>()
@@ -115,12 +115,14 @@ export default function MapScreen({ route }: MapScreenProps) {
           paddingBottom: bottomTabBarHeight,
         }}
       >
+        {/* 길찾기 표시 버튼 */}
+        <MapFAB onPress={handleClickFindWay} iconName="findWay" />
         {/* 북마크 표시 버튼 */}
-        <MapFAB
+        {/* <MapFAB
           onPress={() => setIsBookMarkPressed(!isBookMarkPressed)}
           iconName="bookmark"
           enabled={isBookMarkPressed}
-        />
+        /> */}
         {/* 내 위치 버튼 */}
         <MapFAB onPress={handleLocationPress} iconName="position" enabled={isLocationPressed} />
       </View>
@@ -130,8 +132,6 @@ export default function MapScreen({ route }: MapScreenProps) {
           paddingBottom: bottomTabBarHeight,
         }}
       >
-        {/* 길찾기 표시 버튼 */}
-        <MapFAB onPress={handleClickFindWay} iconName="findWay" />
         {/* 주차장 표시 버튼 */}
         <MapFAB
           onPress={() => setIsTrafficPressed(!isParkingPressed)}

@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
 import { useState } from 'react'
-import { View, TouchableOpacity, Image, Text, Pressable } from 'react-native'
+import { View, TouchableOpacity, Image, Text, Pressable, ImageURISource } from 'react-native'
 
 import { user } from '@/assets/images'
 import { SafeScreen } from '@/components/common'
@@ -9,6 +9,7 @@ import { useGallery } from '@/hooks/useGallery'
 import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { SvgIcon } from '@/shared'
 import { MyPageStackParamList } from '@/types/navigation'
+import { storage } from '@/utils/storage'
 
 import type { StackNavigationProp } from '@react-navigation/stack'
 
@@ -30,6 +31,11 @@ export default function ProfileSettingScreen() {
     }
   }
 
+  const [userName] = useState<string>(storage.getString('userName') || '친절한 여행자')
+  const [userThumbnailUri] = useState<ImageURISource>(
+    { uri: storage.getString('userThumbnail') } || user,
+  )
+
   const handleResetPhoto = () => {
     // updateUserInfoData('image', null)
     setIsOpenProfilePicker(false)
@@ -49,7 +55,7 @@ export default function ProfileSettingScreen() {
         <View className="mt-10 items-center">
           <TouchableOpacity className="relative" onPress={() => setIsOpenProfilePicker(true)}>
             <View className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border border-neutral-100 bg-blue-100">
-              <Image source={user} style={{ width: '100%', height: '100%' }} />
+              <Image source={userThumbnailUri} style={{ width: '100%', height: '100%' }} />
             </View>
             <View className="absolute bottom-0 right-0 rounded-full border-2 border-white bg-gray-300 p-1">
               <SvgIcon name="cameraFilled" className="text-white" size={16} />
@@ -66,7 +72,7 @@ export default function ProfileSettingScreen() {
             <View className="flex-1 flex-row items-center justify-between">
               <Text className="text-[15px] text-gray-500">닉네임</Text>
               <View className="flex-row items-center gap-4">
-                <Text className="text-base font-medium text-gray-700">친절한 여행자</Text>
+                <Text className="text-base font-medium text-gray-700">{{ userName }}</Text>
                 <SvgIcon name="chevronRight" size={16} className="text-gray-300" />
               </View>
             </View>

@@ -47,7 +47,9 @@ const kakaoSignIn = async (): Promise<Role> => {
   console.log(loginInfo)
   if (await isLogined()) {
     const userInfo = await me()
-    storage.set('userInfo', JSON.stringify(userInfo))
+
+    storage.set('userName', userInfo.nickname)
+    storage.set('userThumbnail', userInfo.profileImageUrl)
 
     const response = await post_signin_kakao({
       accessToken: loginInfo.accessToken,

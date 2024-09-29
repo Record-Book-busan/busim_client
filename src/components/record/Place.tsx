@@ -15,8 +15,16 @@ export function Place() {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'CreateRecordStack'>>()
   const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
   const { location, myPositionValid, refreshLocation } = useLocation()
-  const [isBookMarkPressed, setIsBookMarkPressed] = useState(false)
+  // const [isBookMarkPressed, setIsBookMarkPressed] = useState(false)
   const [isLocationPressed, setIsLocationPressed] = useState(false)
+
+  const handleClickFindWay = () => {
+    navigateWithPermissionCheck({
+      navigation,
+      routeName: 'SearchStack',
+      params: { screen: 'FindWay' },
+    })
+  }
 
   const handleLocationPress = () => {
     void refreshLocation()
@@ -40,12 +48,14 @@ export function Place() {
           paddingBottom: bottomTabBarHeight,
         }}
       >
+        {/* 길찾기 표시 버튼 */}
+        <MapFAB onPress={handleClickFindWay} iconName="findWay" />
         {/* 북마크 표시 버튼 */}
-        <MapFAB
+        {/* <MapFAB
           onPress={() => setIsBookMarkPressed(!isBookMarkPressed)}
           iconName="bookmark"
           enabled={isBookMarkPressed}
-        />
+        /> */}
         {/* 내 위치 버튼 */}
         <MapFAB onPress={handleLocationPress} iconName="position" enabled={isLocationPressed} />
       </View>
