@@ -27,12 +27,15 @@ export default function RecordMainScreen() {
       {/* 검색바 */}
       <SearchHeader type="button" placeholder="장소 검색" onPress={handleSearchBarPress} />
       <View className="flex-1 bg-white">
-        <View className="bg-white pt-2">
-          <Tab value={index} onValueChange={setIndex}>
-            <Tab.Item>장소 기록</Tab.Item>
-            <Tab.Item>기록 피드</Tab.Item>
-          </Tab>
-        </View>
+        <Tab
+          value={index}
+          onValueChange={setIndex}
+          containerStyle="border-b-2 border-gray-200 bg-white pt-2"
+        >
+          <Tab.Item>장소 기록</Tab.Item>
+          <Tab.Item>기록 피드</Tab.Item>
+        </Tab>
+
         <TabView disableSwipe={true} value={index} onValueChange={setIndex}>
           <TabView.Item>
             <Place />
