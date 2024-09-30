@@ -33,6 +33,10 @@ export function Feed(props: FeedProps) {
   const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   const handleNavigation = (id: number) => {
+    console.log(`id: ${id}`)
+
+    if (id === 0) return
+
     navigateWithPermissionCheck({
       navigation,
       routeName: 'ReadRecord',

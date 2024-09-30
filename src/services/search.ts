@@ -176,6 +176,7 @@ export const get_feed_search = async ({
         searchParams: params,
       })
       .json()
+    console.log(`response: ${JSON.stringify(response)}`)
     return FeedArraySchema.parse(response)
   } catch (error) {
     if (error instanceof ZodError) {

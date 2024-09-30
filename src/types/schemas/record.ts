@@ -34,11 +34,11 @@ export type Record = z.infer<typeof RecordSchma>
 export const RecordDetailSchema = z.object({
   id: z.number(),
   title: z.string().min(1).max(100),
-  thumbnailUrl: z.string().url().nullable(),
+  imageUrl: z.string().url().nullable(),
   address: z.string(),
   lat: z.number().min(-90).max(90),
   lng: z.number().min(-180).max(180),
-  touristCategory: z.string(),
+  createdAt: z.string(),
   content: z.string().optional(),
 })
 export type RecordDetail = z.infer<typeof RecordDetailSchema>
