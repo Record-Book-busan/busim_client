@@ -30,6 +30,15 @@ export function MapDetailContent({ id, type }: MapDetailContentProps) {
     }
 
     fetchImageUris()
+
+    if (data.cat1 === 'tourist') {
+      if (data.lat > 40) {
+        const temp = data.lng
+        data.lng = data.lat
+        data.lat = temp
+      }
+    }
+    console.log(`data: ${JSON.stringify(data)}`)
   }, [data])
 
   return (
