@@ -1,7 +1,7 @@
 import { Suspense, useState } from 'react'
 import { Alert, Linking, TouchableOpacity, View } from 'react-native'
 
-import { SafeScreen, SearchBar, SearchHeader } from '@/components/common'
+import { SafeScreen, SearchBar } from '@/components/common'
 import { SearchResults, RecentSearches } from '@/components/search'
 import { useRecentSearch } from '@/services/search'
 import { Typo } from '@/shared'
@@ -14,71 +14,68 @@ type LocationType = {
 }
 
 export default function SearchScreen() {
-  const [query, setQuery] = useState('')
-  const [query2, setQuery2] = useState('')
-  const [location2, setLocation2] = useState<LocationType | null>(null)
-  const [query3, setQuery3] = useState('')
-  const [location3, setLocation3] = useState<LocationType | null>(null)
+  const [startQuery, setStartQuery] = useState('')
+  const [startLocation, setStartLocation] = useState<LocationType | null>(null)
+  const [endQuery, setEndQuery] = useState('')
+  const [endLocation, setEndLocation] = useState<LocationType | null>(null)
   const [isSearching, setIsSearching] = useState(false)
   const { recentSearches, addRecentSearch, removeRecentSearch } = useRecentSearch()
-  const [selectedQuery, setSelectedQuery] = useState<number>()
+  const [selectedQuery, setSelectedQuery] = useState<string>('start')
 
-  const handleSearch = () => {
-    setSelectedQuery(1)
-    if (query.trim()) {
+  const handleStartSearch = () => {
+    setSelectedQuery('start')
+    if (startQuery.trim()) {
       setIsSearching(true)
     }
   }
 
-  const handleInputChange = (text: string) => {
-    setQuery(text)
-    setIsSearching(false)
-  }
-
-  const handleInputChange2 = (text: string) => {
-    setQuery2(text)
-    setLocation2(null)
-  }
-
-  const handleInputChange3 = (text: string) => {
-    setQuery3(text)
-    setLocation3(null)
-  }
-
-  const navigateFillInput = (place: Place) => {
-    addRecentSearch(place)
-
-    console.log(`lat: ${place.latitude}, lon: ${place.longitude}`)
-
-    if (selectedQuery === 2) {
-      setQuery2(place.name)
-      setLocation2({ lat: place.latitude, lon: place.longitude })
-    } else if (selectedQuery === 3) {
-      setQuery3(place.name)
-      setLocation3({ lat: place.latitude, lon: place.longitude })
-    } else {
-      if (!query2.trim()) {
-        setQuery2(place.name)
-        setLocation2({ lat: place.latitude, lon: place.longitude })
-      } else if (!query3.trim()) {
-        setQuery3(place.name)
-        setLocation3({ lat: place.latitude, lon: place.longitude })
-      }
+  const handleEndSearch = () => {
+    setSelectedQuery('end')
+    if (endQuery.trim()) {
+      setIsSearching(true)
     }
   }
 
+  const handleStartInputChange = (text: string) => {
+    setStartQuery(text)
+    setStartLocation(null)
+  }
+
+  const handleEndInputChange = (text: string) => {
+    setEndQuery(text)
+    setEndLocation(null)
+  }
+
+  const fillStartInput = (place: Place) => {
+    addRecentSearch(place)
+
+    console.log(`fillStartInput lat: ${place.latitude}, lon: ${place.longitude}`)
+
+    setStartQuery(place.name)
+    setStartLocation({ lat: place.latitude, lon: place.longitude })
+  }
+
+  const fillEndInput = (place: Place) => {
+    addRecentSearch(place)
+
+    console.log(`fillEndInput lat: ${place.latitude}, lon: ${place.longitude}`)
+
+    setEndQuery(place.name)
+    setEndLocation({ lat: place.latitude, lon: place.longitude })
+  }
+
   const navigateKakaoMap = () => {
-    if (!location2?.lat || !location2?.lon) {
+    if (!startLocation?.lat || !startLocation?.lon) {
       Alert.alert('출발지를 입력해주세요!')
       return
-    } else if (!location3?.lat || !location3?.lon) {
+    } else if (!endLocation?.lat || !endLocation?.lon) {
       Alert.alert('도착지를 입력해주세요!')
       return
     }
 
     const navigateToKakao = async () => {
       try {
-        const appUrl = `kakaomap://route?sp=${location2?.lat},${location2?.lon}&ep=${location3?.lat},${location3?.lon}&by=PUBLICTRANSIT`
+        const appUrl = `kakaomap://route?sp=${startLocation?.lat},${startLocation?.lon}&ep=${endLocation?.lat},${endLocation?.lon}&by=PUBLICTRANSIT`
 
         await Linking.openURL(appUrl)
       } catch {
@@ -98,27 +95,25 @@ export default function SearchScreen() {
   }
 
   return (
-    <SafeScreen>
-      <SearchHeader
-        type="input"
-        placeholder="장소 검색"
-        onChangeText={handleInputChange}
-        value={query}
-        onPress={handleSearch}
-        onSubmitEditing={handleSearch}
-      />
+    <SafeScreen excludeEdges={['top']}>
       <View className="flex h-[210px] justify-between border-t-2 border-[#dadada] px-4 py-4">
         <SearchBar
-          type="button"
+          type="input"
           placeholder="출발지를 선택해주세요."
-          onChangeText={handleInputChange2}
-          value={query2}
+          onChangeText={handleStartInputChange}
+          value={startQuery}
+          onPress={handleStartSearch}
+          onSubmitEditing={handleStartSearch}
+          setClicked={() => setSelectedQuery('start')}
         />
         <SearchBar
-          type="button"
+          type="input"
           placeholder="도착지를 선택해주세요."
-          onChangeText={handleInputChange3}
-          value={query3}
+          onChangeText={handleEndInputChange}
+          value={endQuery}
+          onPress={handleEndSearch}
+          onSubmitEditing={handleEndSearch}
+          setClicked={() => setSelectedQuery('end')}
         />
         <TouchableOpacity
           className="mt-3 flex h-12 justify-center rounded-2xl bg-[#00339d]"
@@ -131,13 +126,16 @@ export default function SearchScreen() {
         {!isSearching ? (
           <RecentSearches
             recentSearches={recentSearches}
-            onItemPress={navigateFillInput}
+            onItemPress={selectedQuery === 'start' ? fillStartInput : fillEndInput}
             onItemDelete={removeRecentSearch}
           />
         ) : (
           <Suspense fallback={<Typo>Loading...</Typo>}>
-            {query.trim() !== '' && (
-              <SearchResults query={query} onItemPress={navigateFillInput} isNextButton={false} />
+            {startQuery.trim() !== '' && selectedQuery === 'start' && (
+              <SearchResults query={startQuery} onItemPress={fillStartInput} isNextButton={false} />
+            )}
+            {endQuery.trim() !== '' && selectedQuery === 'end' && (
+              <SearchResults query={endQuery} onItemPress={fillEndInput} isNextButton={false} />
             )}
           </Suspense>
         )}

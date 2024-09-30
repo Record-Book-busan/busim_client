@@ -36,6 +36,7 @@ export interface SearchBarProps extends TextInputProps {
   onPress?: () => void
   onCancel?: () => void
   disableClear?: boolean
+  setClicked?: () => void
 }
 
 export function SearchBar({
@@ -44,6 +45,7 @@ export function SearchBar({
   containerStyle,
   onPress,
   onCancel,
+  setClicked,
   value: propValue,
   onChangeText: propOnChangeText,
   disableClear,
@@ -146,6 +148,7 @@ export function SearchBar({
           onChangeText={handleChangeText}
           onFocus={handleFocus}
           onBlur={handleBlur}
+          onPress={setClicked}
           {...props}
         />
         {value !== '' && !disableClear && (

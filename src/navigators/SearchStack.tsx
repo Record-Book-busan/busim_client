@@ -1,6 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack'
 
 import { SearchScreen, DetailScreen, FindWayScreen } from '@/screens'
+import { Header } from '@/shared'
 
 import type { SearchStackParamList } from '@/types/navigation'
 
@@ -51,6 +52,8 @@ function SearchStackNavigator() {
         name="FindWay"
         component={FindWayScreen}
         options={{
+          headerShown: true,
+          header: () => <Header title="길찾기" />,
           animationEnabled: false,
         }}
       />
