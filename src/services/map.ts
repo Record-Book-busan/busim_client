@@ -6,6 +6,12 @@ const map = `<!DOCTYPE html>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- 스타일 시트 추가 -->
     <style>
+    body{
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-use-select: none;
+        user-select: none;
+        }
       .group-overlay {
         position: relative;
         bottom: 40px;
@@ -72,10 +78,91 @@ const map = `<!DOCTYPE html>
 </head>
 <body style="margin: 0; padding: 0;">
     <div id="map" style="width:100%;height:100%;position:absolute;top:0;left:0;"></div>
-    <script>
+    <script type="text/javascript">
     let showingOverlays = []
     let infowindows = []
     let map
+
+    /**
+     * RN으로부터 메시지를 받는 함수
+     */
+    function handleNativeMessage(event) {
+        const messageData = event.data || event.detail;
+        console.log('Received message:', messageData);
+
+        let message;
+        try {
+            message = JSON.parse(messageData);
+        } catch (error) {
+            console.warn('유효하지 않은 JSON 메시지:', messageData);
+            return;
+        }
+
+        if (message && message.action) {
+            handleAction(message);
+        }
+    }
+
+    /**
+     * 액션 처리 함수
+     */
+    function handleAction(message) {
+        const { id, action, payload } = message;
+
+        switch (action) {
+            case 'GET_RECORD_DATA':
+                settingImageOverlays(payload);
+                sendResponse(id, action, 'SUCCESS');
+                break;
+            case 'GET_PLACE_DATA':
+                settingPlaceOverlays(payload);
+                sendResponse(id, action, 'SUCCESS');
+                break;
+            case 'GET_CURRENT_LOCATION':
+                moveMap({ lng: payload.lng, lat: payload.lat });
+                const data = map.getCenter(); // 바뀐 위치 전송
+                sendResponse(id, action, 'SUCCESS', { lat: data.getLat(), lng: data.getLng() });
+                break;
+            case 'GET_OVERLAY_STATE':
+                removeOverlays();
+                sendResponse(id, action, 'SUCCESS');
+                break;
+            default:
+                console.warn('알 수 없는 액션 타입:', action);
+                sendResponse(id, action, 'ERROR');
+                break;
+        }
+    }
+
+    /**
+     * RN으로 응답을 보내는 함수
+     */
+    function sendResponse(id, action, status, payload = {}) {
+    const response = {
+        id,
+        action,
+        status,
+        payload
+    };
+    window.ReactNativeWebView.postMessage(JSON.stringify(response));
+    }
+
+    /**
+     * RN으로 메시지를 보내는 함수
+     */
+    function postMessage(type, data) {
+        const response = {
+            type,
+            data,
+        };
+        window.ReactNativeWebView.postMessage(JSON.stringify(response));
+    }
+
+
+    // 메시지 리스너 등록
+    document.addEventListener('message', handleNativeMessage);
+    window.addEventListener('message', handleNativeMessage);
+
 
     /**
      * 지도 생성 함수
@@ -91,26 +178,21 @@ const map = `<!DOCTYPE html>
         map = new kakao.maps.Map(container, options);
 
         kakao.maps.event.addListener(map, 'zoom_changed', function(event) {
-            const data = 'LEVEL_' + map.getLevel();
-            window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'zoomChanged', data: { zoomLevel: data } }));
+            const level = 'LEVEL_' + map.getLevel();
+            postMessage("ZOOM_CHANGE", { zoomLevel: level })
         });
 
         kakao.maps.event.addListener(map, 'dragend', function() {
             const data = map.getCenter();
-            window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'dragend', data: { lat: data.getLat(), lng: data.getLng() } }));
+            postMessage("POSITION_CHANGE", { lat: data.getLat(), lng: data.getLng() })
         });
-
-        kakao.maps.event.addListener(map, 'click', initInfowindows);
-        kakao.maps.event.addListener(map, 'bounds_changed', initInfowindows);
     }
 
     /**
      * 지도 이동 함수
      */
-    function moveMap({ lng, lat, level=3 }) {
+    function moveMap({ lng, lat }) {
         const latlng = new kakao.maps.LatLng(lat, lng)
-
-        map.setLevel(level)
         map.panTo(latlng)
     }
 
@@ -128,8 +210,6 @@ const map = `<!DOCTYPE html>
      * 오버레이 초기화 함수
      */
     function initOverlays() {
-      initInfowindows()
-
       if(showingOverlays && showingOverlays.length > 0) {
           showingOverlays.forEach(m => m.setMap(null))
           showingOverlays = []
@@ -172,34 +252,6 @@ const map = `<!DOCTYPE html>
         return 0.5
     }
 
-    /**
-     * 인포 윈도우 초기화 함수
-     */
-    function initInfowindows() {
-        if(infowindows && infowindows.length > 0) {
-            infowindows.forEach(m => m.setMap(null))
-            infowindows = []
-        }
-    }
-
-    /**
-     * 인포 윈도우 추가 함수
-     */
-    function showInfowindows() {
-        infowindows.forEach(m => {
-            m.setMap(map)
-        })
-    }
-
-    /**
-     * 인포 윈도우 클릭 함수
-     */
-    function handleInfowindowClick(id, type) {
-        if(type === 'RECORD') type = 'record'
-        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'overlayClick', data: { type: type, id: id } }));
-    }
-
-
       /**
        * 오버레이 이미지 선택 함수
        */
@@ -239,77 +291,29 @@ const map = `<!DOCTYPE html>
           }
       }
 
-
-    /**
-     * 카테고리 코드를 카테고리 명으로 변경
-     */
-    function codeToName(code) {
-      switch (code) {
-          case 'NORMAL_RESTAURANT':
-              return '일반 맛집'
-          case 'SPECIAL_RESTAURANT':
-              return '특별 맛집'
-          case 'TOURIST_SPOT':
-              return '관광지'
-          case 'THEME':
-              return '테마'
-          case 'HOT_PLACE':
-              return '핫플'
-          case 'NATURE':
-              return '자연'
-          case 'LEISURE_SPORTS':
-              return '레포츠'
-          case 'RECORD':
-              return '기록'
-          default:
-              return code
-      }
-    }
-
     /**
      * 오버레이 클릭 함수
      */
     function handleOverlayClick({ lng, lat, level, category, id, type, types }) {
-        if(category.indexOf(",") !== -1) {
+    if (category.indexOf(',') !== -1) {
         // 클러스터된 오버레이일 경우 level 조정
-        moveMap({ lng: lng, lat: lat, level: level-1 })
+        moveMap({ lng: lng, lat: lat, level: level - 1 })
     } else {
-        if(category !== 'TOILET' && category !== 'PARKING') {
-            if(category.indexOf(",") === -1) {
-                // 단일 아이템일 경우 type을 전송
-                window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'overlayClick', data: { type: type, id: id } }))
-            } else {
-                let items = ''
-                const categories = category.split(",")
-                const ids = id.split(",")
-                const typesArray = types.split(",") // types를 배열로 분리
-
-                for (let i = 0; i < categories.length; i++) {
-                    if(categories[i] !== 'TOILET' && categories[i] !== 'PARKING') {
-                        items += '<div onclick="handleInfowindowClick(\\'' + ids[i] + '\\', \\'' + typesArray[i] + '\\')" style="padding: 5px 10px;"><a href="javascript:void(0);">' + codeToName(categories[i]) + '(' + ids[i] + ')</a></div>'
-                    }
-                }
-
-                const iwContent = '<div style="max-height: 100px; overflow-y: scroll;">' + items + '</div>'
-
-                const infowindow = new kakao.maps.InfoWindow({
-                    position : new kakao.maps.LatLng(lat, lng), 
-                    content : iwContent,
-                })
-
-                infowindows.push(infowindow)
-
-                showInfowindows()
-            }
-        } 
+        if (category !== 'TOILET' && category !== 'PARKING') {
+        // 단일 오버레이일 경우 메시지 전송
+        if (category.indexOf(',') === -1) {
+            postMessage('OVERLAY_CLICK', { id, type })
+        }
+        }
     }
     }
+
 
 
     /**
     * 장소 오버레이 생성 함수
     */
-    function settingPlaceOverlays(category, response) {
+    function settingPlaceOverlays(response) {
     initOverlays();
 
     const data = response;
@@ -318,7 +322,7 @@ const map = `<!DOCTYPE html>
     if (level <= 3) {
         // 클러스터링 해제 - 개별 오버레이 표시
         data.forEach((item) => {
-        const overlay = createSingleOverlay(item, category, level);
+        const overlay = createSingleOverlay(item, level);
         showingOverlays.push(overlay);
         overlay.setMap(map);
         });
@@ -337,7 +341,11 @@ const map = `<!DOCTYPE html>
 
         for (const key in clusters) {
         const items = clusters[key];
-        const overlay = createOverlay(items, category, level);
+        const overlay = createOverlay(items, level);
+
+
+console.log("이쪽", items)
+
         showingOverlays.push(overlay);
         overlay.setMap(map);
         }
@@ -345,20 +353,20 @@ const map = `<!DOCTYPE html>
     }
 
 
-    function createOverlay(items, category, level) {
+    function createOverlay(items, level) {
         if (items.length === 1) {
-            return createSingleOverlay(items[0], category, level)
+            return createSingleOverlay(items[0], level)
         } else {
-            return createClusteredOverlay(items, category, level)
+            return createClusteredOverlay(items, level)
         }
     }
 
     /**
      * 단일 오버레이 생성 함수
      */
-    function createSingleOverlay(item, category, level) {
+    function createSingleOverlay(item, level) {
     const imageUrl = getOverlayImage(item.category);
-    const content = '<div class="single-overlay" onClick="handleOverlayClick({ lng: ' + item.lng + ', lat: ' + item.lat + ', level: ' + level + ', category: \\\'' + item.category + '\\\', id: \\\'' + item.title + '\\\', type: \\\'' + item.type + '\\\' })">' +
+    const content = '<div class="single-overlay" onClick="handleOverlayClick({ lng: ' + item.lng + ', lat: ' + item.lat + ', level: ' + level + ', category: \\\'' + item.category + '\\\', id: \\\'' + item.id + '\\\', type: \\\'' + item.type + '\\\' })">' +
         '<div class="icons">' +
             '<img class="icon" src="' + imageUrl + '" style="left:0;" />' +
         '</div>' +
@@ -377,7 +385,7 @@ const map = `<!DOCTYPE html>
     /**
      * 클러스터 오버레이 생성 함수
      */
-    function createClusteredOverlay(items, category, level) {
+    function createClusteredOverlay(items, level) {
     let sumLat = 0;
     let sumLng = 0;
     let keys = '';
@@ -386,7 +394,7 @@ const map = `<!DOCTYPE html>
     const uniqueCategories = new Set();
 
     for (const item of items) {
-        keys += item.title + ',';
+        keys += item.id + ',';
         categories += item.category + ',';
         types += item.type + ',';
         sumLat += item.lat;

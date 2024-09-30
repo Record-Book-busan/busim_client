@@ -108,6 +108,7 @@ function MainTabNavigator() {
               <View>{props.children}</View>
             </TouchableOpacity>
           ),
+          unmountOnBlur: true,
         }}
       />
       <Tab.Screen

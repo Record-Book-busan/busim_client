@@ -1,13 +1,12 @@
 import { type BottomTabNavigationProp, useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { useNavigation } from '@react-navigation/native'
 import { useState, useRef, useCallback } from 'react'
-import { View, Alert, Platform } from 'react-native'
+import { View, Platform } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { SafeScreen, SearchBarView, Categories } from '@/components/common'
 import { PlaceMapView, EyeButton, MapFAB } from '@/components/map'
 import { CategoryType } from '@/constants/data'
-import { useLocation } from '@/hooks/useLocation'
 import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { RootStackParamList } from '@/types/navigation'
 
@@ -18,13 +17,10 @@ type MapScreenProps = {
 }
 
 export default function MapScreen({ route }: MapScreenProps) {
-  const { location, myPositionValid, refreshLocation } = useLocation()
   const [activeCategory, setActiveCategory] = useState<string[]>([])
   const [eyeState, setEyeState] = useState(true)
-  const [isLocationPressed, setIsLocationPressed] = useState(false)
   const [isToiletPressed, setIsToiletPressed] = useState(false)
   const [isParkingPressed, setIsTrafficPressed] = useState(false)
-  // const [isBookMarkPressed, setIsBookMarkPressed] = useState(false)
   const searchBarHeight = useRef(0)
   const insets = useSafeAreaInsets()
   const navigation = useNavigation<BottomTabNavigationProp<RootStackParamList, 'MainTab'>>()
@@ -46,24 +42,7 @@ export default function MapScreen({ route }: MapScreenProps) {
     setEyeState(prev => !prev)
   }
 
-  const handleLocationPress = useCallback(() => {
-    void refreshLocation()
-    if (myPositionValid) {
-      setIsLocationPressed(prev => !prev)
-    } else {
-      Alert.alert('서비스 제공 위치가 아닙니다', '부산 외 지역은 서비스 제공 지역이 아닙니다.')
-    }
-  }, [myPositionValid, refreshLocation])
-
   const bottomTabBarHeight = useBottomTabBarHeight()
-
-  const handleClickFindWay = () => {
-    navigateWithPermissionCheck({
-      navigation,
-      routeName: 'SearchStack',
-      params: { screen: 'FindWay' },
-    })
-  }
 
   return (
     <SafeScreen
@@ -108,26 +87,8 @@ export default function MapScreen({ route }: MapScreenProps) {
           <EyeButton eyeState={eyeState} onPress={handleEyePress} />
         </View>
       </View>
-
       <View
-        className="absolute bottom-12 right-4 z-[2] flex gap-4"
-        style={{
-          paddingBottom: bottomTabBarHeight,
-        }}
-      >
-        {/* 길찾기 표시 버튼 */}
-        <MapFAB onPress={handleClickFindWay} iconName="findWay" />
-        {/* 북마크 표시 버튼 */}
-        {/* <MapFAB
-          onPress={() => setIsBookMarkPressed(!isBookMarkPressed)}
-          iconName="bookmark"
-          enabled={isBookMarkPressed}
-        /> */}
-        {/* 내 위치 버튼 */}
-        <MapFAB onPress={handleLocationPress} iconName="position" enabled={isLocationPressed} />
-      </View>
-      <View
-        className="absolute bottom-12 left-4 z-[2] flex gap-4"
+        className="absolute bottom-10 left-4 z-[2] flex gap-4"
         style={{
           paddingBottom: bottomTabBarHeight,
         }}
@@ -151,8 +112,6 @@ export default function MapScreen({ route }: MapScreenProps) {
         <PlaceMapView
           activeCategory={activeCategory}
           eyeState={eyeState}
-          location={location}
-          isLocationPressed={isLocationPressed}
           isToiletPressed={isToiletPressed}
           isParkingPressed={isParkingPressed}
         />

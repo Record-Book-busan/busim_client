@@ -1,4 +1,4 @@
-import { TouchableOpacity, View } from 'react-native'
+import { Pressable, View } from 'react-native'
 
 import { SvgIcon, Typo } from '@/shared'
 
@@ -8,7 +8,7 @@ type RefreshButtonProps = {
 
 export function RefreshButton({ onPress }: RefreshButtonProps) {
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={onPress}
       className="flex w-48 items-center justify-center self-center rounded-full bg-white py-2"
       style={{
@@ -23,6 +23,6 @@ export function RefreshButton({ onPress }: RefreshButtonProps) {
         <Typo className="font-SemiBold">현지도에서 재검색</Typo>
         <SvgIcon name="refresh" size={24} className="text-black" />
       </View>
-    </TouchableOpacity>
+    </Pressable>
   )
 }

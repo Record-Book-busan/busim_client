@@ -210,7 +210,9 @@ type getLocationToAddrProps = {
  * @param x - lng 경도
  * @param y - lat 위도
  */
-const get_location_to_addr = async (params: getLocationToAddrProps): Promise<LocationToAddr> => {
+export const get_location_to_addr = async (
+  params: getLocationToAddrProps,
+): Promise<LocationToAddr> => {
   return await kakaoMap().get('geo/coord2address.json', { searchParams: params }).json()
 }
 

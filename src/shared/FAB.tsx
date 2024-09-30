@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import React from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, type StyleProp, type ViewStyle } from 'react-native'
 
 import { cn } from '@/utils/cn'
 
@@ -54,6 +54,7 @@ export interface FABProps extends VariantProps<typeof fabVariants>, ButtonProps 
   leftAddon?: React.ReactNode
   rightAddon?: React.ReactNode
   visible?: boolean
+  style?: StyleProp<ViewStyle>
 }
 
 export const FAB: React.FC<FABProps> = ({
@@ -65,6 +66,7 @@ export const FAB: React.FC<FABProps> = ({
   position = 'bottomRight',
   buttonStyle,
   textStyle,
+  style,
 }) => {
   // const animatedValue = useRef(new Animated.Value(visible ? 1 : 0)).current
   const hasText = typeof children === 'string'
@@ -82,7 +84,7 @@ export const FAB: React.FC<FABProps> = ({
   // }
 
   return (
-    <View className={cn(fabVariants({ size, position, hasText }))}>
+    <View className={cn(fabVariants({ size, position, hasText }))} style={style}>
       <ButtonPrimitive onPress={onPress}>
         <View className={cn('flex-row items-center justify-center', buttonStyle)}>
           {leftAddon && <View className="mr-2">{leftAddon}</View>}
