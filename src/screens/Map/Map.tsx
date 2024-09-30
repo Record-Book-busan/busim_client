@@ -44,14 +44,6 @@ export default function MapScreen({ route }: MapScreenProps) {
 
   const bottomTabBarHeight = useBottomTabBarHeight()
 
-  const handleClickFindWay = () => {
-    navigateWithPermissionCheck({
-      navigation,
-      routeName: 'SearchStack',
-      params: { screen: 'FindWay' },
-    })
-  }
-
   return (
     <SafeScreen
       excludeEdges={['top', 'bottom']}
