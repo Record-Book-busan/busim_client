@@ -46,7 +46,7 @@ async function initializeSDK() {
 function App() {
   useEffect(() => {
     void initializeSDK()
-    getKeyHashAndroid().then(console.log)
+    getKeyHashAndroid().then(response => console.log(`hashKey: ${response}`))
   }, [])
 
   return (
