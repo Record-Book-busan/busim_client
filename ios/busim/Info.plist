@@ -37,6 +37,7 @@
 	<string>NSAppTransportSecurity</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+		<string>kakaomap</string>
 		<string>kakaokompassauth</string>
 		<string>storykompassauth</string>
 		<string>kakaolink</string>
