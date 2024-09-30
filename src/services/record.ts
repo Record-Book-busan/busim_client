@@ -150,17 +150,15 @@ const get_record_list = async (params: { query: string; offset: number; limit: n
     .json()
   const parsedResponses = RecordListArraySchema.parse(response)
 
+  console.log(`parsedReponse: ${JSON.stringify(parsedResponses)}`)
+
   const details = await Promise.all(
-    parsedResponses.map(async parsedResponse => {
-      return get_record_image_detail({ markId: parsedResponse.id })
-    }),
+    parsedResponses
+      .filter(parsedResponse => parsedResponse.id !== 0)
+      .map(async parsedResponse => get_record_image_detail({ markId: parsedResponse.id })),
   )
 
-  // const contents = await Promise.all(
-  //   details.map(async detail => {
-  //     return get_record_detail({ markId: detail.id })
-  //   })
-  // )
+  console.log(`details: ${JSON.stringify(details)}`)
 
   return RecordDetailArraySchema.parse(details)
 }
