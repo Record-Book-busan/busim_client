@@ -225,6 +225,8 @@ const delete_user_membership = async (): Promise<string> => {
     }
   }
 
+  await logoutAll()
+
   return response
 }
 

@@ -57,19 +57,14 @@
 -dontwarn java.nio.file.**
 -dontwarn sun.misc.Unsafe
 
-# 9. XML 리소스 유지 (특정 리소스가 제거되지 않도록 설정)
--keepresources xml/**
--keepresources drawable/**
--keepresources layout/**
-
-# 10. 애노테이션 유지 (의존성있는 애노테이션을 보호)
+# 9. 애노테이션 유지 (의존성있는 애노테이션을 보호)
 -keepattributes *Annotation*
 
-# 11. AndroidX 관련 클래스 보호
+# 10. AndroidX 관련 클래스 보호
 -keep class androidx.** { *; }
 -dontwarn androidx.**
 
-# 12. ProGuard가 외부 라이브러리의 에러를 경고하지 않도록 설정
+# 11. ProGuard가 외부 라이브러리의 에러를 경고하지 않도록 설정
 # 외부 라이브러리에서 난독화로 인해 발생하는 경고를 무시
 -dontwarn com.squareup.**
 -dontwarn javax.annotation.**
