@@ -11,7 +11,9 @@
     "start": "react-native start",
     "commit": "git-cz",
     "pod-install": "cd ios && RCT_NEW_ARCH_ENABLED=1 bundle exec pod install && cd ..",
-    "postinstall": "npx patch-package && husky"
+    "postinstall": "npx patch-package && husky",
+    "android-build:window": "cd android && gradlew.bat assembleRelease && cd ..",
+    "android-build:mac": "cd android && ./gradlew assembleRelease && cd .."
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [
