@@ -1,5 +1,5 @@
 import appleAuth from '@invertase/react-native-apple-authentication'
-import { login, logout, isLogined, me } from '@react-native-kakao/user'
+import { login, logout, isLogined } from '@react-native-kakao/user'
 import { useMutation } from '@tanstack/react-query'
 import { getUniqueId } from 'react-native-device-info'
 
@@ -26,7 +26,6 @@ export type LoginProvider = 'kakao' | 'apple' | 'guest'
  * 모든 로그인 세션을 로그아웃합니다.
  */
 export const logoutAll = async (): Promise<void> => {
-  storage.delete('userInfo')
   storage.delete('accessToken')
   storage.delete('refreshToken')
   storage.delete('userId')
@@ -46,16 +45,12 @@ const kakaoSignIn = async (): Promise<Role> => {
   const loginInfo = await login()
   console.log(loginInfo)
   if (await isLogined()) {
-    const userInfo = await me()
-
-    storage.set('userName', userInfo.nickname)
-    storage.set('userThumbnail', userInfo.profileImageUrl)
-
     const response = await post_signin_kakao({
       accessToken: loginInfo.accessToken,
     })
     const role = response?.isAgreed ? ROLE.MEMBER : ROLE.PENDING_MEMBER
 
+    storage.set('loginType', 'kakao')
     storage.set('accessToken', response?.accessToken)
     storage.set('refreshToken', response?.refreshToken)
     storage.set('userId', response.userId.toString())
@@ -89,6 +84,7 @@ const appleSignIn = async (): Promise<Role> => {
     })
     const role = response?.isAgreed ? ROLE.MEMBER : ROLE.PENDING_MEMBER
 
+    storage.set('loginType', 'apple')
     storage.set('accessToken', response?.accessToken)
     storage.set('refreshToken', response?.refreshToken)
     storage.set('userId', response.userId.toString())
@@ -208,7 +204,27 @@ export const useCacelMemberShip = () => {
  * 탈퇴합니다.
  */
 const delete_user_membership = async (): Promise<string> => {
-  const response = await instance('kkilogbu/').delete('users/withdrawal/kakao').text()
+  let response: Promise<string> = new Promise(() => '')
+
+  if (storage.getString('loginType') === 'kakao') {
+    response = (await instance('kkilogbu/').delete('users/withdrawal/kakao')).text()
+  }
+
+  if (storage.getString('loginType') === 'apple') {
+    const userId = storage.getString('userId')
+    const accessToken = storage.getString('accessToken')
+
+    if (!!userId && !!accessToken) {
+      response = (
+        await instance('kkilogbu/').delete(`users/${userId}`, {
+          searchParams: { accessToken: accessToken },
+        })
+      ).text()
+    } else {
+      throw new Error('storage에 userId 혹은 accessToken이 없습니다.')
+    }
+  }
+
   return response
 }
 
