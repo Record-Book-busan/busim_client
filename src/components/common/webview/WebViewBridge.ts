@@ -1,15 +1,15 @@
 import { WebView } from 'react-native-webview'
 
-import {
+import { isNativeActionResponse } from '@/types/schemas/action'
+import { isWebViewMessage } from '@/types/schemas/message'
+
+import type {
   NativeActionData,
   NativeActionRequest,
   NativeActionResponse,
   NativeActionType,
 } from '@/types/action'
-import { WebViewMessage, WebViewMessageData, WebViewMessageType } from '@/types/message'
-import { isNativeActionResponse } from '@/types/schemas/action'
-import { isWebViewMessage } from '@/types/schemas/message'
-
+import type { WebViewMessage, WebViewMessageData, WebViewMessageType } from '@/types/message'
 import type { WebViewMessageEvent } from 'react-native-webview'
 
 export class WebViewBridge {

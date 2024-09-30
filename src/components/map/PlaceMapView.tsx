@@ -9,7 +9,7 @@ import map from '@/services/map'
 import { type PlaceType, useMapPlace, useParking, useToilet } from '@/services/place'
 
 import { RefreshButton } from './RefreshButton'
-import { WebView, WebViewBridge, WebViewEl } from '../common'
+import { WebView, WebViewBridge, type WebViewEl } from '../common'
 import { MapFAB } from './MapFAB'
 
 import type { RootStackParamList } from '@/types/navigation'
@@ -190,6 +190,14 @@ export const PlaceMapView = ({
     }
   }
 
+  const handleFindWayPress = () => {
+    navigateWithPermissionCheck({
+      navigation,
+      routeName: 'SearchStack',
+      params: { screen: 'FindWay' },
+    })
+  }
+
   const handleRefresh = useCallback(() => {
     setQueryCenter(mapCenter)
     setQueryZoomLevel(zoomLevel)
@@ -198,13 +206,15 @@ export const PlaceMapView = ({
 
   return (
     <>
-      {/* 내 위치 버튼 */}
       <View
-        className="absolute bottom-10 right-4 z-[2]"
+        className="absolute bottom-10 right-4 z-[2] flex gap-4"
         style={{
           paddingBottom: bottomTabBarHeight,
         }}
       >
+        {/* 길찾기 표시 버튼 */}
+        <MapFAB onPress={handleFindWayPress} iconName="findWay" />
+        {/* 내 위치 버튼 */}
         <MapFAB onPress={handleLocationPress} iconName="position" enabled={isMyLocationActive} />
       </View>
       {/* 지도 웹뷰 */}
