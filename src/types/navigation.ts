@@ -37,7 +37,7 @@ export type CreateRecordStackParamList = {
 }
 
 export type RecordStackParamList = {
-  RecordMain: undefined
+  RecordMain: { tab?: number }
   RecordSearch?: { query?: string }
   RecordResult: { query: string }
   ReadRecord: { id: number }

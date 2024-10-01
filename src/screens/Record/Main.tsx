@@ -1,5 +1,5 @@
-import { useNavigation } from '@react-navigation/native'
-import { Suspense, useState } from 'react'
+import { type RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import { Suspense, useEffect, useState } from 'react'
 import { View } from 'react-native'
 
 import { SafeScreen, SearchHeader } from '@/components/common'
@@ -14,7 +14,14 @@ import type { StackNavigationProp } from '@react-navigation/stack'
 export default function RecordMainScreen() {
   const [index, setIndex] = useState(0)
   const navigation = useNavigation<StackNavigationProp<RecordStackParamList, 'RecordMain'>>()
+  const route = useRoute<RouteProp<RecordStackParamList, 'RecordMain'>>()
   const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
+
+  useEffect(() => {
+    if (route.params?.tab) {
+      setIndex(route.params.tab)
+    }
+  }, [route.params?.tab])
 
   const handleSearchBarPress = () =>
     navigateWithPermissionCheck({
