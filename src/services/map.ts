@@ -235,21 +235,25 @@ const map = `<!DOCTYPE html>
         map = new kakao.maps.Map(container, options);
 
         kakao.maps.event.addListener(map, 'zoom_changed', function(event) {
-            const level = map.getLevel();
-            postMessage("ZOOM_CHANGE", { zoomLevel: 'LEVEL_' + level });
-
             // 줌 레벨 변경 시 오버레이 재설정
             if (currentPlaceData.length > 0) {
                 settingPlaceOverlays(currentPlaceData);
             }
         });
-        kakao.maps.event.addListener(map, 'dragend', function() {
+        kakao.maps.event.addListener(map, 'center_changed', function() {
             // 지도 중심 변경 시 오버레이 재설정
             if (currentPlaceData.length > 0) {
                 settingPlaceOverlays(currentPlaceData);
             }
+        });
+        kakao.maps.event.addListener(map, 'dragstart', function() {
             const latlng = map.getCenter();
-            postMessage("CENTER_CHANGE", { lat: latlng.getLat(), lng: latlng.getLng() })
+            postMessage("DRAG_START", {})
+        });
+        kakao.maps.event.addListener(map, 'idle', function() {
+            const latlng = map.getCenter();
+            const level = map.getLevel();
+            postMessage("CENTER_CHANGE", { lat: latlng.getLat(), lng: latlng.getLng(), level: 'LEVEL_' + level })
         });
     }
 
