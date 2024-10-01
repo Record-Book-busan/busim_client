@@ -16,8 +16,8 @@ type RecordFABProps = {
 }
 
 const SCREEN_WIDTH = window.width
-const COLLAPSED_WIDTH = 55
-const EXPANDED_WIDTH = SCREEN_WIDTH * (2 / 3)
+const COLLAPSED_WIDTH = 48
+const EXPANDED_WIDTH = SCREEN_WIDTH * (3 / 5)
 
 export function RecordFAB({ isExpanded, onPress }: RecordFABProps) {
   const animatedStyles = useAnimatedStyle(() => {
@@ -49,7 +49,7 @@ export function RecordFAB({ isExpanded, onPress }: RecordFABProps) {
       <Button
         type="button"
         variant="primary"
-        size="full"
+        size="lg"
         style={{
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 2 },

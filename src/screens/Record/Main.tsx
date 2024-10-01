@@ -1,12 +1,12 @@
 import { useNavigation } from '@react-navigation/native'
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { View } from 'react-native'
 
 import { SafeScreen, SearchHeader } from '@/components/common'
 import { Place } from '@/components/record'
 import { FeedMain } from '@/components/record/FeedMain'
 import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
-import { Tab, TabView } from '@/shared'
+import { Tab, TabView, Typo } from '@/shared'
 
 import type { RecordStackParamList } from '@/types/navigation'
 import type { StackNavigationProp } from '@react-navigation/stack'
@@ -38,10 +38,14 @@ export default function RecordMainScreen() {
 
         <TabView disableSwipe={true} value={index} onValueChange={setIndex}>
           <TabView.Item>
-            <Place />
+            <Suspense fallback={<Typo>로딩중,,</Typo>}>
+              <Place />
+            </Suspense>
           </TabView.Item>
           <TabView.Item>
-            <FeedMain />
+            <Suspense fallback={<Typo>로딩중..</Typo>}>
+              <FeedMain />
+            </Suspense>
           </TabView.Item>
         </TabView>
       </View>
