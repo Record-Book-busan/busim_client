@@ -3,27 +3,12 @@ import { useState, useEffect } from 'react'
 import { ZodError } from 'zod'
 
 import { PlaceArraySchema, PlaceSchema, SearchDetail, type Place } from '@/types/schemas/place'
-import { type FeedType, FeedArraySchema } from '@/types/schemas/record'
 import { storage } from '@/utils/storage'
 
 import { instance } from './instance'
 import * as service from './service'
 
 const LIMIT = 10
-
-export const useFeedInfiniteSearch = (query: string) => {
-  return useSuspenseInfiniteQuery<FeedType[]>({
-    queryKey: ['search', query],
-    queryFn: ({ pageParam = 0 }) =>
-      get_feed_search({ query, offset: pageParam as number, limit: LIMIT }),
-    getNextPageParam: (lastPage, allPages) => {
-      return lastPage.length === LIMIT ? allPages.length * LIMIT : undefined
-    },
-    initialPageParam: 0,
-    retryOnMount: false,
-    refetchOnWindowFocus: false,
-  })
-}
 
 export const usePlaceInfiniteSearch = (query: string) => {
   return useSuspenseInfiniteQuery<Place[]>({
@@ -138,46 +123,6 @@ export const get_place_search = async ({
 
     const response = await service.getSearchPlace(params)
     return PlaceArraySchema.parse(response)
-  } catch (error) {
-    if (error instanceof ZodError) {
-      console.error('데이터 유효성 검사 실패:', error.errors)
-    } else {
-      console.error('알 수 없는 에러 발생:', error)
-    }
-    throw error
-  }
-}
-
-/**
- * 검색어를 기반으로 기록을 가져옵니다.
- * @param query - 검색어
- * @param offset - 데이터의 시작점
- * @param limit - 한 번에 가져올 데이터 수
- * @returns
- */
-export const get_feed_search = async ({
-  query,
-  offset,
-  limit,
-}: {
-  query: string
-  offset: number
-  limit: number
-}) => {
-  try {
-    const params = {
-      query,
-      offset: offset.toString(),
-      limit: limit.toString(),
-    }
-
-    const response = await instance('kkilogbu/')
-      .get('record/images', {
-        searchParams: params,
-      })
-      .json()
-    console.log(`response: ${JSON.stringify(response)}`)
-    return FeedArraySchema.parse(response)
   } catch (error) {
     if (error instanceof ZodError) {
       console.error('데이터 유효성 검사 실패:', error.errors)
