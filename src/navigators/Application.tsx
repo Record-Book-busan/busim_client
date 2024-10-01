@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
 import { createStackNavigator, type StackNavigationProp } from '@react-navigation/stack'
+import ErrorBoundary from 'react-native-error-boundary'
 
-import ErrorBoundary from '@/common/ErrorBoundary'
 import { NeedLoginPopup } from '@/components/common/NeedLoginPopup'
 import { ErrorScreen, LoginScreen, PrivacyPolicyScreen } from '@/screens'
 
@@ -20,7 +20,12 @@ function ApplicationNavigator() {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>()
 
   return (
-    <ErrorBoundary navigation={navigation}>
+    <ErrorBoundary
+      FallbackComponent={ErrorScreen}
+      onError={(error, stackTrace) => {
+        console.error('에러바운더리:', error, stackTrace)
+      }}
+    >
       <NeedLoginPopup navigation={navigation} />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Login" component={LoginScreen} />

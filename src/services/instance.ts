@@ -33,7 +33,6 @@ const kyExtend = ({ prefixUrl, headers }: kyExtendProps) =>
       beforeError: [
         error => {
           console.error('kyExtend beforeError Error:', error)
-
           return error
         },
       ],
