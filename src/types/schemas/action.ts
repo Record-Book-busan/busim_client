@@ -3,7 +3,11 @@ import { z } from 'zod'
 import type { NativeActionRequest, NativeActionResponse, NativeActionType } from '../action'
 
 export const requestPayloadSchema = {
-  GET_CURRENT_LOCATION: z.object({ lat: z.number(), lng: z.number() }),
+  GET_CURRENT_LOCATION: z.object({
+    lat: z.number(),
+    lng: z.number(),
+    visible: z.boolean().optional(),
+  }),
   GET_PLACE_DATA: z.array(
     z.object({
       id: z.string(),

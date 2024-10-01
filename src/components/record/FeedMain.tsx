@@ -2,7 +2,7 @@ import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { ActivityIndicator } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { useFeedInfiniteSearch } from '@/services/search'
+import { useFeedInfiniteSearch } from '@/services/record'
 
 import { Feed } from './Feed'
 

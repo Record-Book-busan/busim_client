@@ -20,7 +20,7 @@ export const buttonContainerVariants = cva(
         sm: 'px-1',
         md: 'px-1.5',
         lg: 'px-10',
-        full: 'h-[56px] px-6 w-full rounded-2xl',
+        full: 'h-[54px] px-6 w-full rounded-2xl',
       },
       disabled: {
         true: 'opacity-50 cursor-not-allowed',
@@ -29,10 +29,11 @@ export const buttonContainerVariants = cva(
     compoundVariants: [
       /** 버튼 컨테이너 스타일 */
       { variant: ['default', 'primary'], size: 'sm', type: 'button', class: 'h-10 px-3' },
-      { variant: ['default', 'primary'], size: 'md', type: 'button', class: 'h-12 px-2 ' },
-      { variant: ['default', 'primary'], size: 'lg', type: 'button', class: 'h-[54px] w-2/3' },
+      { variant: ['default'], size: 'md', type: 'button', class: 'h-12 px-2 ' },
+      { variant: ['default'], size: 'lg', type: 'button', class: 'h-[54px] w-2/3' },
       { variant: ['default'], size: 'full', type: 'button', class: '' },
       { variant: ['primary'], size: 'full', type: 'button', class: 'rounded-full' },
+      { variant: ['primary'], size: 'lg', type: 'button', class: 'h-12 w-full px-4 rounded-full' },
       /** 텍스트 버튼 스타일 */
       { variant: 'ghost', size: 'md', type: 'text', class: 'h-11 px-1.5' },
       /** 터치 버튼 스타일 */

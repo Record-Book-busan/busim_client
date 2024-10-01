@@ -47,22 +47,14 @@ export const RecordDetailArraySchema = z.array(RecordDetailSchema)
 export const RecordListSchema = z.object({
   id: z.number(),
   title: z.string().min(1).max(100),
-  thumbnailUrl: z.string().url().nullable(),
-  address: z.string(),
+  imageUrl: z.string().url().nullable(),
   lat: z.number().min(-90).max(90),
   lng: z.number().min(-180).max(180),
-  touristCategory: z.string(),
   content: z.string().optional(),
+  address: z.string().optional(),
 })
 export type RecordList = z.infer<typeof RecordListSchema>
-
-export const RecordListResponseSchema = z.object({
-  id: z.number(),
-  imageUrl: z.string(),
-})
-
-export type RecordListResponse = z.infer<typeof RecordListResponseSchema>
-export const RecordListArraySchema = z.array(RecordListResponseSchema)
+export const RecordListArraySchema = z.array(RecordListSchema)
 
 export const MapRecordSchema = z.object({
   id: z.number(),

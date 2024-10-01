@@ -1,6 +1,6 @@
 import { View } from 'react-native'
 
-import { Button } from '@/shared'
+import { Button, Typo } from '@/shared'
 
 interface RecordSubmitButtonProps {
   onSubmit: () => void
@@ -8,9 +8,9 @@ interface RecordSubmitButtonProps {
 
 export const RecordSubmitButton = ({ onSubmit }: RecordSubmitButtonProps) => {
   return (
-    <View className="px-3 pb-2 pt-2">
+    <View className="w-full px-3 pb-2 pt-2">
       <Button variant="primary" type="button" size="full" onPress={onSubmit}>
-        기록하기
+        <Typo className="text-center font-SemiBold text-lg text-white">기록 하기</Typo>
       </Button>
     </View>
   )

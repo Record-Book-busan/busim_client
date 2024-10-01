@@ -1,12 +1,13 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import { type ForwardedRef, forwardRef, useState } from 'react'
-import { Text, TextInput, View, type TextInputProps } from 'react-native'
+import { TextInput, View, type TextInputProps } from 'react-native'
 
 import { cn } from '@/utils/cn'
 
 import { TextField } from './TextField'
+import { Typo } from './Typo'
 
-const textAreaVariants = cva('px-3 py-2 ', {
+const textAreaVariants = cva('font-Regular px-3 py-2', {
   variants: {
     size: {
       sm: 'h-24',
@@ -26,6 +27,7 @@ export interface TextAreaProps extends TextInputProps, VariantProps<typeof textA
   showCount?: boolean
   /* 최대 글자수를 설정합니다 */
   maxLength?: number
+  containerStyle?: string
 }
 
 export const TextArea = forwardRef<TextInput, TextAreaProps>(
@@ -36,6 +38,7 @@ export const TextArea = forwardRef<TextInput, TextAreaProps>(
       placeholderTextColor,
       showCount = false,
       maxLength,
+      containerStyle,
       ...props
     }: TextAreaProps,
     ref: ForwardedRef<TextInput>,
@@ -59,12 +62,13 @@ export const TextArea = forwardRef<TextInput, TextAreaProps>(
           multiline
           onChangeText={handleChangeText}
           maxLength={maxLength}
-          className={cn(textAreaVariants({ size }))}
+          className={cn(textAreaVariants({ size }), containerStyle)}
         />
         {showCount && (
-          <Text className="absolute bottom-3 right-3 text-xs text-gray-500">
-            {count}/{maxLength || 'ထ'}
-          </Text>
+          <Typo className="absolute bottom-3 right-3 text-xs tracking-wide text-gray-500">
+            <Typo className="font-SemiBold tracking-wide text-gray-800">{count}</Typo>/
+            {maxLength || 'ထ'}
+          </Typo>
         )}
       </View>
     )

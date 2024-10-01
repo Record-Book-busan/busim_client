@@ -1,7 +1,7 @@
 import { type BottomTabNavigationProp, useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { useNavigation } from '@react-navigation/native'
-import { useState, useRef, useCallback } from 'react'
-import { View, Platform } from 'react-native'
+import { useState, useCallback } from 'react'
+import { View, Platform, type LayoutChangeEvent } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { SafeScreen, SearchBarView, Categories } from '@/components/common'
@@ -21,7 +21,7 @@ export default function MapScreen({ route }: MapScreenProps) {
   const [eyeState, setEyeState] = useState(true)
   const [isToiletPressed, setIsToiletPressed] = useState(false)
   const [isParkingPressed, setIsTrafficPressed] = useState(false)
-  const searchBarHeight = useRef(0)
+  const [searchBarHeight, setSearchBarHeight] = useState(0)
   const insets = useSafeAreaInsets()
   const navigation = useNavigation<BottomTabNavigationProp<RootStackParamList, 'MainTab'>>()
   const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
@@ -44,6 +44,11 @@ export default function MapScreen({ route }: MapScreenProps) {
 
   const bottomTabBarHeight = useBottomTabBarHeight()
 
+  const onSearchBarLayout = useCallback((event: LayoutChangeEvent) => {
+    const { height } = event.nativeEvent.layout
+    setSearchBarHeight(height)
+  }, [])
+
   return (
     <SafeScreen
       excludeEdges={['top', 'bottom']}
@@ -58,34 +63,34 @@ export default function MapScreen({ route }: MapScreenProps) {
           marginTop: Platform.OS === 'ios' ? insets.top : insets.top + 12,
         }}
       >
-        <View
-          onLayout={event => {
-            searchBarHeight.current = event.nativeEvent.layout.height
-          }}
-        >
+        <View onLayout={onSearchBarLayout}>
           <SearchBarView placeholder="장소 검색" onPress={handleSearchBarPress} />
         </View>
         {/* 카테고리 */}
-        <View
-          className={`absolute left-0 right-0 z-[1px]`}
-          style={{
-            top: searchBarHeight.current,
-          }}
-        >
-          <Categories
-            initCategories={route.params?.categories || []}
-            onCategoryChange={handleCategoryChange}
-          />
-        </View>
+        {searchBarHeight > 0 && (
+          <View
+            className={`absolute left-0 right-0 z-[1px]`}
+            style={{
+              top: searchBarHeight,
+            }}
+          >
+            <Categories
+              initCategories={route.params?.categories || []}
+              onCategoryChange={handleCategoryChange}
+            />
+          </View>
+        )}
         {/* 눈 아이콘 */}
-        <View
-          className={`absolute right-4 z-[1px]`}
-          style={{
-            top: searchBarHeight.current,
-          }}
-        >
-          <EyeButton eyeState={eyeState} onPress={handleEyePress} />
-        </View>
+        {searchBarHeight > 0 && (
+          <View
+            className={`absolute right-4 z-[1px]`}
+            style={{
+              top: searchBarHeight,
+            }}
+          >
+            <EyeButton eyeState={eyeState} onPress={handleEyePress} />
+          </View>
+        )}
       </View>
       <View
         className="absolute bottom-12 left-4 z-[2] flex gap-2"
@@ -117,7 +122,7 @@ export default function MapScreen({ route }: MapScreenProps) {
         />
       </View>
 
-      <RecommendSheet headerHeight={searchBarHeight.current + insets.top} />
+      <RecommendSheet headerHeight={searchBarHeight + insets.top} />
     </SafeScreen>
   )
 }

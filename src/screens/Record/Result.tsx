@@ -4,7 +4,7 @@ import { View, ActivityIndicator } from 'react-native'
 import { SafeScreen, SearchHeader } from '@/components/common'
 import { Feed } from '@/components/record'
 import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
-import { useFeedInfiniteSearch } from '@/services/search'
+import { useFeedInfiniteSearch } from '@/services/record'
 import { RecordStackParamList } from '@/types/navigation'
 
 import type { StackNavigationProp } from '@react-navigation/stack'

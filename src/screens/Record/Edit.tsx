@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useRef, useReducer, useEffect, Suspense } from 'react'
+import { useRef, useReducer, useEffect, Suspense, RefObject } from 'react'
 import { ScrollView, View, Text } from 'react-native'
+import { TextInput } from 'react-native-gesture-handler'
 
 import { KeyboardAvoidingView, SafeScreen } from '@/components/common'
 import {
@@ -107,23 +108,19 @@ export function RecordEditContent({ id }: RecordEditContentProps) {
         <RecordTitle
           title={state.title}
           onChangeTitle={text => updateRecordData('title', text)}
-          inputRef={inputRefs.current[0]}
+          ref={inputRefs.current[0] as RefObject<TextInput>}
           onSubmitEditing={() => focusNextInput(0)}
         />
-        <RecordLocation
-          location={state.location}
-          isLoading={isLocationLoading}
-          dispatch={dispatch}
-        />
+        <RecordLocation location={state.location} dispatch={dispatch} />
         <RecordImage
           uri={state.image?.uri}
           onImageSelected={image => updateRecordData('image', image)}
-          inputRef={inputRefs.current[1]}
+          ref={inputRefs.current[1]}
         />
         <RecordContent
           content={state.content}
           onChangeContent={text => updateRecordData('content', text)}
-          inputRef={inputRefs.current[2]}
+          ref={inputRefs.current[2] as RefObject<TextInput>}
           scrollViewRef={scrollViewRef}
         />
         <RecordSubmitButton onSubmit={handleSubmit} />
