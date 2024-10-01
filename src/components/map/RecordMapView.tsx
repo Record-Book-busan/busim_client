@@ -3,6 +3,7 @@ import { useNavigation } from '@react-navigation/native'
 import { useEffect, useCallback, useRef, useState } from 'react'
 import { View } from 'react-native'
 import { useSharedValue } from 'react-native-reanimated'
+import { useDebounce } from 'use-debounce'
 
 import { useLocation } from '@/hooks/useLocation'
 import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
@@ -11,7 +12,6 @@ import { useMapRecord } from '@/services/record'
 
 import { WebView, type WebViewHandles } from '../common'
 import { MapFAB } from './MapFAB'
-import { RefreshButton } from './RefreshButton'
 import { RecordFAB } from '../record/RecordFAB'
 
 import type { RootStackParamList } from '@/types/navigation'
@@ -24,11 +24,12 @@ export const RecordMapView = () => {
 
   const { location, refreshLocation } = useLocation()
   const [mapCenter, setMapCenter] = useState(location)
-  const [queryCenter, setQueryCenter] = useState(location)
   const [zoomLevel, setZoomLevel] = useState('LEVEL_3')
-  const [queryZoomLevel, setQueryZoomLevel] = useState('LEVEL_3')
+  const [geolocation] = useDebounce(
+    { lat: mapCenter.lat, lng: mapCenter.lng, level: zoomLevel },
+    500,
+  )
 
-  const [isChangedMap, setIsChangedMap] = useState(false)
   const [isMyLocationActive, setIsMyLocationActive] = useState(false)
 
   const isFABExpanded = useSharedValue(true)
@@ -36,7 +37,7 @@ export const RecordMapView = () => {
 
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>()
   const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
-  const { data: recordData } = useMapRecord(queryCenter.lat, queryCenter.lng, queryZoomLevel)
+  const { data: recordData } = useMapRecord(geolocation)
 
   useEffect(() => {
     const bridge = webViewRef.current?.bridge
@@ -44,7 +45,6 @@ export const RecordMapView = () => {
     bridge?.onEvent('ZOOM_CHANGE', data => {
       if (data.zoomLevel) {
         setZoomLevel(data.zoomLevel)
-        setIsChangedMap(true)
         isFABExpanded.value = false
       }
     })
@@ -52,7 +52,6 @@ export const RecordMapView = () => {
     bridge?.onEvent('CENTER_CHANGE', data => {
       if (data.lat && data.lng) {
         setMapCenter(data)
-        setIsChangedMap(true)
         isFABExpanded.value = false
       }
     })
@@ -75,6 +74,7 @@ export const RecordMapView = () => {
 
     bridge?.onEvent('CONTENTS_LOADED', data => {
       if (data.loaded) {
+        console.log(data.loaded)
         setIsMapLoaded(true)
       }
     })
@@ -128,7 +128,11 @@ export const RecordMapView = () => {
     const latlng = await refreshLocation()
     if (latlng) {
       try {
-        await webViewRef.current?.bridge.sendRequest('GET_CURRENT_LOCATION', latlng)
+        await webViewRef.current?.bridge.sendRequest('GET_CURRENT_LOCATION', {
+          lat: latlng.lat,
+          lng: latlng.lng,
+          visible: false,
+        })
       } catch (error) {
         console.error('[ERROR] 현재 위치 전송 실패:', error)
       }
@@ -145,22 +149,8 @@ export const RecordMapView = () => {
     })
   }
 
-  const handleRefresh = () => {
-    setQueryCenter(mapCenter)
-    setQueryZoomLevel(zoomLevel)
-    setIsChangedMap(false)
-  }
-
   return (
     <>
-      {/* 현재 위치에서 재검색 버튼 */}
-      {isChangedMap && (
-        <View className="flex-row items-center justify-center">
-          <View className="absolute top-3 z-[2]">
-            <RefreshButton onPress={handleRefresh} />
-          </View>
-        </View>
-      )}
       {/* 기록 작성 버튼 */}
       <View
         className="absolute bottom-4 left-4 z-[2]"

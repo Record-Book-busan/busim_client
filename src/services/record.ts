@@ -46,12 +46,14 @@ export const useRecordDetail = (id: number) => {
 }
 
 /** 지도기반의 기록을 가져오는 훅입니다. */
-export const useMapRecord = (lat: number, lng: number, level: string) => {
+export const useMapRecord = (param: { lat: number; lng: number; level: string }) => {
+  const { lat, lng, level } = param
   return useQuery({
     queryKey: ['mapRecord', lat, lng, level],
     queryFn: () => get_map_record({ lat, lng, level }),
     retryOnMount: false,
     refetchOnWindowFocus: false,
+    placeholderData: prev => prev,
   })
 }
 
