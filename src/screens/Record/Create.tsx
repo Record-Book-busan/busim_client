@@ -1,7 +1,8 @@
-import { useRef, useReducer, useEffect } from 'react'
-import { ScrollView } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
+import { useRef, useReducer } from 'react'
+import { ScrollView, TextInput, View } from 'react-native'
 
-import { KeyboardAvoidingView, SafeScreen } from '@/components/common'
+import { KeyboardDismissPressable, SafeScreen } from '@/components/common'
 import {
   RecordContent,
   RecordImage,
@@ -9,21 +10,19 @@ import {
   RecordSubmitButton,
   RecordTitle,
   useCreateRecordForm,
-  useCurrentLocationToAddr,
 } from '@/components/record'
 import { initialState, recordFormReducer } from '@/components/record'
 import { useAutoFocus } from '@/hooks/useAutoFocus'
 import { useUploadImage } from '@/services/image'
 import { useCreateRecord } from '@/services/record'
-import { Header } from '@/shared'
-import { showToast } from '@/utils/toast'
+import { Button, Header, SvgIcon } from '@/shared'
 
 export default function RecordCreateScreen() {
+  const navigation = useNavigation()
   const scrollViewRef = useRef<ScrollView>(null)
-  const { inputRefs, focusNextInput } = useAutoFocus(4)
+  const { inputRefs, focusNextInput } = useAutoFocus<TextInput | View>(4)
   const { mutateRecord } = useCreateRecord()
   const { mutateUpload } = useUploadImage()
-  const { getCurrentAddress, isLoading: isLocationLoading } = useCurrentLocationToAddr()
 
   const [state, dispatch] = useReducer(recordFormReducer, initialState)
 
@@ -36,51 +35,62 @@ export default function RecordCreateScreen() {
     inputRefs,
   )
 
-  useEffect(() => {
-    void getCurrentAddress()
-      .then(location => {
-        dispatch({ type: 'UPDATE_LOCATION', value: location })
-      })
-      .catch(_ => {
-        showToast({ text: '현재 위치를 불러오는데 실패했습니다. 다시 시도해주세요.' })
-      })
-  }, [])
-
   return (
-    <SafeScreen>
-      <Header title="여행 기록 쓰기" />
-      <KeyboardAvoidingView edge="top">
+    <SafeScreen className="bg-gray-100">
+      <Header
+        LeftContent={<View />}
+        rightContent={
+          <Button type="touch">
+            <SvgIcon
+              name="x"
+              width={22}
+              height={22}
+              className="text-color-700"
+              onPress={() => navigation.goBack()}
+            />
+          </Button>
+        }
+        containerStyle="bg-transparent"
+      />
+      <KeyboardDismissPressable>
         <ScrollView
           ref={scrollViewRef}
           keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{ flexGrow: 1, backgroundColor: 'white' }}
+          className="bg-gray-100 p-4"
+          contentContainerStyle={{ flexGrow: 1 }}
           scrollEventThrottle={16}
         >
-          <RecordTitle
-            title={state.title}
-            onChangeTitle={text => updateRecordData('title', text)}
-            inputRef={inputRefs.current[0]}
-            onSubmitEditing={() => focusNextInput(0)}
-          />
-          <RecordLocation
-            location={state.location}
-            dispatch={dispatch}
-            isLoading={isLocationLoading}
-          />
-          <RecordImage
-            uri={state.image?.uri}
-            onImageSelected={uri => updateRecordData('image', uri)}
-            inputRef={inputRefs.current[1]}
-          />
-          <RecordContent
-            content={state.content}
-            onChangeContent={text => updateRecordData('content', text)}
-            inputRef={inputRefs.current[2]}
-            scrollViewRef={scrollViewRef}
-          />
+          <View className="mb-6 rounded-xl bg-white p-4 shadow-lg">
+            <RecordTitle
+              ref={inputRefs.current[0] as React.RefObject<TextInput>}
+              title={state.title}
+              onChangeTitle={text => updateRecordData('title', text)}
+              onSubmitEditing={() => focusNextInput(3)}
+            />
+
+            <RecordImage
+              ref={inputRefs.current[1] as React.RefObject<View>}
+              uri={state.image?.uri}
+              onImageSelected={uri => updateRecordData('image', uri)}
+            />
+
+            <View className="mt-4">
+              <RecordContent
+                content={state.content}
+                onChangeContent={text => updateRecordData('content', text)}
+                ref={inputRefs.current[3] as React.RefObject<TextInput>}
+                scrollViewRef={scrollViewRef}
+              />
+            </View>
+          </View>
+
+          <View className="mb-4 rounded-lg bg-white p-3 shadow-sm">
+            <RecordLocation location={state.location} dispatch={dispatch} />
+          </View>
+
           <RecordSubmitButton onSubmit={handleSubmit} />
         </ScrollView>
-      </KeyboardAvoidingView>
+      </KeyboardDismissPressable>
     </SafeScreen>
   )
 }

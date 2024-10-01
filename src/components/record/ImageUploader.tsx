@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { View, Image, Text } from 'react-native'
+import { View, Image, Pressable } from 'react-native'
 import Lightbox from 'react-native-lightbox-v2'
 
 import { ImagePickerSheet } from '@/components/record'
 import { window } from '@/constants'
 import { useCamera } from '@/hooks/useCamera'
 import { useGallery } from '@/hooks/useGallery'
-import { SvgIcon } from '@/shared'
+import { SvgIcon, Typo } from '@/shared'
 import { ButtonPrimitive } from '@/shared/Button'
 
 import type { ImageAsset } from '@/services/image'
@@ -46,7 +46,10 @@ export function ImageUploader({ uri, onImageSelected }: ImageUploaderProps) {
   }
 
   return (
-    <View className="relative mb-4 items-center justify-center overflow-hidden rounded-xl border border-gray-300">
+    <Pressable
+      className="h-64 w-full items-center justify-center overflow-hidden rounded-lg bg-gray-100"
+      onPress={() => setIsImagePickerOpen(true)}
+    >
       {uri ? (
         <View className="w-full">
           <Lightbox
@@ -58,20 +61,18 @@ export function ImageUploader({ uri, onImageSelected }: ImageUploaderProps) {
               resizeMode: 'contain',
             }}
           >
-            <Image source={{ uri: uri }} className="h-48 w-full" resizeMode="cover" />
+            <Image source={{ uri: uri }} className="h-full w-full" resizeMode="cover" />
           </Lightbox>
           <View className="absolute right-3 top-2">
             <ButtonPrimitive onPress={() => onImageSelected(null)}>
-              <SvgIcon name="trash" size={24} className="text-BUSIM-blue" />
+              <SvgIcon name="xCircleFilled" size={22} className="text-neutral-700" />
             </ButtonPrimitive>
           </View>
         </View>
       ) : (
-        <View className="h-48 w-full items-center justify-center rounded-xl">
-          <ButtonPrimitive onPress={() => setIsImagePickerOpen(true)}>
-            <SvgIcon name="add" className="text-BUSIM-blue" />
-          </ButtonPrimitive>
-          <Text className="mt-2 text-sm text-gray-800">사진 추가하기</Text>
+        <View className="items-center">
+          <SvgIcon name="camera" size={40} className="text-gray-400" />
+          <Typo className="mt-2 font-SemiBold text-lg text-gray-600">사진을 추가해주세요</Typo>
         </View>
       )}
       {/* 이미지 선택 바텀 시트 */}
@@ -81,6 +82,6 @@ export function ImageUploader({ uri, onImageSelected }: ImageUploaderProps) {
         onSelectGallery={handleGetPhoto}
         onSelectCamera={handleTakePhoto}
       />
-    </View>
+    </Pressable>
   )
 }
