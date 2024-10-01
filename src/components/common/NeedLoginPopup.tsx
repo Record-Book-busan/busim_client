@@ -4,7 +4,8 @@ import { TouchableOpacity, View } from 'react-native'
 import { defaultImageBlueGgilogbu } from '@/assets/images'
 import { usePopup } from '@/hooks/usePopup'
 import { ImageVariant, SvgIcon, Typo } from '@/shared'
-import { RootStackParamList } from '@/types/navigation'
+
+import type { RootStackParamList } from '@/types/navigation'
 
 interface NeedLoginPopupProps {
   navigation: StackNavigationProp<RootStackParamList>
@@ -28,9 +29,11 @@ export function NeedLoginPopup({ navigation }: NeedLoginPopupProps) {
         width: '100%',
         height: '100%',
         backgroundColor: 'rgba(0,0,0,0.3)',
+        justifyContent: 'center',
+        alignItems: 'center',
       }}
     >
-      <View className="absolute left-1/2 top-1/2 z-[9999] flex w-[350px] -translate-x-[175px] -translate-y-[150px] items-center justify-center gap-y-2">
+      <View className="absolute flex w-[340px] items-center justify-center gap-y-2 shadow">
         <View className="flex w-full items-center rounded-2xl bg-[#00339D] px-4 py-8">
           <ImageVariant
             className="-mb-[70px] -mt-[20px] h-[200px] w-[300px]"
@@ -39,18 +42,18 @@ export function NeedLoginPopup({ navigation }: NeedLoginPopupProps) {
           <Typo className="text-center text-sm font-medium text-white">
             나의 부산 여행록, 끼록:부
           </Typo>
-          <Typo className="py-10 text-center text-lg font-semibold text-white">
+          <Typo className="py-10 text-center font-SemiBold text-lg text-white">
             로그인이 필요한 기능입니다.
           </Typo>
           <TouchableOpacity
-            className="flex w-full items-center justify-center rounded-lg bg-white py-2"
+            className="flex w-full items-center justify-center rounded-full bg-white p-4"
             onPress={handleLoginButtonClick}
           >
-            <Typo className="font-bold">지금 로그인하기</Typo>
+            <Typo className="font-Bold text-neutral-800">지금 로그인하기</Typo>
           </TouchableOpacity>
         </View>
         <TouchableOpacity className="flex flex-row items-center gap-x-4" onPress={closePopup}>
-          <Typo className="text-base text-white">비회원으로 계속 볼래요</Typo>
+          <Typo className="text-sm text-white">비회원으로 계속 볼래요</Typo>
           <SvgIcon className="text-white" size={14} name="chevronRight" />
         </TouchableOpacity>
       </View>

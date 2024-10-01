@@ -8,7 +8,7 @@ import { SafeScreen, SearchBarView, Categories } from '@/components/common'
 import { PlaceMapView, EyeButton, MapFAB } from '@/components/map'
 import { CategoryType } from '@/constants/data'
 import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
-import { RootStackParamList } from '@/types/navigation'
+import { AuthStackParamList } from '@/types/navigation'
 
 import { RecommendSheet } from './RecommendSheet'
 
@@ -23,7 +23,7 @@ export default function MapScreen({ route }: MapScreenProps) {
   const [isParkingPressed, setIsTrafficPressed] = useState(false)
   const [searchBarHeight, setSearchBarHeight] = useState(0)
   const insets = useSafeAreaInsets()
-  const navigation = useNavigation<BottomTabNavigationProp<RootStackParamList, 'MainTab'>>()
+  const navigation = useNavigation<BottomTabNavigationProp<AuthStackParamList, 'MainTab'>>()
   const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   const handleCategoryChange = useCallback((cat: string[]) => {

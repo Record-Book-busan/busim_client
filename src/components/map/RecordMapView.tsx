@@ -14,7 +14,7 @@ import { WebView, type WebViewHandles } from '../common'
 import { MapFAB } from './MapFAB'
 import { RecordFAB } from '../record/RecordFAB'
 
-import type { RootStackParamList } from '@/types/navigation'
+import type { AuthStackParamList } from '@/types/navigation'
 import type { StackNavigationProp } from '@react-navigation/stack'
 
 export const RecordMapView = () => {
@@ -35,7 +35,7 @@ export const RecordMapView = () => {
   const isFABExpanded = useSharedValue(true)
   const bottomTabBarHeight = useBottomTabBarHeight()
 
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>()
+  const navigation = useNavigation<StackNavigationProp<AuthStackParamList>>()
   const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
   const { data: recordData } = useMapRecord(geolocation)
 

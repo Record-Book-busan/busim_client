@@ -7,7 +7,7 @@ import { useInfiniteRecordList } from '@/services/record'
 import { Typo } from '@/shared'
 import { type RecordList } from '@/types/schemas/record'
 
-import type { MainTabParamList, MyPageStackParamList, RootStackParamList } from '@/types/navigation'
+import type { MainTabParamList, MyPageStackParamList, AuthStackParamList } from '@/types/navigation'
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
 import type { StackNavigationProp } from '@react-navigation/stack'
 
@@ -15,7 +15,7 @@ type NavigationProps = CompositeNavigationProp<
   StackNavigationProp<MyPageStackParamList, 'RecordList'>,
   CompositeNavigationProp<
     BottomTabNavigationProp<MainTabParamList, 'Record'>,
-    StackNavigationProp<RootStackParamList>
+    StackNavigationProp<AuthStackParamList>
   >
 >
 

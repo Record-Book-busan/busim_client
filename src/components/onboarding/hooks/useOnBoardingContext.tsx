@@ -7,7 +7,7 @@ import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionC
 import { usePostInterest } from '@/services/service'
 import { INTEREST_KEY, storage } from '@/utils/storage'
 
-import type { RootStackParamList } from '@/types/navigation'
+import type { AuthStackParamList } from '@/types/navigation'
 import type { StackNavigationProp } from '@react-navigation/stack'
 
 type OnBoardingContextProps = {
@@ -35,7 +35,7 @@ export const OnBoardingProvider = ({ children }: { children: React.ReactNode }) 
   const [currentScreen, setCurrentScreen] = useState<'tour' | 'food'>('tour')
   const [isAnimating, setIsAnimating] = useState(false)
   const animationProgress = useSharedValue(0)
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'MainTab'>>()
+  const navigation = useNavigation<StackNavigationProp<AuthStackParamList, 'MainTab'>>()
   const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
   const { mutateInterest } = usePostInterest()
 
@@ -136,7 +136,6 @@ export const OnBoardingProvider = ({ children }: { children: React.ReactNode }) 
         onSuccess: () =>
           navigation.replace('MainTab', {
             screen: 'Map',
-            params: { categories: checkedCategories },
           }),
       })
     }

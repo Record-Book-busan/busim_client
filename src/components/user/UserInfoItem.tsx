@@ -5,13 +5,13 @@ import { user } from '@/assets/images'
 import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { useGetUserInfo } from '@/services/user'
 import { Button, SvgIcon, Typo } from '@/shared'
-import { RootStackParamList } from '@/types/navigation'
+import { AuthStackParamList } from '@/types/navigation'
 
 import type { StackNavigationProp } from '@react-navigation/stack'
 
 export function UserInfoItem() {
   const { data } = useGetUserInfo()
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'MainTab'>>()
+  const navigation = useNavigation<StackNavigationProp<AuthStackParamList, 'MainTab'>>()
   const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   const handlePressButton = () =>

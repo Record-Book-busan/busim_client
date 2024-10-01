@@ -7,7 +7,7 @@ import { SafeScreen } from '@/components/common'
 import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { usePostConsent } from '@/services/auth'
 import { SvgIcon, Typo } from '@/shared'
-import { RootStackParamList } from '@/types/navigation'
+import { AuthStackParamList } from '@/types/navigation'
 import { storage } from '@/utils/storage'
 
 const PRIVACY_CONTENTS = [
@@ -41,7 +41,7 @@ const handlerClickWhole = (type: string) => {
 }
 
 function PrivacyPolicyScreen() {
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'OnBoardingStack'>>()
+  const navigation = useNavigation<StackNavigationProp<AuthStackParamList, 'OnBoardingStack'>>()
   const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
   const postConsent = usePostConsent()
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({})

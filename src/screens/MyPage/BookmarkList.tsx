@@ -10,7 +10,7 @@ import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionC
 import { SegmentedControl, SvgIcon } from '@/shared'
 import { ButtonPrimitive } from '@/shared/Button'
 
-import type { MyPageStackParamList, RootStackParamList } from '@/types/navigation'
+import type { MyPageStackParamList, AuthStackParamList } from '@/types/navigation'
 import type { StackNavigationProp } from '@react-navigation/stack'
 
 type BookmarkType = 'PLACE' | 'RECORD'
@@ -35,7 +35,7 @@ interface BookmarkResponse {
 
 type BookMarkListNavigationProps = CompositeNavigationProp<
   StackNavigationProp<MyPageStackParamList, 'BookMarkList'>,
-  StackNavigationProp<RootStackParamList>
+  StackNavigationProp<AuthStackParamList>
 >
 
 const generateMockData = (type: BookmarkType, page: number): BookmarkResponse => {

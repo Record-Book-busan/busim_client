@@ -3,14 +3,10 @@ import { createStackNavigator, type StackNavigationProp } from '@react-navigatio
 import ErrorBoundary from 'react-native-error-boundary'
 
 import { NeedLoginPopup } from '@/components/common/NeedLoginPopup'
-import { ErrorScreen, LoginScreen, PrivacyPolicyScreen } from '@/screens'
+import { useAuth } from '@/hooks/useAuthContext'
+import { ErrorScreen, LoginScreen } from '@/screens'
 
-import CreateRecordStackNavigator from './CreateRecordStack'
-import MainTabNavigator from './MainTab'
-import MapStackNavigator from './MapStack'
-import MyPageStackNavigator from './MyPageStack'
-import OnboardingStackNavigator from './OnboardingStack'
-import SearchStackNavigator from './SearchStack'
+import AuthenticatedNavigator from './AuthenticatedStack'
 
 import type { RootStackParamList } from '@/types/navigation'
 
@@ -18,30 +14,37 @@ const Stack = createStackNavigator<RootStackParamList>()
 
 function ApplicationNavigator() {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>()
+  const { state } = useAuth()
+
+  if (state.isLoading) {
+    // TODO: 스플래쉬 화면 구현
+    return null
+  }
 
   return (
     <ErrorBoundary
       FallbackComponent={ErrorScreen}
       onError={(error, stackTrace) => {
-        console.error('에러바운더리:', error, stackTrace)
+        console.error('[🚨 ERROR!!]:', error, stackTrace)
       }}
     >
       <NeedLoginPopup navigation={navigation} />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
-        <Stack.Screen name="OnBoardingStack" component={OnboardingStackNavigator} />
-        <Stack.Screen
-          name="MainTab"
-          component={MainTabNavigator}
-          options={{
-            gestureEnabled: false,
-          }}
-        />
-        <Stack.Screen name="MapStack" component={MapStackNavigator} />
-        <Stack.Screen name="CreateRecordStack" component={CreateRecordStackNavigator} />
-        <Stack.Screen name="MyPageStack" component={MyPageStackNavigator} />
-        <Stack.Screen name="SearchStack" component={SearchStackNavigator} />
+        {state.token == null ? (
+          // 로그인 전 화면
+          <>
+            <Stack.Screen
+              name="Login"
+              component={LoginScreen}
+              options={{
+                animationTypeForReplace: state.isSignOut ? 'pop' : 'push',
+              }}
+            />
+          </>
+        ) : (
+          // 로그인 후 화면
+          <Stack.Screen name="Authenticated" component={AuthenticatedNavigator} />
+        )}
         <Stack.Screen name="Error" component={ErrorScreen} />
       </Stack.Navigator>
     </ErrorBoundary>

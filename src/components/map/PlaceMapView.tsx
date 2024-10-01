@@ -13,7 +13,7 @@ import { RefreshButton } from './RefreshButton'
 import { WebView, type WebViewHandles } from '../common'
 import { MapFAB } from './MapFAB'
 
-import type { RootStackParamList } from '@/types/navigation'
+import type { AuthStackParamList } from '@/types/navigation'
 
 type MapViewProps = {
   activeCategory: string[]
@@ -46,7 +46,7 @@ export const PlaceMapView = ({
   const [isChangedMap, setIsChangedMap] = useState(false)
   const [isMyLocationActive, setIsMyLocationActive] = useState(false)
 
-  const navigation = useNavigation<BottomTabNavigationProp<RootStackParamList, 'MainTab'>>()
+  const navigation = useNavigation<BottomTabNavigationProp<AuthStackParamList, 'MainTab'>>()
   const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
   const bottomTabBarHeight = useBottomTabBarHeight()
 

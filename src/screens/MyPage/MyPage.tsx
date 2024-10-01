@@ -4,15 +4,16 @@ import { Text, View, ScrollView, Linking, Pressable } from 'react-native'
 
 import { SafeScreen } from '@/components/common'
 import { UserInfoItem } from '@/components/user'
+import { useAuth } from '@/hooks/useAuthContext'
 import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
-import { logoutAll, useCacelMemberShip } from '@/services/auth'
 import { Button, Header, SvgIcon } from '@/shared'
-import { type RootStackParamList } from '@/types/navigation'
+import { type AuthStackParamList } from '@/types/navigation'
 
 export default function MyPageScreen() {
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'MainTab'>>()
+  const navigation = useNavigation<StackNavigationProp<AuthStackParamList, 'MainTab'>>()
   const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
-  const cancelMembership = useCacelMemberShip()
+
+  const { signOut, unRegister } = useAuth()
 
   const menuItems = [
     {
@@ -26,17 +27,6 @@ export default function MyPageScreen() {
           },
         }),
     },
-    // {
-    //   title: '북마크',
-    //   onPress: () =>
-    //     navigateWithPermissionCheck({
-    //       navigation,
-    //       routeName: 'MyPageStack',
-    //       params: {
-    //         screen: 'BookMarkList',
-    //       },
-    //     }),
-    // },
   ]
 
   const settingsItems = [
@@ -62,29 +52,31 @@ export default function MyPageScreen() {
     },
   ]
 
-  const handleLogoutPress = () => {
-    logoutAll()
-      .then(() => {
-        navigateWithPermissionCheck({
-          navigation,
-          routeName: 'Login',
-        })
+  const handleLogoutPress = async () => {
+    try {
+      await signOut()
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
       })
-      .catch(err => console.log(`로그아웃 오류가 발생했습니다.: ${err}`))
+    } catch (err) {
+      if (err instanceof Error) {
+        console.log(`로그아웃 오류가 발생했습니다.: ${err.message}`)
+      }
+    }
   }
 
-  const handleCancelMembershipPress = () => {
+  const handleCancelMembershipPress = async () => {
     try {
-      cancelMembership().then(response => {
-        console.log(response)
-
-        navigateWithPermissionCheck({
-          navigation,
-          routeName: 'Login',
-        })
+      await unRegister()
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
       })
-    } catch {
-      throw new Error('회원 탈퇴에 실패했습니다.')
+    } catch (err) {
+      if (err instanceof Error) {
+        console.log(`회원탈퇴 중 오류가 발생했습니다.: ${err.message}`)
+      }
     }
   }
 
