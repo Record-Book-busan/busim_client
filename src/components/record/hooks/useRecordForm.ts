@@ -1,11 +1,17 @@
+import { useNavigation } from '@react-navigation/native'
 import { useCallback } from 'react'
-import { View, ScrollView, TextInput, findNodeHandle } from 'react-native'
+import { View, ScrollView, TextInput, findNodeHandle, Alert } from 'react-native'
 
+import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
+import { RootStackParamList } from '@/types/navigation'
 import { showToast } from '@/utils/toast'
+import { verifyLocation } from '@/utils/validate'
 
 import type { ImageAsset, PostImageProps } from '@/services/image'
 import type { PostRecord, UpdateRecord } from '@/types/schemas/record'
+import type { StackNavigationProp } from '@react-navigation/stack'
 import type { UseMutateAsyncFunction, UseMutateFunction } from '@tanstack/react-query'
+
 export interface RecordFormState {
   title: string
   location: {
@@ -175,11 +181,21 @@ export const useCreateRecordForm = (
     scrollViewRef,
     fieldRefs,
   )
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'MainTab'>>()
+  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   const handleSubmit = useCallback(async () => {
     if (validateAndHandleErrors()) return
 
     try {
+      const isValid = await verifyLocation(state.location)
+      if (!isValid) {
+        Alert.alert('서비스 지역이 아닙니다', '부산 지역에서만 서비스가 제공됩니다.', [
+          { text: '확인', style: 'default' },
+        ])
+        return
+      }
+
       if (!state.image) throw new Error('이미지 없음!')
 
       showToast({ text: '이미지 업로드 중...', type: 'info' })
@@ -199,11 +215,22 @@ export const useCreateRecordForm = (
 
       mutateRecord(postRecord, {
         onSuccess: () => {
-          showToast({ text: '기록을 업로드했어요.', type: 'info' })
+          showToast({ text: '기록을 업로드했어요', type: 'info' })
           dispatch({ type: 'RESET_FORM' })
+          navigateWithPermissionCheck({
+            navigation,
+            routeName: 'MainTab',
+            params: {
+              screen: 'Record',
+              params: {
+                screen: 'RecordMain',
+                params: { tab: 1 }, // 피드로 이동
+              },
+            },
+          })
         },
         onError: err => {
-          showToast({ text: '기록 업로드가 실패했어요.', type: 'info' })
+          showToast({ text: '기록 업로드가 실패했어요', type: 'info' })
           console.error('[ERROR] 기록 저장 실패:', err)
         },
       })
@@ -244,11 +271,22 @@ export const useEditRecordForm = (
     scrollViewRef,
     fieldRefs,
   )
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'MainTab'>>()
+  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   const handleSubmit = useCallback(async () => {
     if (validateAndHandleErrors()) return
+    const isValidLocation = await verifyLocation(state.location)
+    if (!isValidLocation) return
 
     try {
+      const isValid = await verifyLocation(state.location)
+      if (!isValid) {
+        Alert.alert('서비스 지역이 아닙니다', '부산 지역에서만 서비스가 제공됩니다.', [
+          { text: '확인', style: 'default' },
+        ])
+        return
+      }
       if (!state.image) throw new Error('이미지 없음!')
 
       showToast({ text: '이미지 업로드 중...', type: 'info' })
@@ -269,6 +307,17 @@ export const useEditRecordForm = (
       mutateUpdate(updateRecord, {
         onSuccess: () => {
           showToast({ text: '기록을 변경했어요.', type: 'info' })
+          navigateWithPermissionCheck({
+            navigation,
+            routeName: 'MainTab',
+            params: {
+              screen: 'Record',
+              params: {
+                screen: 'ReadRecord',
+                params: { id: recordId },
+              },
+            },
+          })
         },
         onError: err => {
           showToast({ text: '기록 변경이 실패했어요.', type: 'info' })
