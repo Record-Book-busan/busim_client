@@ -33,11 +33,16 @@ export const PlaceMapView = ({
   const [isMapLoaded, setIsMapLoaded] = useState(false) // 카카오맵 로드 상태
 
   const { location, refreshLocation } = useLocation()
-  const [mapCenter, setMapCenter] = useState(location)
-  const [queryCenter, setQueryCenter] = useState(location)
-  const [zoomLevel, setZoomLevel] = useState('LEVEL_3')
-  const [queryZoomLevel, setQueryZoomLevel] = useState('LEVEL_3')
-
+  const [mapCenter, setMapCenter] = useState({
+    lat: location.lat,
+    lng: location.lng,
+    level: 'LEVEL_3',
+  })
+  const [queryCenter, setQueryCenter] = useState({
+    lat: location.lat,
+    lng: location.lng,
+    level: 'LEVEL_3',
+  })
   const [isChangedMap, setIsChangedMap] = useState(false)
   const [isMyLocationActive, setIsMyLocationActive] = useState(false)
 
@@ -53,10 +58,15 @@ export const PlaceMapView = ({
     }
   }, [activeCategory])
 
+  const shouldShowRefreshButton = useMemo(() => {
+    const hasActiveFilters = activeCategory.length > 0 || isToiletPressed || isParkingPressed
+    return isChangedMap && hasActiveFilters
+  }, [isChangedMap, activeCategory, isToiletPressed, isParkingPressed])
+
   const { data: placeData } = useMapPlace({
     lat: queryCenter.lat,
     lng: queryCenter.lng,
-    level: queryZoomLevel,
+    level: queryCenter.level,
     restaurantCategories,
     touristCategories,
     isEnabled: activeCategory.length > 0,
@@ -65,30 +75,26 @@ export const PlaceMapView = ({
   const { data: toiletData } = useToilet(
     queryCenter.lat,
     queryCenter.lng,
-    queryZoomLevel,
+    queryCenter.level,
     isToiletPressed,
   )
   const { data: parkingData } = useParking(
     queryCenter.lat,
     queryCenter.lng,
-    queryZoomLevel,
+    queryCenter.level,
     isParkingPressed,
   )
 
   useEffect(() => {
     const bridge = webViewRef.current?.bridge
 
-    bridge?.onEvent('ZOOM_CHANGE', data => {
-      if (data.zoomLevel) {
-        setZoomLevel(data.zoomLevel)
-        setIsChangedMap(true)
-      }
+    bridge?.onEvent('DRAG_START', () => {
+      setIsChangedMap(true)
     })
 
     bridge?.onEvent('CENTER_CHANGE', data => {
-      if (data.lat && data.lng) {
+      if (data.lat && data.lng && data.level) {
         setMapCenter(data)
-        setIsChangedMap(true)
       }
     })
 
@@ -115,7 +121,7 @@ export const PlaceMapView = ({
     })
 
     return () => {
-      bridge?.offEvent('ZOOM_CHANGE')
+      bridge?.offEvent('DRAG_START')
       bridge?.offEvent('CENTER_CHANGE')
       bridge?.offEvent('OVERLAY_CLICK')
       bridge?.offEvent('CONTENTS_LOADED')
@@ -124,7 +130,7 @@ export const PlaceMapView = ({
 
   const updateOverlays = useCallback(async () => {
     const bridge = webViewRef.current?.bridge
-    if (!bridge || !isMapLoaded || !placeData) return
+    if (!bridge || !isMapLoaded) return
 
     if (eyeState) {
       const data = [
@@ -152,7 +158,6 @@ export const PlaceMapView = ({
             }))
           : []),
       ]
-
       try {
         await bridge.sendRequest('GET_PLACE_DATA', data)
       } catch (error) {
@@ -241,9 +246,8 @@ export const PlaceMapView = ({
   }
 
   const handleRefresh = useCallback(() => {
-    setQueryCenter(mapCenter)
-    setQueryZoomLevel(zoomLevel)
     setIsChangedMap(false)
+    setQueryCenter(mapCenter)
   }, [mapCenter])
 
   return (
@@ -278,7 +282,7 @@ export const PlaceMapView = ({
         debug={true}
       />
       {/* 현재 위치에서 재검색 버튼 */}
-      {isChangedMap && activeCategory.length > 0 && (
+      {shouldShowRefreshButton && (
         <View className="flex-row items-center justify-center">
           <View
             className="absolute bottom-12 z-[2]"
