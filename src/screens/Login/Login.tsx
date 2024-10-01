@@ -6,44 +6,48 @@ import LinearGradient from 'react-native-linear-gradient'
 import { logoWelcome } from '@/assets/images'
 import { LoginButton } from '@/components/auth'
 import { SafeScreen } from '@/components/common'
-import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
-import { type LoginProvider, handleSocialLogin, ROLE } from '@/services/auth'
+import { useAuth } from '@/hooks/useAuthContext'
+import { type LoginProvider, ROLE } from '@/services/auth'
 import { ImageVariant } from '@/shared'
-import { RootStackParamList } from '@/types/navigation'
+
+import type { AuthStackParamList, RootStackParamList } from '@/types/navigation'
+
+type LoginScreenNavigationProp = StackNavigationProp<
+  RootStackParamList & AuthStackParamList,
+  'Login'
+>
 
 export default function LoginScreen() {
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Login'>>()
-  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
+  const navigation = useNavigation<LoginScreenNavigationProp>()
+  const { signIn } = useAuth()
 
-  const handleSignIn = async (provider: LoginProvider) => {
+  const handleSignInProcess = async (provider: LoginProvider) => {
     try {
-      const role = await handleSocialLogin(provider)
+      const role = await signIn(provider)
       switch (role) {
         case ROLE.MEMBER:
-          navigateWithPermissionCheck({
-            navigation,
-            routeName: 'MainTab',
-            params: {
-              screen: 'Map',
-              params: { categories: [] },
-            },
-          })
-          break
         case ROLE.GUEST:
-          navigateWithPermissionCheck({
-            navigation,
-            routeName: 'MainTab',
-            params: {
-              screen: 'Map',
-              params: { categories: [] },
-            },
+          navigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: 'Authenticated',
+                state: {
+                  routes: [
+                    {
+                      name: 'MainTab',
+                      state: {
+                        routes: [{ name: 'Map' }],
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
           })
           break
         case ROLE.PENDING_MEMBER:
-          navigateWithPermissionCheck({
-            navigation,
-            routeName: 'PrivacyPolicy',
-          })
+          navigation.navigate('PrivacyPolicy')
           break
       }
     } catch (error) {
@@ -69,10 +73,10 @@ export default function LoginScreen() {
 
         <View className="px-6" style={{ gap: 12 }}>
           {Platform.OS === 'ios' && (
-            <LoginButton provider="apple" onPress={() => handleSignIn('apple')} />
+            <LoginButton provider="apple" onPress={() => handleSignInProcess('apple')} />
           )}
-          <LoginButton provider="kakao" onPress={() => handleSignIn('kakao')} />
-          <LoginButton provider="guest" onPress={() => handleSignIn('guest')} />
+          <LoginButton provider="kakao" onPress={() => handleSignInProcess('kakao')} />
+          <LoginButton provider="guest" onPress={() => handleSignInProcess('guest')} />
         </View>
       </LinearGradient>
     </SafeScreen>
