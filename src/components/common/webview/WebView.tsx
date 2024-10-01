@@ -1,4 +1,4 @@
-import { forwardRef, type RefObject, useRef } from 'react'
+import { forwardRef, useImperativeHandle, useRef } from 'react'
 import {
   WebView as BaseWebView,
   type WebViewMessageEvent,
@@ -6,14 +6,27 @@ import {
 } from 'react-native-webview'
 
 import { handleLog, INJECT_DEBUG, LogType } from './console'
+import { WebViewBridge } from './WebViewBridge'
 
 interface WebViewProps extends BaseWebViewProps {
   debug?: boolean
 }
 
-export const WebView = forwardRef<BaseWebView, WebViewProps>((props, ref) => {
-  const localRef = useRef<BaseWebView>(null)
-  const webviewRef = (ref as RefObject<BaseWebView>) || localRef
+export interface WebViewHandles {
+  bridge: WebViewBridge
+}
+
+export const WebView = forwardRef<WebViewHandles, WebViewProps>((props, ref) => {
+  const webviewRef = useRef<BaseWebView>(null)
+  const bridgeRef = useRef<WebViewBridge | null>(null)
+
+  if (!bridgeRef.current) {
+    bridgeRef.current = new WebViewBridge(webviewRef)
+  }
+
+  useImperativeHandle(ref, () => ({
+    bridge: bridgeRef.current!,
+  }))
 
   const handleMessage = (event: WebViewMessageEvent) => {
     if (!webviewRef.current) {
@@ -27,7 +40,8 @@ export const WebView = forwardRef<BaseWebView, WebViewProps>((props, ref) => {
       }
       handleLog({ method, args })
     } else {
-      props.onMessage?.(event)
+      // Bridge의 handleMessage를 호출
+      void bridgeRef.current?.handleMessage(event)
     }
   }
 
@@ -36,11 +50,10 @@ export const WebView = forwardRef<BaseWebView, WebViewProps>((props, ref) => {
       {...props}
       ref={webviewRef}
       onMessage={handleMessage}
+      onLoad={bridgeRef.current.handleLoad}
       injectedJavaScript={[props.debug && INJECT_DEBUG, props.injectedJavaScript, 'true;']
         .filter(Boolean)
         .join('\n')}
     />
   )
 })
-
-export type WebViewEl = BaseWebView
