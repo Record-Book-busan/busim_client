@@ -7,7 +7,7 @@ export type MessageData = {
 }
 
 const requestDataSchema = {
-  OVERLAY_CLICK: z.object({ id: z.string(), type: z.string() }),
+  OVERLAY_CLICK: z.object({ id: z.string(), type: z.string().optional() }),
   ZOOM_CHANGE: z.object({ zoomLevel: z.string() }),
   CENTER_CHANGE: z.object({ lat: z.number(), lng: z.number() }),
   POSITION_CHANGE: z.object({ lat: z.number(), lng: z.number() }),
