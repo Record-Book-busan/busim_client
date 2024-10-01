@@ -8,6 +8,7 @@ export const requestPayloadSchema = {
     z.object({
       id: z.string(),
       category: z.string(),
+      type: z.string().optional(),
       lat: z.number(),
       lng: z.number(),
     }),
@@ -18,7 +19,7 @@ export const requestPayloadSchema = {
       category: z.string(),
       lat: z.number(),
       lng: z.number(),
-      src: z.string(),
+      imageUrl: z.string(),
     }),
   ),
   GET_OVERLAY_STATE: z.boolean(),

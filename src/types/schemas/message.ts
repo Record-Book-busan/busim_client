@@ -9,7 +9,9 @@ export type MessageData = {
 const requestDataSchema = {
   OVERLAY_CLICK: z.object({ id: z.string(), type: z.string() }),
   ZOOM_CHANGE: z.object({ zoomLevel: z.string() }),
+  CENTER_CHANGE: z.object({ lat: z.number(), lng: z.number() }),
   POSITION_CHANGE: z.object({ lat: z.number(), lng: z.number() }),
+  CONTENTS_LOADED: z.object({ loaded: z.boolean() }),
 } as const
 
 const MESSAGE_TYPES = Object.keys(requestDataSchema) as WebViewMessageType[]

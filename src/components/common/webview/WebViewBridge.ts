@@ -23,7 +23,8 @@ export class WebViewBridge {
     }
   > = new Map()
 
-  private timeoutDuration: number = 5000
+  private timeoutDuration: number = 10000
+  private isWebViewLoaded: boolean = false
 
   private eventHandlers: Map<WebViewMessageType, (data: WebViewMessageData<any>) => void> =
     new Map()
@@ -45,6 +46,9 @@ export class WebViewBridge {
     action: T,
     payload: NativeActionData<T>['request'],
   ): Promise<NativeActionResponse<T>> {
+    if (!this.isWebViewLoaded) {
+      return Promise.reject(new Error('WebView가 아직 로드되지 않았습니다.'))
+    }
     const requestId = this.generateRequestId()
     const message: NativeActionRequest<T> = {
       id: requestId,
@@ -89,10 +93,10 @@ export class WebViewBridge {
     const message = await JSON.parse(eventData)
 
     if (isNativeActionResponse(message)) {
-      // 이것은 WebView로부터의 응답입니다.
+      // WebView로부터의 응답
       this.handleResponse(message)
     } else if (isWebViewMessage(message)) {
-      // 이것은 WebView로부터의 이벤트입니다.
+      // WebView로부터의 이벤트
       this.handleEvent(message)
     } else {
       console.warn('알 수 없는 메시지 형식:', message)
@@ -124,6 +128,14 @@ export class WebViewBridge {
     } else {
       console.warn('이벤트 핸들러가 등록되지 않음:', type)
     }
+  }
+
+  /**
+   * WebView가 로드되었을 때 호출되는 함수입니다.
+   */
+  handleLoad = () => {
+    this.isWebViewLoaded = true
+    console.log('WebView가 로드되었습니다.')
   }
 
   /**

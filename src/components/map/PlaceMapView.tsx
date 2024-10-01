@@ -1,7 +1,8 @@
 import { type BottomTabNavigationProp, useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
-import { useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { useEffect, useCallback, useRef, useState, useMemo } from 'react'
 import { View } from 'react-native'
+import Geolocation from 'react-native-geolocation-service'
 
 import { useLocation } from '@/hooks/useLocation'
 import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
@@ -9,7 +10,7 @@ import map from '@/services/map'
 import { type PlaceType, useMapPlace, useParking, useToilet } from '@/services/place'
 
 import { RefreshButton } from './RefreshButton'
-import { WebView, WebViewBridge, type WebViewEl } from '../common'
+import { WebView, type WebViewHandles } from '../common'
 import { MapFAB } from './MapFAB'
 
 import type { RootStackParamList } from '@/types/navigation'
@@ -27,11 +28,11 @@ export const PlaceMapView = ({
   isToiletPressed,
   isParkingPressed,
 }: MapViewProps) => {
-  const webViewRef = useRef<WebViewEl>(null)
-  const webViewBridge = useRef(new WebViewBridge(webViewRef)).current
+  const webViewRef = useRef<WebViewHandles>(null)
+
+  const [isMapLoaded, setIsMapLoaded] = useState(false) // 카카오맵 로드 상태
 
   const { location, refreshLocation } = useLocation()
-  const [currentLocation, setCurrentLocation] = useState(location)
   const [mapCenter, setMapCenter] = useState(location)
   const [queryCenter, setQueryCenter] = useState(location)
   const [zoomLevel, setZoomLevel] = useState('LEVEL_3')
@@ -75,21 +76,23 @@ export const PlaceMapView = ({
   )
 
   useEffect(() => {
-    webViewBridge.onEvent('ZOOM_CHANGE', data => {
+    const bridge = webViewRef.current?.bridge
+
+    bridge?.onEvent('ZOOM_CHANGE', data => {
       if (data.zoomLevel) {
         setZoomLevel(data.zoomLevel)
         setIsChangedMap(true)
       }
     })
 
-    webViewBridge.onEvent('POSITION_CHANGE', data => {
+    bridge?.onEvent('CENTER_CHANGE', data => {
       if (data.lat && data.lng) {
-        setMapCenter({ lat: data.lat, lng: data.lng })
+        setMapCenter(data)
         setIsChangedMap(true)
       }
     })
 
-    webViewBridge.onEvent('OVERLAY_CLICK', data => {
+    bridge?.onEvent('OVERLAY_CLICK', data => {
       if (data.id && data.type) {
         navigateWithPermissionCheck({
           navigation,
@@ -105,15 +108,23 @@ export const PlaceMapView = ({
       }
     })
 
+    bridge?.onEvent('CONTENTS_LOADED', data => {
+      if (data.loaded) {
+        setIsMapLoaded(true)
+      }
+    })
+
     return () => {
-      webViewBridge.offEvent('ZOOM_CHANGE')
-      webViewBridge.offEvent('POSITION_CHANGE')
-      webViewBridge.offEvent('OVERLAY_CLICK')
+      bridge?.offEvent('ZOOM_CHANGE')
+      bridge?.offEvent('CENTER_CHANGE')
+      bridge?.offEvent('OVERLAY_CLICK')
+      bridge?.offEvent('CONTENTS_LOADED')
     }
   }, [])
 
   const updateOverlays = useCallback(async () => {
-    if (!webViewBridge) return
+    const bridge = webViewRef.current?.bridge
+    if (!bridge || !isMapLoaded || !placeData) return
 
     if (eyeState) {
       const data = [
@@ -143,13 +154,13 @@ export const PlaceMapView = ({
       ]
 
       try {
-        await webViewBridge.sendRequest('GET_PLACE_DATA', data)
+        await bridge.sendRequest('GET_PLACE_DATA', data)
       } catch (error) {
         console.error('[ERROR] 오버레이 업데이트 실패:', error)
       }
     } else {
       try {
-        await webViewBridge.sendRequest('GET_OVERLAY_STATE', eyeState)
+        await bridge.sendRequest('GET_OVERLAY_STATE', eyeState)
       } catch (error) {
         console.error('[ERROR] 오버레이 제거 실패:', error)
       }
@@ -157,8 +168,16 @@ export const PlaceMapView = ({
   }, [eyeState, placeData, toiletData, parkingData, isToiletPressed, isParkingPressed])
 
   useEffect(() => {
-    void updateOverlays()
-  }, [updateOverlays])
+    if (isMapLoaded) {
+      void updateOverlays()
+    }
+  }, [updateOverlays, isMapLoaded])
+
+  useFocusEffect(
+    useCallback(() => {
+      void updateOverlays()
+    }, [updateOverlays]),
+  )
 
   useEffect(() => {
     // 활성화된 카테고리가 바뀌거나, MapFAB들을 클릭했을 때 isChangedMap 상태 초기화
@@ -168,22 +187,45 @@ export const PlaceMapView = ({
   useEffect(() => {
     // 지도 중심이 변경될 때마다 현재 위치와 비교
     const isSameLocation =
-      Math.abs(mapCenter.lat - currentLocation.lat) < 0.0001 &&
-      Math.abs(mapCenter.lng - currentLocation.lng) < 0.0001
-
-    console.log('isSameLocation', mapCenter.lat, currentLocation.lat)
-    console.log('isSameLocation', mapCenter.lng, currentLocation.lng)
+      Math.abs(mapCenter.lat - location.lat) < 0.0001 &&
+      Math.abs(mapCenter.lng - location.lng) < 0.0001
 
     setIsMyLocationActive(isSameLocation)
-  }, [mapCenter, currentLocation])
+  }, [mapCenter])
+
+  const updateLocation = useCallback(async (latlng: { lat: number; lng: number }) => {
+    const bridge = webViewRef.current?.bridge
+    if (!bridge) return
+
+    try {
+      await bridge.sendRequest('GET_CURRENT_LOCATION', latlng)
+    } catch (error) {
+      console.error('[ERROR] 현재 위치 표시 실패:', error)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!isMapLoaded) return
+
+    const watchId = Geolocation.watchPosition(
+      position => {
+        const { latitude, longitude } = position.coords
+        void updateLocation({ lat: latitude, lng: longitude })
+      },
+      error => console.log(error),
+      { enableHighAccuracy: true, distanceFilter: 10, interval: 5000, fastestInterval: 2000 },
+    )
+
+    return () => Geolocation.clearWatch(watchId)
+  }, [updateLocation])
 
   const handleLocationPress = async () => {
-    const coords = await refreshLocation()
-    if (coords) {
+    if (!isMapLoaded) return
+
+    const latlng = await refreshLocation()
+    if (latlng) {
       try {
-        const response = await webViewBridge.sendRequest('GET_CURRENT_LOCATION', coords)
-        setCurrentLocation(response.payload)
-        setIsMyLocationActive(true)
+        await webViewRef.current?.bridge.sendRequest('GET_CURRENT_LOCATION', latlng)
       } catch (error) {
         console.error('[ERROR] 현재 위치 전송 실패:', error)
       }
@@ -207,7 +249,7 @@ export const PlaceMapView = ({
   return (
     <>
       <View
-        className="absolute bottom-10 right-4 z-[2] flex gap-4"
+        className="absolute bottom-12 right-4 z-[2] flex gap-2"
         style={{
           paddingBottom: bottomTabBarHeight,
         }}
@@ -223,10 +265,14 @@ export const PlaceMapView = ({
         source={{ html: map }}
         injectedJavaScript={`
           kakao.maps.load(function(){
-            const map = createMap(${JSON.stringify(location)})
-          })
+            createMap(${JSON.stringify(location)});
+            addMyLocationMarker(${JSON.stringify(location)})
+            window.ReactNativeWebView.postMessage(JSON.stringify({
+              type: 'CONTENTS_LOADED',
+              data: { loaded: true }
+            }));
+          });
         `}
-        onMessage={webViewBridge.handleMessage}
         javaScriptEnabled
         domStorageEnabled
         debug={true}
@@ -235,7 +281,7 @@ export const PlaceMapView = ({
       {isChangedMap && activeCategory.length > 0 && (
         <View className="flex-row items-center justify-center">
           <View
-            className="absolute bottom-10 z-[2]"
+            className="absolute bottom-12 z-[2]"
             style={{
               paddingBottom: bottomTabBarHeight,
             }}

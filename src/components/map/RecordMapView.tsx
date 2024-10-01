@@ -9,7 +9,7 @@ import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionC
 import map from '@/services/map'
 import { useMapRecord } from '@/services/record'
 
-import { WebViewBridge, WebView, type WebViewEl } from '../common'
+import { WebView, type WebViewHandles } from '../common'
 import { MapFAB } from './MapFAB'
 import { RefreshButton } from './RefreshButton'
 import { RecordFAB } from '../record/RecordFAB'
@@ -18,11 +18,11 @@ import type { RootStackParamList } from '@/types/navigation'
 import type { StackNavigationProp } from '@react-navigation/stack'
 
 export const RecordMapView = () => {
-  const webViewRef = useRef<WebViewEl>(null)
-  const webViewBridge = useRef(new WebViewBridge(webViewRef)).current
+  const webViewRef = useRef<WebViewHandles>(null)
+
+  const [isMapLoaded, setIsMapLoaded] = useState(false) // 카카오맵 로드 상태
 
   const { location, refreshLocation } = useLocation()
-  const [currentLocation, setCurrentLocation] = useState(location)
   const [mapCenter, setMapCenter] = useState(location)
   const [queryCenter, setQueryCenter] = useState(location)
   const [zoomLevel, setZoomLevel] = useState('LEVEL_3')
@@ -39,7 +39,9 @@ export const RecordMapView = () => {
   const { data: recordData } = useMapRecord(queryCenter.lat, queryCenter.lng, queryZoomLevel)
 
   useEffect(() => {
-    webViewBridge.onEvent('ZOOM_CHANGE', data => {
+    const bridge = webViewRef.current?.bridge
+
+    bridge?.onEvent('ZOOM_CHANGE', data => {
       if (data.zoomLevel) {
         setZoomLevel(data.zoomLevel)
         setIsChangedMap(true)
@@ -47,15 +49,15 @@ export const RecordMapView = () => {
       }
     })
 
-    webViewBridge.onEvent('POSITION_CHANGE', data => {
+    bridge?.onEvent('CENTER_CHANGE', data => {
       if (data.lat && data.lng) {
-        setMapCenter({ lat: data.lat, lng: data.lng })
+        setMapCenter(data)
         setIsChangedMap(true)
         isFABExpanded.value = false
       }
     })
 
-    webViewBridge.onEvent('OVERLAY_CLICK', data => {
+    bridge?.onEvent('OVERLAY_CLICK', data => {
       if (data.id) {
         navigateWithPermissionCheck({
           navigation,
@@ -71,54 +73,62 @@ export const RecordMapView = () => {
       }
     })
 
+    bridge?.onEvent('CONTENTS_LOADED', data => {
+      if (data.loaded) {
+        setIsMapLoaded(true)
+      }
+    })
+
     return () => {
-      webViewBridge.offEvent('OVERLAY_CLICK')
-      webViewBridge.offEvent('POSITION_CHANGE')
-      webViewBridge.offEvent('ZOOM_CHANGE')
+      bridge?.offEvent('OVERLAY_CLICK')
+      bridge?.offEvent('CENTER_CHANGE')
+      bridge?.offEvent('ZOOM_CHANGE')
+      bridge?.offEvent('CONTENTS_LOADED')
     }
   }, [])
 
   // WebView로 데이터를 전송하는 함수
   const updateOverlays = useCallback(async () => {
-    if (!recordData) return
+    const bridge = webViewRef.current?.bridge
+    if (!bridge || !recordData || !isMapLoaded) return
 
     const data = recordData.map(r => ({
       id: r.id.toString(),
       category: 'RECORD',
       lat: r.lat,
       lng: r.lng,
-      src: r.imageUrl,
+      imageUrl: r.imageUrl,
     }))
 
     try {
-      await webViewBridge.sendRequest('GET_RECORD_DATA', data)
+      await bridge?.sendRequest('GET_RECORD_DATA', data)
     } catch (error) {
       console.error('[ERROR] 오버레이 업데이트 실패:', error)
     }
   }, [recordData])
 
   useEffect(() => {
-    void updateOverlays()
-  }, [updateOverlays])
+    if (isMapLoaded) {
+      void updateOverlays()
+    }
+  }, [updateOverlays, isMapLoaded])
 
   useEffect(() => {
     // 지도 중심이 변경될 때마다 현재 위치와 비교
     const isSameLocation =
-      Math.abs(mapCenter.lat - currentLocation.lat) < 0.0001 &&
-      Math.abs(mapCenter.lng - currentLocation.lng) < 0.0001
-
-    console.log('isSameLocation', isSameLocation)
+      Math.abs(mapCenter.lat - location.lat) < 0.0001 &&
+      Math.abs(mapCenter.lng - location.lng) < 0.0001
 
     setIsMyLocationActive(isSameLocation)
-  }, [mapCenter, currentLocation])
+  }, [mapCenter])
 
   const handleLocationPress = async () => {
-    const coords = await refreshLocation()
-    if (coords) {
+    if (!isMapLoaded) return
+
+    const latlng = await refreshLocation()
+    if (latlng) {
       try {
-        const response = await webViewBridge.sendRequest('GET_CURRENT_LOCATION', coords)
-        setCurrentLocation(response.payload)
-        setIsMyLocationActive(true)
+        await webViewRef.current?.bridge.sendRequest('GET_CURRENT_LOCATION', latlng)
       } catch (error) {
         console.error('[ERROR] 현재 위치 전송 실패:', error)
       }
@@ -140,8 +150,6 @@ export const RecordMapView = () => {
     setQueryZoomLevel(zoomLevel)
     setIsChangedMap(false)
   }
-
-  console.log('활성화', isMyLocationActive)
 
   return (
     <>
@@ -177,10 +185,13 @@ export const RecordMapView = () => {
         source={{ html: map }}
         injectedJavaScript={`
           kakao.maps.load(function(){
-            const map = createMap(${JSON.stringify(location)})
-          })
+            createMap(${JSON.stringify(location)});
+            window.ReactNativeWebView.postMessage(JSON.stringify({
+              type: 'CONTENTS_LOADED',
+              data: { loaded: true }
+            }));
+          });
         `}
-        onMessage={webViewBridge.handleMessage}
         javaScriptEnabled
         domStorageEnabled
         debug={true}

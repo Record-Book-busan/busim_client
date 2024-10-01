@@ -88,7 +88,7 @@ export default function MapScreen({ route }: MapScreenProps) {
         </View>
       </View>
       <View
-        className="absolute bottom-10 left-4 z-[2] flex gap-4"
+        className="absolute bottom-12 left-4 z-[2] flex gap-2"
         style={{
           paddingBottom: bottomTabBarHeight,
         }}
