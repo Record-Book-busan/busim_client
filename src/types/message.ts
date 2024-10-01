@@ -3,7 +3,8 @@ import { MessageData } from './schemas/message'
 export interface WebViewMessageMap {
   OVERLAY_CLICK: MessageData['OVERLAY_CLICK']
   ZOOM_CHANGE: MessageData['ZOOM_CHANGE']
-  POSITION_CHANGE: MessageData['POSITION_CHANGE']
+  CENTER_CHANGE: MessageData['CENTER_CHANGE']
+  CONTENTS_LOADED: MessageData['CONTENTS_LOADED']
 }
 
 export type WebViewMessageType = keyof WebViewMessageMap
