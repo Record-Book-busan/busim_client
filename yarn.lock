@@ -4637,6 +4637,7 @@ __metadata:
     react-i18next: "npm:^15.0.1"
     react-native: "npm:0.75.2"
     react-native-device-info: "npm:^13.0.0"
+    react-native-error-boundary: "npm:^1.2.4"
     react-native-file-access: "npm:^3.1.1"
     react-native-geolocation-service: "npm:^5.3.1"
     react-native-gesture-handler: "npm:^2.18.1"
@@ -11041,6 +11042,20 @@ __metadata:
   peerDependencies:
     react-native: "*"
   checksum: 10c0/4ca9fa36c2f578c993cbf2c5bb22f30d0b05e5d1fd74b6d0f65b6a922ef0ce0f3be7d2816f9a860c7a4b2da6e16474fb80c8ed56428dec391d811c23b2287f89
+  languageName: node
+  linkType: hard
+
+"react-native-error-boundary@npm:^1.2.4":
+  version: 1.2.4
+  resolution: "react-native-error-boundary@npm:1.2.4"
+  peerDependencies:
+    "@types/react-native": ">=0.57.7"
+    react: ">=16.6.0"
+    react-native: ">=0.57.7"
+  peerDependenciesMeta:
+    "@types/react-native":
+      optional: true
+  checksum: 10c0/455bf57b0ef99b2e4c3bfca8e7a0f3244446de1ad84342a22c34bcec6b70c7a6bcb6f295076197817a18b62e6a05c4db55a1bf796e93c2c87f090041612c4a39
   languageName: node
   linkType: hard
 
