@@ -1,4 +1,4 @@
-import { Suspense, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { Alert, Linking, TouchableOpacity, View } from 'react-native'
 
 import { SafeScreen, SearchBar } from '@/components/common'
@@ -19,8 +19,14 @@ export default function SearchScreen() {
   const [endQuery, setEndQuery] = useState('')
   const [endLocation, setEndLocation] = useState<LocationType | null>(null)
   const [isSearching, setIsSearching] = useState(false)
+  const [canFindWay, setCanFindWay] = useState(false)
   const { recentSearches, addRecentSearch, removeRecentSearch } = useRecentSearch()
   const [selectedQuery, setSelectedQuery] = useState<string>('start')
+
+  useEffect(() => {
+    if (!!startQuery.trim() && !!endQuery.trim()) setCanFindWay(true)
+    else setCanFindWay(false)
+  }, [startLocation, endLocation])
 
   const handleStartSearch = () => {
     setSelectedQuery('start')
@@ -39,11 +45,13 @@ export default function SearchScreen() {
   const handleStartInputChange = (text: string) => {
     setStartQuery(text)
     setStartLocation(null)
+    setIsSearching(false)
   }
 
   const handleEndInputChange = (text: string) => {
     setEndQuery(text)
     setEndLocation(null)
+    setIsSearching(false)
   }
 
   const fillStartInput = (place: Place) => {
@@ -65,33 +73,27 @@ export default function SearchScreen() {
   }
 
   const navigateKakaoMap = () => {
-    if (!startLocation?.lat || !startLocation?.lon) {
-      Alert.alert('출발지를 입력해주세요!')
-      return
-    } else if (!endLocation?.lat || !endLocation?.lon) {
-      Alert.alert('도착지를 입력해주세요!')
-      return
-    }
+    if (canFindWay) {
+      const navigateToKakao = async () => {
+        try {
+          const appUrl = `kakaomap://route?sp=${startLocation?.lat},${startLocation?.lon}&ep=${endLocation?.lat},${endLocation?.lon}&by=PUBLICTRANSIT`
 
-    const navigateToKakao = async () => {
-      try {
-        const appUrl = `kakaomap://route?sp=${startLocation?.lat},${startLocation?.lon}&ep=${endLocation?.lat},${endLocation?.lon}&by=PUBLICTRANSIT`
+          await Linking.openURL(appUrl)
+        } catch {
+          console.error('카카오맵 이동에 실패했습니다.')
 
-        await Linking.openURL(appUrl)
-      } catch {
-        console.error('카카오맵 이동에 실패했습니다.')
-
-        Alert.alert('카카오 지도 앱이 설치되어 있지 않습니다. 웹으로 이동하시겠습니까?', '', [
-          { text: '취소', style: 'cancel' },
-          {
-            text: '웹으로 이동',
-            onPress: () => Linking.openURL('https://map.kakao.com/link/to'),
-          },
-        ])
+          Alert.alert('카카오 지도 앱이 설치되어 있지 않습니다. 웹으로 이동하시겠습니까?', '', [
+            { text: '취소', style: 'cancel' },
+            {
+              text: '웹으로 이동',
+              onPress: () => Linking.openURL('https://map.kakao.com/link/to'),
+            },
+          ])
+        }
       }
-    }
 
-    navigateToKakao()
+      navigateToKakao()
+    }
   }
 
   return (
@@ -116,10 +118,13 @@ export default function SearchScreen() {
           setClicked={() => setSelectedQuery('end')}
         />
         <TouchableOpacity
-          className="mt-3 flex h-12 justify-center rounded-2xl bg-[#00339d]"
+          className="mt-3 flex h-12 justify-center rounded-2xl"
+          style={{
+            backgroundColor: canFindWay ? '#00339d' : '#6e7d9d',
+          }}
           onPress={navigateKakaoMap}
         >
-          <Typo className="w-full text-center text-base font-bold text-white">검색하기</Typo>
+          <Typo className="w-full text-center text-base font-bold text-white">길찾기</Typo>
         </TouchableOpacity>
       </View>
       <View className="flex-1">
