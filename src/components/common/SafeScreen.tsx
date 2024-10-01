@@ -1,4 +1,5 @@
 import { useFocusEffect } from '@react-navigation/native'
+import { styled } from 'nativewind'
 import React, { useEffect } from 'react'
 import {
   ColorValue,
@@ -20,7 +21,7 @@ type SafeScreenProps = {
   style?: StyleProp<ViewStyle>
 }
 
-export function SafeScreen({
+function BaseSafeScreen({
   children,
   excludeEdges = [],
   bgColor = 'white',
@@ -59,3 +60,5 @@ export function SafeScreen({
     </SafeAreaView>
   )
 }
+
+export const SafeScreen = styled(BaseSafeScreen)
