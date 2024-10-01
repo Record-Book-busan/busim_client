@@ -10,6 +10,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
 
 import { toastConfig } from './components/common'
+import { AuthProvider } from './hooks/useAuthContext'
 import { PopupProvider } from './hooks/usePopup'
 import ApplicationNavigator from './navigators/Application'
 
@@ -55,9 +56,11 @@ function App() {
         <BottomSheetModalProvider>
           <NavigationContainer>
             <SafeAreaProvider>
-              <PopupProvider>
-                <ApplicationNavigator />
-              </PopupProvider>
+              <AuthProvider>
+                <PopupProvider>
+                  <ApplicationNavigator />
+                </PopupProvider>
+              </AuthProvider>
             </SafeAreaProvider>
           </NavigationContainer>
           <Toast config={toastConfig} />

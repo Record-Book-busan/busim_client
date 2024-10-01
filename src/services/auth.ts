@@ -29,21 +29,21 @@ export const logoutAll = async (): Promise<void> => {
   storage.delete('accessToken')
   storage.delete('refreshToken')
   storage.delete('userId')
-  storage.delete('isAgreed')
-  storage.delete('role')
 
   const logged = await isLogined()
 
-  if (logged) logout()
-  else Promise.resolve()
+  if (logged) {
+    void logout()
+  } else {
+    void Promise.resolve()
+  }
 }
 
 /**
  * 카카오 로그인을 수행합니다.
  */
-const kakaoSignIn = async (): Promise<Role> => {
+const kakaoSignIn = async (): Promise<{ role: Role; token: string }> => {
   const loginInfo = await login()
-  console.log(loginInfo)
   if (await isLogined()) {
     const response = await post_signin_kakao({
       accessToken: loginInfo.accessToken,
@@ -54,10 +54,8 @@ const kakaoSignIn = async (): Promise<Role> => {
     storage.set('accessToken', response?.accessToken)
     storage.set('refreshToken', response?.refreshToken)
     storage.set('userId', response.userId.toString())
-    storage.set('isAgreed', response?.isAgreed || false)
-    storage.set('role', role)
 
-    return role
+    return { role, token: response.accessToken }
   }
   throw new Error('카카오 로그인 실패')
 }
@@ -65,7 +63,7 @@ const kakaoSignIn = async (): Promise<Role> => {
 /**
  * 애플 로그인을 수행합니다.
  */
-const appleSignIn = async (): Promise<Role> => {
+const appleSignIn = async (): Promise<{ role: Role; token: string }> => {
   const auth = await appleAuth.performRequest({
     requestedOperation: appleAuth.Operation.LOGIN,
   })
@@ -88,10 +86,9 @@ const appleSignIn = async (): Promise<Role> => {
     storage.set('accessToken', response?.accessToken)
     storage.set('refreshToken', response?.refreshToken)
     storage.set('userId', response.userId.toString())
-    storage.set('isAgreed', response?.isAgreed)
     storage.set('role', role)
 
-    return role
+    return { role, token: response.accessToken }
   }
   throw new Error('애플 로그인 실패')
 }
@@ -99,7 +96,7 @@ const appleSignIn = async (): Promise<Role> => {
 /**
  * 비회원 로그인을 수행합니다.
  */
-const guestSignIn = async (): Promise<Role> => {
+const guestSignIn = async (): Promise<{ role: Role; token: string }> => {
   try {
     showToast({
       text: '비회원 로그인 시, 일부 기능들이 제한됩니다.',
@@ -108,12 +105,10 @@ const guestSignIn = async (): Promise<Role> => {
     })
 
     const response = await post_signin_guest()
+    storage.set('accessToken', response)
     const role = ROLE.GUEST
 
-    storage.set('accessToken', response)
-    storage.set('role', role)
-
-    return role
+    return { role, token: response }
   } catch {
     throw new Error('비회원 로그인 실패')
   }
@@ -122,7 +117,9 @@ const guestSignIn = async (): Promise<Role> => {
 /**
  * 소셜로그인을 수행합니다.
  */
-export const handleSocialLogin = async (provider: LoginProvider): Promise<Role> => {
+export const handleSignIn = async (
+  provider: LoginProvider,
+): Promise<{ role: Role; token: string }> => {
   await logoutAll()
 
   switch (provider) {
@@ -165,6 +162,7 @@ const post_signin_kakao = async (params: { accessToken: string }) => {
  */
 const post_signin_guest = async (): Promise<string> => {
   const response = await instance('kkilogbu/').post('users/signin/anonymous').text()
+  console.log(response)
   return response
 }
 
@@ -192,18 +190,10 @@ const post_consent = async (): Promise<string> => {
   return response
 }
 
-export const useCacelMemberShip = () => {
-  const { mutateAsync } = useMutation({
-    mutationFn: delete_user_membership,
-  })
-
-  return mutateAsync
-}
-
 /**
  * 탈퇴합니다.
  */
-const delete_user_membership = async (): Promise<string> => {
+export const delete_user_membership = async (): Promise<string> => {
   let response: Promise<string> = new Promise(() => '')
 
   if (storage.getString('loginType') === 'kakao') {
