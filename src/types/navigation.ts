@@ -1,18 +1,22 @@
-import type { CategoryType } from '@/constants'
 import type { PlaceType } from '@/services/place'
 import type { NavigatorScreenParams } from '@react-navigation/native'
 import type { StackScreenProps } from '@react-navigation/stack'
 
 export type RootStackParamList = {
   Login: undefined
-  PrivacyPolicy: undefined
-  OnBoardingStack: NavigatorScreenParams<OnboardingStackParamList>
+  Authenticated: NavigatorScreenParams<AuthStackParamList>
+  Error: undefined
+}
+
+export type AuthStackParamList = {
   MainTab: NavigatorScreenParams<MainTabParamList>
   MapStack: NavigatorScreenParams<MapStackParamList>
+  SearchStack: NavigatorScreenParams<SearchStackParamList>
+  Login: undefined
+  PrivacyPolicy: undefined
+  OnBoardingStack: NavigatorScreenParams<OnboardingStackParamList>
   CreateRecordStack: NavigatorScreenParams<CreateRecordStackParamList>
   MyPageStack: NavigatorScreenParams<MyPageStackParamList>
-  SearchStack: NavigatorScreenParams<SearchStackParamList>
-  Error: undefined
 }
 
 export type OnboardingStackParamList = {
@@ -20,7 +24,7 @@ export type OnboardingStackParamList = {
 }
 
 export type MainTabParamList = {
-  Map: { categories: CategoryType[] }
+  Map: undefined
   Search: undefined
   Record: NavigatorScreenParams<RecordStackParamList>
   MyPage: undefined
@@ -57,5 +61,9 @@ export type SearchStackParamList = {
   FindWay: undefined
 }
 
-export type RootScreenProps<S extends keyof RootStackParamList = keyof RootStackParamList> =
-  StackScreenProps<RootStackParamList, S>
+export type RootScreenProps<S extends keyof AuthStackParamList = keyof AuthStackParamList> =
+  StackScreenProps<AuthStackParamList, S>
+
+export type AuthenticatedScreenProps<
+  S extends keyof AuthStackParamList = keyof AuthStackParamList,
+> = StackScreenProps<AuthStackParamList, S>

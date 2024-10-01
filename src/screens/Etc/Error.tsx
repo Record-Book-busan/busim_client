@@ -4,8 +4,8 @@ import LinearGradient from 'react-native-linear-gradient'
 
 import { SafeScreen } from '@/components/common'
 import { Button, SvgIcon, Typo } from '@/shared'
-import { RootStackParamList } from '@/types/navigation'
 
+import type { RootStackParamList } from '@/types/navigation'
 import type { StackNavigationProp } from '@react-navigation/stack'
 
 export default function ErrorScreen() {

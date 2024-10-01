@@ -18,7 +18,7 @@ import DropBox from '@/components/common/DropBox'
 import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { validateImageUris, validateImageUri } from '@/services/image'
 import { SvgIcon, Typo } from '@/shared'
-import { RootStackParamList } from '@/types/navigation'
+import { AuthStackParamList } from '@/types/navigation'
 
 import type { StackNavigationProp } from '@react-navigation/stack'
 import { PlaceType, useSpecialPlace } from '@/services/place'
@@ -54,7 +54,7 @@ type ListItemProps = {
 }
 
 const ListItem = ({ name, category, explain, id, uri }: ListItemProps) => {
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'SearchStack'>>()
+  const navigation = useNavigation<StackNavigationProp<AuthStackParamList, 'SearchStack'>>()
   const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   const handleButtonClick = useCallback((placeId: number) => {

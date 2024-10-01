@@ -3,7 +3,7 @@ import { useCallback } from 'react'
 import { View, ScrollView, TextInput, findNodeHandle, Alert } from 'react-native'
 
 import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
-import { RootStackParamList } from '@/types/navigation'
+import { AuthStackParamList } from '@/types/navigation'
 import { showToast } from '@/utils/toast'
 import { verifyLocation } from '@/utils/validate'
 
@@ -181,7 +181,7 @@ export const useCreateRecordForm = (
     scrollViewRef,
     fieldRefs,
   )
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'MainTab'>>()
+  const navigation = useNavigation<StackNavigationProp<AuthStackParamList, 'MainTab'>>()
   const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   const handleSubmit = useCallback(async () => {
@@ -271,7 +271,7 @@ export const useEditRecordForm = (
     scrollViewRef,
     fieldRefs,
   )
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'MainTab'>>()
+  const navigation = useNavigation<StackNavigationProp<AuthStackParamList, 'MainTab'>>()
   const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   const handleSubmit = useCallback(async () => {

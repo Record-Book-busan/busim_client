@@ -10,11 +10,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { MapScreen, MyPageScreen } from '@/screens'
 import { SvgIcon } from '@/shared'
+import { theme } from '@/theme'
 
 import RecordStackNavigator from './RecordStack'
 
 import type { IconName } from '@/shared/SvgIcon'
-import type { MainTabParamList, RootStackParamList } from '@/types/navigation'
+import type { MainTabParamList, AuthStackParamList } from '@/types/navigation'
 
 const TabBarIcon = ({ name, size, color }: { name: IconName; size: number; color: string }) => {
   return (
@@ -28,7 +29,7 @@ const Tab = createBottomTabNavigator<MainTabParamList>()
 
 function MainTabNavigator() {
   const insets = useSafeAreaInsets()
-  const navigation = useNavigation<BottomTabNavigationProp<RootStackParamList, 'MainTab'>>()
+  const navigation = useNavigation<BottomTabNavigationProp<AuthStackParamList, 'MainTab'>>()
   const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   return (
@@ -61,7 +62,7 @@ function MainTabNavigator() {
         tabBarIconStyle: {
           marginTop: 8,
         },
-        tabBarActiveTintColor: '#0E4194',
+        tabBarActiveTintColor: theme.colors['BUSIM-blue'],
         tabBarInactiveTintColor: '#9ca3af',
       }}
     >
