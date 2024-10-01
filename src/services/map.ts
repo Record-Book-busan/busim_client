@@ -64,6 +64,7 @@ const map = `<!DOCTYPE html>
             border: 0.75px solid white;
             box-shadow: 0 0px 3px rgba(0,0,0,0.1);
             pointer-events: auto;
+            overflow: hidden;
         }
         .single-overlay .icons {
             position: relative;
@@ -74,6 +75,36 @@ const map = `<!DOCTYPE html>
         .single-overlay .icon {
             width: 22px;
             height: 22px;
+        }
+        .single-img-overlay {
+            position: relative;
+        }
+        .single-img-overlay .pin {
+            width: 35px;
+            height: 35px;
+            box-shadow: 0 0px 10px rgba(0, 0, 0, 0.15);
+            border: 0.75px solid rgba(0, 0, 0, 0.2);
+            border-radius: 50% 50% 50% 0;
+            background: white;
+            transform: rotate(-45deg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+        }
+        .single-img-overlay .icon-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+            transform: rotate(45deg);
+            border: 2px solid white;
+            border-radius: 50%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .single-img-overlay .icon {
+            width: 30px;
+            height: 30px;
         }
         .current-marker {
             display: flex;
@@ -145,7 +176,7 @@ const map = `<!DOCTYPE html>
                 break;
             case 'GET_CURRENT_LOCATION':
                 moveMap({ lng: payload.lng, lat: payload.lat, level: map.getLevel() });
-                addMyLocationMarker({ lat: payload.lat, lng: payload.lng }) // 현재 위치 마커 추가
+                payload.visible && addMyLocationMarker({ lat: payload.lat, lng: payload.lng }) // 현재 위치 마커 추가
                 const data = map.getCenter(); // 바뀐 위치 전송
                 sendResponse(id, action, 'SUCCESS', { lat: data.getLat(), lng: data.getLng() });
                 break;
@@ -540,13 +571,15 @@ const map = `<!DOCTYPE html>
      * 단일 이미지 오버레이 생성 함수
      */
     function createSingleImageOverlay(item, level) {
-        // const imageUrl = getOverlayImage('RECORD');
-        const content = '<div class="single-overlay" onClick="handleOverlayClick({ lng: ' + item.lng +
+        const imageUrl = item.imageUrl || getOverlayImage('RECORD');
+        const content = '<div class="single-img-overlay" onClick="handleOverlayClick({ lng: ' + item.lng +
             ', lat: ' + item.lat +
             ', level: ' + level +
             ', category: \\\'' + item.category + '\\\', id: \\\'' + item.id + '\\\' })">' +
-            '<div class="icons">' +
+            '<div class="pin">' +
+            '<div class="icon-wrap">' +
                 '<img class="icon" src="' + item.imageUrl + '" alt="Marker"/>' +
+            '</div>' +
             '</div>' +
         '</div>';
 
@@ -566,11 +599,12 @@ const map = `<!DOCTYPE html>
         let categories = '';
         let imagesHtml = '';
         const imageCount = Math.min(items.length, 5)
+        const imageUrl = item.imageUrl || getOverlayImage('RECORD');
 
         for (let i = 0; i < imageCount; i++) {
             imagesHtml +=
             '<img src="' +
-            item.imageUrl +
+            imageUrl +
             '" class="icon" style="left:' +
             i * 15 +
             'px; z-index:' +
