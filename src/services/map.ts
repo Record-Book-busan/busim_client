@@ -243,7 +243,7 @@ const map = `<!DOCTYPE html>
                 settingPlaceOverlays(currentPlaceData);
             }
         });
-        kakao.maps.event.addListener(map, 'center_changed', function() {
+        kakao.maps.event.addListener(map, 'dragend', function() {
             // 지도 중심 변경 시 오버레이 재설정
             if (currentPlaceData.length > 0) {
                 settingPlaceOverlays(currentPlaceData);
