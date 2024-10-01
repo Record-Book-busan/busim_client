@@ -1,6 +1,8 @@
 import { createStackNavigator } from '@react-navigation/stack'
 
 import { MapDetailScreen } from '@/screens'
+import RecommendDetail from '@/screens/Map/RecommendDetail'
+import { Header } from '@/shared'
 
 import type { MapStackParamList } from '@/types/navigation'
 
@@ -38,6 +40,14 @@ function MapStackNavigator() {
           gestureEnabled: true,
           gestureDirection: 'vertical',
           gestureResponseDistance: 1500,
+        }}
+      />
+      <Stack.Screen
+        name="MapRecommend"
+        component={RecommendDetail}
+        options={{
+          headerShown: true,
+          header: () => <Header title="전체보기" />,
         }}
       />
     </Stack.Navigator>

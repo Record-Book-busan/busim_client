@@ -192,6 +192,19 @@ export const useSpecialPlace = ({
   })
 }
 
+/** 나의 여행 기록 리스트를 가져오는 훅입니다. */
+// export const useInfiniteSpecialPlaceList = () => {
+//   return useSuspenseInfiniteQuery({
+//     queryKey: ['recordList'],
+//     queryFn: ({ pageParam = 0 }) => get_record_list({ query: '', offset: pageParam, limit: 10 }),
+//     getNextPageParam: (lastPage, allPages) => {
+//       if (lastPage.length === 0) return undefined
+//       return allPages.length * 10
+//     },
+//     initialPageParam: 0,
+//   })
+// }
+
 /**
  * 바텀 시트를 위한 특별한 맛집 정보를 가져옵니다.
  * @param lat 위도

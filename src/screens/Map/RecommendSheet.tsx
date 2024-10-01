@@ -20,10 +20,8 @@ import { validateImageUris, validateImageUri } from '@/services/image'
 import { SvgIcon, Typo } from '@/shared'
 import { RootStackParamList } from '@/types/navigation'
 
-import { getCategoryType } from '../Search/Search'
-
 import type { StackNavigationProp } from '@react-navigation/stack'
-import { useSpecialPlace } from '@/services/place'
+import { PlaceType, useSpecialPlace } from '@/services/place'
 import Carousel from 'react-native-reanimated-carousel'
 import Indicator from '@/components/common/CarouselIndicator'
 import { useSharedValue } from 'react-native-reanimated'
@@ -67,7 +65,8 @@ const ListItem = ({ name, category, explain, id, uri }: ListItemProps) => {
         screen: 'MapDetail',
         params: {
           id: placeId,
-          type: getCategoryType('투어'),
+          // type: 'restaurant' as PlaceType,
+          type: 'tourist' as PlaceType,
         },
       },
     })
@@ -163,6 +162,8 @@ interface RecommendSheetProps {
 }
 
 export const RecommendSheet: React.FC<RecommendSheetProps> = ({ headerHeight }) => {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'SearchStack'>>()
+  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
   const bottomSheetRef = useRef<BottomSheet>(null)
   const { height: screenHeight } = Dimensions.get('window')
   const tabBarHeight = useBottomTabBarHeight()
@@ -212,6 +213,7 @@ export const RecommendSheet: React.FC<RecommendSheetProps> = ({ headerHeight }) 
     lat: 35.2002495716857,
     lng: 129.16,
     level: 'LEVEL_10',
+    // restaurantCategories: '',
     restaurantCategories: '',
     touristCategories: 'TOURIST_SPOT',
     isEnabled: true,
@@ -270,6 +272,16 @@ export const RecommendSheet: React.FC<RecommendSheetProps> = ({ headerHeight }) 
     setActiveCategory(item)
   }
 
+  const handleWholeClick = useCallback(() => {
+    navigateWithPermissionCheck({
+      navigation,
+      routeName: 'MapStack',
+      params: {
+        screen: 'MapRecommend',
+      },
+    })
+  }, [])
+
   return (
     <BottomSheet
       ref={bottomSheetRef}
@@ -321,10 +333,13 @@ export const RecommendSheet: React.FC<RecommendSheetProps> = ({ headerHeight }) 
           <Typo className="w-full text-left text-base">사장님, 여기 맛집이에요!</Typo>
         </View>
         <View className="items-center border-t-2 border-[#DBDCE5] bg-white px-4 py-2">
-          <Typo className="w-full py-2 text-center text-lg font-bold">추천 관광지</Typo>
+          <Typo className="w-full py-2 text-center text-lg font-bold">추천 맛집</Typo>
           <View className="mt-2 w-[350px] flex-row items-center justify-between px-2">
             <DropBox items={categories} selected={activeCategory} onItemClick={handleItemClick} />
-            <TouchableOpacity className="flex w-16 flex-row items-center justify-start">
+            <TouchableOpacity
+              className="flex w-16 flex-row items-center justify-start"
+              onPress={handleWholeClick}
+            >
               <Typo className="flex-1 text-left text-xs text-[#96979E]">전체 보기</Typo>
               <SvgIcon name="arrowRightBlack" size={14} className="text-[#96979E]" />
             </TouchableOpacity>
