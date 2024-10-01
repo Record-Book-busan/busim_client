@@ -7,8 +7,6 @@ export const useCurrentLocationToAddr = () => {
   const { location, refreshLocation } = useLocation()
   const { isLoading, isError, refetch } = useLocationToAddr(location.lat, location.lng)
 
-  console.log('location:', location)
-
   const getCurrentAddress = async () => {
     await refreshLocation()
     const { data } = await refetch()
