@@ -23,12 +23,12 @@ export const RecordMapView = () => {
   const [isMapLoaded, setIsMapLoaded] = useState(false) // 카카오맵 로드 상태
 
   const { location, refreshLocation } = useLocation()
-  const [mapCenter, setMapCenter] = useState(location)
-  const [zoomLevel, setZoomLevel] = useState('LEVEL_3')
-  const [geolocation] = useDebounce(
-    { lat: mapCenter.lat, lng: mapCenter.lng, level: zoomLevel },
-    500,
-  )
+  const [mapCenter, setMapCenter] = useState({
+    lat: location.lat,
+    lng: location.lng,
+    level: 'LEVEL_3',
+  })
+  const [geolocation] = useDebounce(mapCenter, 500)
 
   const [isMyLocationActive, setIsMyLocationActive] = useState(false)
 
@@ -42,18 +42,14 @@ export const RecordMapView = () => {
   useEffect(() => {
     const bridge = webViewRef.current?.bridge
 
-    bridge?.onEvent('ZOOM_CHANGE', data => {
-      if (data.zoomLevel) {
-        setZoomLevel(data.zoomLevel)
-        isFABExpanded.value = false
+    bridge?.onEvent('CENTER_CHANGE', data => {
+      if (data) {
+        setMapCenter(data)
       }
     })
 
-    bridge?.onEvent('CENTER_CHANGE', data => {
-      if (data.lat && data.lng) {
-        setMapCenter(data)
-        isFABExpanded.value = false
-      }
+    bridge?.onEvent('DRAG_START', () => {
+      isFABExpanded.value = false
     })
 
     bridge?.onEvent('OVERLAY_CLICK', data => {
@@ -82,7 +78,7 @@ export const RecordMapView = () => {
     return () => {
       bridge?.offEvent('OVERLAY_CLICK')
       bridge?.offEvent('CENTER_CHANGE')
-      bridge?.offEvent('ZOOM_CHANGE')
+      bridge?.offEvent('DRAG_START')
       bridge?.offEvent('CONTENTS_LOADED')
     }
   }, [])
