@@ -33,7 +33,9 @@ export const RecordLocation = ({ location, dispatch }: RecordLocationProps) => {
       try {
         const location = await getCurrentAddress()
         const isValid = await verifyLocation(location)
-        if (isValid) dispatch({ type: 'UPDATE_LOCATION', value: location })
+        if (!isValid)
+          showToast({ text: '서비스 지역이 아닙니다. 부산 지역에서만 서비스가 제공됩니다.' })
+        dispatch({ type: 'UPDATE_LOCATION', value: location })
       } catch {
         showToast({ text: '현재 위치를 불러오는데 실패했습니다. 다시 시도해주세요.' })
       }
