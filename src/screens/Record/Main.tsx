@@ -45,14 +45,18 @@ export default function RecordMainScreen() {
 
         <TabView disableSwipe={true} value={index} onValueChange={setIndex}>
           <TabView.Item>
-            <Suspense fallback={<Typo>로딩중,,</Typo>}>
-              <Place />
-            </Suspense>
+            {index === 0 && (
+              <Suspense fallback={<Typo>로딩중,,</Typo>}>
+                <Place />
+              </Suspense>
+            )}
           </TabView.Item>
           <TabView.Item>
-            <Suspense fallback={<Typo>로딩중..</Typo>}>
-              <FeedMain />
-            </Suspense>
+            {index === 1 && (
+              <Suspense fallback={<Typo>로딩중..</Typo>}>
+                <FeedMain />
+              </Suspense>
+            )}
           </TabView.Item>
         </TabView>
       </View>
