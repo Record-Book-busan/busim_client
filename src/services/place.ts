@@ -1,4 +1,4 @@
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query'
+import { useQuery, useSuspenseInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query'
 import { z } from 'zod'
 
 import {
@@ -6,12 +6,25 @@ import {
   ParkingSchema,
   ToiletSchema,
   type PlaceDetail,
-  PlaceDetailSchema,
+  SpecialRestaurantSchema,
 } from '@/types/schemas/place'
 
+import { validateImageUri } from './image'
 import { instance } from './instance'
 
 export type PlaceType = 'tourist' | 'restaurant'
+
+export const SpecialCategories = {
+  ALL: '전체',
+  OCEAN_VIEW: '오션뷰',
+  BLUE_RIBBON: '블루 리본',
+  GOOD_RESTAURANT: '착한 업소',
+  TOURISM_RECOMMENDED: '관광공사 추천',
+  BUSAN_RECOMMENDED: '부산시 추천',
+  FAMOUS_SOUP: '국밥',
+  CELEBRITY_FAVORITE: '연예인 추천 맛집',
+}
+export type SpecialCategoryType = keyof typeof SpecialCategories
 
 type MapPlaceParams = {
   lat: number
@@ -23,6 +36,12 @@ type MapPlaceParams = {
   | { restaurantCategories?: never; touristCategories: string }
   | { restaurantCategories: string; touristCategories: string }
 )
+
+type SpecialPlaceParams = {
+  category: string
+  offset: number
+  limit: number
+}
 
 /**
  * 맛집, 관광 정보를 가져오는 훅입니다.
@@ -161,76 +180,55 @@ const get_parking = async (params: { lat: number; lng: number; level: string }) 
 
 /**
  * 바텀 시트를 위한 특별한 맛집 정보를 가져오는 훅입니다.
- * @param lat 위도
- * @param lng 경도
- * @param level 줌 레벨 (LEVEL_1 ~ LEVEL_15)
- * @param restaurantCategories 음식점 카테고리 (NORMAL_RESTAURANT, SPECIAL_RESTAURANT)
- * @param touristCategories 관광지 카테고리 (TOURIST_SPOT, THEME, HOT_PLACE, NATURE, LEISURE_SPORTS)
- * @param isEnabled 쿼리 활성화
+ * @param category 카테고리(OCEAN_VIEW, BLUE_RIBBON, GOOD_RESTAURANT, TOURISM_RECOMMENDED, BUSAN_RECOMMENDED, FAMOUS_SOUP, CELEBRITY_FAVORITE, ALL)
+ * @param offset 시작 위치
+ * @param limit 개수
  */
-export const useSpecialPlace = ({
-  lat,
-  lng,
-  level,
-  restaurantCategories,
-  touristCategories,
-  isEnabled,
-}: MapPlaceParams) => {
+export const useSpecialPlace = ({ category, offset, limit }: SpecialPlaceParams) => {
   return useQuery({
-    queryKey: ['mapPlace', lat, lng, level, restaurantCategories, touristCategories],
-    queryFn: () =>
-      get_spcial_place({
-        lat,
-        lng,
-        level,
-        restaurantCategories,
-        touristCategories,
-      }),
-    enabled: isEnabled,
+    queryKey: [category, offset, limit],
+    queryFn: () => get_spcial_place({ category, offset, limit }),
     retryOnMount: false,
     refetchOnWindowFocus: false,
   })
 }
 
-/** 나의 여행 기록 리스트를 가져오는 훅입니다. */
-// export const useInfiniteSpecialPlaceList = () => {
-//   return useSuspenseInfiniteQuery({
-//     queryKey: ['recordList'],
-//     queryFn: ({ pageParam = 0 }) => get_record_list({ query: '', offset: pageParam, limit: 10 }),
-//     getNextPageParam: (lastPage, allPages) => {
-//       if (lastPage.length === 0) return undefined
-//       return allPages.length * 10
-//     },
-//     initialPageParam: 0,
-//   })
-// }
+/**
+ * 바텀 시트를 위한 특별한 맛집 정보를 가져오는 훅입니다.
+ * @param category 카테고리(OCEAN_VIEW, BLUE_RIBBON, GOOD_RESTAURANT, TOURISM_RECOMMENDED, BUSAN_RECOMMENDED, FAMOUS_SOUP, CELEBRITY_FAVORITE, ALL)
+ * @param offset 시작 위치
+ * @param limit 개수
+ */
+export const useInfiniteSpecialPlaceList = (category: string = 'ALL') => {
+  return useSuspenseInfiniteQuery({
+    queryKey: [category],
+    queryFn: ({ pageParam = 0 }) =>
+      get_spcial_place({ category: category, offset: pageParam, limit: 10 }),
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.length === 0) return undefined
+      return allPages.length * 10
+    },
+    initialPageParam: 0,
+  })
+}
 
 /**
  * 바텀 시트를 위한 특별한 맛집 정보를 가져옵니다.
- * @param lat 위도
- * @param lng 경도
- * @param level 줌 레벨 (LEVEL_1 ~ LEVEL_15)
- * @param restaurantCategories 음식점 카테고리 (NORMAL_RESTAURANT, SPECIAL_RESTAURANT)
- * @param touristCategories 관광지 카테고리 (TOURIST_SPOT, THEME, HOT_PLACE, NATURE, LEISURE_SPORTS)
+ * @param category 카테고리(OCEAN_VIEW, BLUE_RIBBON, GOOD_RESTAURANT, TOURISM_RECOMMENDED, BUSAN_RECOMMENDED, FAMOUS_SOUP, CELEBRITY_FAVORITE, ALL)
+ * @param offset 시작 위치
+ * @param limit 개수
  */
-const get_spcial_place = async (params: {
-  lat: number
-  lng: number
-  level: string
-  restaurantCategories?: string
-  touristCategories?: string
-}) => {
-  const response = await instance('kkilogbu/').get('place', { searchParams: params }).json()
-  const places = z.array(MapPlaceSchema).parse(response)
-
-  const placeDetails = await Promise.all(
-    places.slice(0, 41).map(async place => {
-      const detailResponse = await instance('kkilogbu/')
-        .get(`place/${place.type}/${place.id}`)
-        .json()
-      return detailResponse
-    }),
+const get_spcial_place = async (params: { category: string; offset: number; limit: number }) => {
+  const response = await instance('kkilogbu/')
+    .get('place/bottom-bar', { searchParams: params })
+    .json()
+  const places = z.array(SpecialRestaurantSchema).parse(response)
+  const refinePlaces = Promise.all(
+    places.map(async place => ({
+      ...place,
+      images: await validateImageUri(place.images),
+    })),
   )
 
-  return z.array(PlaceDetailSchema).parse(placeDetails)
+  return refinePlaces
 }

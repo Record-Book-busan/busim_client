@@ -1,63 +1,35 @@
-import { useNavigation } from '@react-navigation/native'
-import { useCallback, useEffect, useState } from 'react'
-import { ActivityIndicator, FlatList, View } from 'react-native'
+import { type RouteProp, useNavigation } from '@react-navigation/native'
+import { useCallback } from 'react'
+import { ActivityIndicator, FlatList, ImageURISource, View } from 'react-native'
 
 import { SafeScreen } from '@/components/common'
 import { ImagePlaceItem } from '@/components/search'
-import { CategoryType, getCategoryText } from '@/constants'
 import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
-import { PlaceType, useSpecialPlace } from '@/services/place'
+import { PlaceType, useInfiniteSpecialPlaceList } from '@/services/place'
 import { Typo } from '@/shared'
 
-import type { RootStackParamList } from '@/types/navigation'
+import type { AuthStackParamList, MapStackParamList } from '@/types/navigation'
 import type { StackNavigationProp } from '@react-navigation/stack'
 
-type PlaceItemType = {
-  id: number
-  title: string
-  category: string
-  content: string
-  imageUrl: string
+interface MapRecommendScreenProps {
+  route: RouteProp<MapStackParamList, 'MapRecommend'>
 }
 
-export default function RecommendDetail() {
-  // const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteRecordList()
-  const { data: placeData } = useSpecialPlace({
-    lat: 35.2002495716857,
-    lng: 129.16,
-    level: 'LEVEL_10',
-    // restaurantCategories: 'SPECIAL_RESTAURANT',
-    restaurantCategories: '',
-    touristCategories: 'TOURIST_SPOT',
-    isEnabled: true,
-  })
-  const [index, setIndex] = useState<number>(1)
-  const [chunkArray, setChunkArray] = useState<PlaceItemType[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+type PlaceItemType = {
+  images: ImageURISource
+  id: number
+  title: string
+  categories: string[]
+  detailedInformation: string
+}
 
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'MapStack'>>()
+export default function RecommendDetail({ route }: MapRecommendScreenProps) {
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteSpecialPlaceList(
+    route.params.category,
+  )
+
+  const navigation = useNavigation<StackNavigationProp<AuthStackParamList, 'MapStack'>>()
   const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
-
-  useEffect(() => {
-    console.log(`index: ${index}`)
-    setIsLoading(true)
-
-    if (placeData) {
-      const definePlaces: PlaceItemType[] = placeData.map(place => {
-        return {
-          id: place.id,
-          title: place.title,
-          category: getCategoryText(place.touristCat2 as CategoryType),
-          content: place.report,
-          imageUrl: place.imageUrl2,
-        } as PlaceItemType
-      })
-
-      setChunkArray(definePlaces.slice(0, 10 * index))
-    }
-
-    setIsLoading(false)
-  }, [placeData, index])
 
   const handleItemPress = useCallback((id: number) => {
     navigateWithPermissionCheck({
@@ -67,8 +39,7 @@ export default function RecommendDetail() {
         screen: 'MapDetail',
         params: {
           id: id,
-          // type: 'restaurant' as PlaceType,
-          type: 'tourist' as PlaceType,
+          type: 'restaurant' as PlaceType,
         },
       },
     })
@@ -78,10 +49,10 @@ export default function RecommendDetail() {
     <ImagePlaceItem
       id={item.id}
       title={item.title}
-      category={item?.category}
-      content={item?.content}
+      category={item?.categories[0]}
+      content={item?.detailedInformation}
       onPressMove={() => handleItemPress(item.id)}
-      imageUrl={item.imageUrl || ''}
+      imageUrl={item.images.uri}
     />
   )
 
@@ -89,17 +60,17 @@ export default function RecommendDetail() {
     <SafeScreen excludeEdges={['top']}>
       <View className="flex-1 bg-white">
         <FlatList
-          data={chunkArray}
+          data={data.pages.flatMap(page => page)}
           renderItem={renderItem}
           keyExtractor={item => item.id.toString()}
-          onEndReached={() => setIndex(prev => prev + 1)}
+          onEndReached={() => hasNextPage && fetchNextPage()}
           onEndReachedThreshold={0.5}
           ListEmptyComponent={
             <View className="flex-1 items-center justify-center">
               <Typo className="p-4 text-gray-700">작성한 기록이 없습니다.</Typo>
             </View>
           }
-          ListFooterComponent={isLoading ? <ActivityIndicator /> : null}
+          ListFooterComponent={isFetchingNextPage ? <ActivityIndicator /> : null}
           contentContainerStyle={{
             flexGrow: 1,
             paddingHorizontal: 16,

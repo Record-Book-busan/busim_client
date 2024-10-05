@@ -1,8 +1,7 @@
-/* eslint-disable */
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { useNavigation } from '@react-navigation/native'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import {
   View,
   Dimensions,
@@ -12,20 +11,18 @@ import {
   ImageURISource,
   ActivityIndicator,
 } from 'react-native'
+import { useSharedValue } from 'react-native-reanimated'
+import Carousel from 'react-native-reanimated-carousel'
 
 import { ImageCarousel } from '@/components/common'
+import Indicator from '@/components/common/CarouselIndicator'
 import DropBox from '@/components/common/DropBox'
 import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
-import { validateImageUris, validateImageUri } from '@/services/image'
+import { PlaceType, SpecialCategories, useSpecialPlace } from '@/services/place'
 import { SvgIcon, Typo } from '@/shared'
 import { AuthStackParamList } from '@/types/navigation'
 
 import type { StackNavigationProp } from '@react-navigation/stack'
-import { PlaceType, useSpecialPlace } from '@/services/place'
-import Carousel from 'react-native-reanimated-carousel'
-import Indicator from '@/components/common/CarouselIndicator'
-import { useSharedValue } from 'react-native-reanimated'
-import { CategoryType, getCategoryText } from '@/constants'
 
 const CustomHandle = () => {
   return (
@@ -46,14 +43,14 @@ const CustomHandle = () => {
 }
 
 type ListItemProps = {
-  name: string
-  category: string
-  explain: string
+  images: ImageURISource
   id: number
-  uri: ImageURISource
+  title: string
+  categories: string[]
+  detailedInformation: string
 }
 
-const ListItem = ({ name, category, explain, id, uri }: ListItemProps) => {
+const ListItem = ({ title, categories, id, images }: ListItemProps) => {
   const navigation = useNavigation<StackNavigationProp<AuthStackParamList, 'SearchStack'>>()
   const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
@@ -65,8 +62,7 @@ const ListItem = ({ name, category, explain, id, uri }: ListItemProps) => {
         screen: 'MapDetail',
         params: {
           id: placeId,
-          // type: 'restaurant' as PlaceType,
-          type: 'tourist' as PlaceType,
+          type: 'restaurant' as PlaceType,
         },
       },
     })
@@ -74,17 +70,17 @@ const ListItem = ({ name, category, explain, id, uri }: ListItemProps) => {
 
   return (
     <View className="my-2 h-[100px] flex-row items-center">
-      <Image className="h-full w-20 rounded-[5px]" source={uri} />
+      <Image className="h-full w-20 rounded-[5px]" source={images} />
       <View className="flex h-full flex-1 gap-y-1 px-2">
-        <Typo className="text-base font-bold">{name}</Typo>
+        <Typo className="text-base font-bold">{title}</Typo>
         <View className="flex-row items-center gap-1">
           <SvgIcon name="category" className="text-black" size={14} />
-          <Typo className="text-xs">{category}</Typo>
+          <Typo className="text-xs">{categories}</Typo>
         </View>
-        <View className="flex-row items-center gap-1">
+        {/* <View className="flex-row items-center gap-1">
           <SvgIcon name="explain" className="text-black" size={14} />
-          <Typo className="text-xs">{explain}</Typo>
-        </View>
+          <Typo className="text-xs">{detailedInformation}</Typo>
+        </View> */}
       </View>
       <View className="px-2">
         <TouchableOpacity
@@ -135,11 +131,11 @@ const ListViewCarousel: React.FC<ListViewCarouselProps> = ({
             {item.map((listItemProp, index) => (
               <ListItem
                 key={index}
-                name={listItemProp.name}
-                category={listItemProp.category}
-                explain={listItemProp.explain}
+                title={listItemProp.title}
+                categories={listItemProp.categories}
+                detailedInformation={listItemProp.detailedInformation}
                 id={listItemProp.id}
-                uri={listItemProp.uri}
+                images={listItemProp.images}
               />
             ))}
           </View>
@@ -162,7 +158,7 @@ interface RecommendSheetProps {
 }
 
 export const RecommendSheet: React.FC<RecommendSheetProps> = ({ headerHeight }) => {
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'SearchStack'>>()
+  const navigation = useNavigation<StackNavigationProp<AuthStackParamList, 'SearchStack'>>()
   const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
   const bottomSheetRef = useRef<BottomSheet>(null)
   const { height: screenHeight } = Dimensions.get('window')
@@ -186,87 +182,12 @@ export const RecommendSheet: React.FC<RecommendSheetProps> = ({ headerHeight }) 
     }
   }, [])
 
-  // const renderBackdrop = (props: BottomSheetBackdropProps) => (
-  //   <BottomSheetBackdrop {...props} appearsOnIndex={1} disappearsOnIndex={0} />
-  // )
-
-  const [isLoadingImageCarousel, setIsLoadingImageCarousel] = useState<boolean>(true)
-  const [isLoadingContent, setIsLoadingContent] = useState<boolean>(true)
-  const [imageUris, setImageUris] = useState<ImageURISource[]>([])
-  const [listViewItems, setListViewItems] = useState<ListItemProps[]>([])
-  const [filteredListViewItems, setFilteredListViewItems] = useState<ListItemProps[]>([])
-  const [categories, setCategories] = useState<string[]>([])
-  const [activeCategory, setActiveCategory] = useState<string>()
-
-  useEffect(() => {
-    if (!!listViewItems && listViewItems?.length > 0) {
-      const filtered = listViewItems.filter(listViewItem => {
-        return listViewItem.category === activeCategory
-      })
-
-      setFilteredListViewItems(filtered)
-      setIsLoadingContent(false)
-    }
-  }, [listViewItems, activeCategory])
-
-  const { data: placeData } = useSpecialPlace({
-    lat: 35.2002495716857,
-    lng: 129.16,
-    level: 'LEVEL_10',
-    // restaurantCategories: '',
-    restaurantCategories: '',
-    touristCategories: 'TOURIST_SPOT',
-    isEnabled: true,
+  const [activeCategory, setActiveCategory] = useState<string>('OCEAN_VIEW')
+  const { data: placeData, isFetching } = useSpecialPlace({
+    category: activeCategory,
+    offset: 0,
+    limit: 25,
   })
-
-  const getListItems = async () => {
-    const listItems = await Promise.all(
-      placeData?.map(async place => ({
-        name: place?.title,
-        category: getCategoryText(place.touristCat2 as CategoryType),
-        explain: place?.content || place?.report,
-        id: place.id,
-        uri: await validateImageUri(place?.imageUrl2 || ''),
-      })) || [],
-    )
-
-    return listItems
-  }
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoadingImageCarousel(true)
-      setIsLoadingContent(true)
-
-      const placeUrls: string[] = []
-
-      placeData?.forEach(place => {
-        if (placeUrls.length < 5 && !!place.imageUrl2) {
-          placeUrls.push(place?.imageUrl2 as string)
-        }
-      })
-
-      const listItems = await getListItems()
-
-      const categoriesSet = new Set<string>()
-      listItems.forEach(listItem => {
-        categoriesSet.add(listItem.category)
-      })
-
-      setValidateUris(placeUrls)
-      setIsLoadingImageCarousel(false)
-      setListViewItems(listItems as ListItemProps[])
-      setCategories(Array.from(categoriesSet))
-      setActiveCategory(Array.from(categoriesSet)[0])
-    }
-
-    fetchData()
-  }, [placeData])
-
-  const setValidateUris = async (imageUrls: string[]) => {
-    const validateUrls = await validateImageUris(imageUrls)
-    setImageUris(validateUrls)
-  }
 
   const handleItemClick = (item: string) => {
     setActiveCategory(item)
@@ -278,9 +199,12 @@ export const RecommendSheet: React.FC<RecommendSheetProps> = ({ headerHeight }) 
       routeName: 'MapStack',
       params: {
         screen: 'MapRecommend',
+        params: {
+          category: activeCategory,
+        },
       },
     })
-  }, [])
+  }, [activeCategory])
 
   return (
     <BottomSheet
@@ -315,7 +239,7 @@ export const RecommendSheet: React.FC<RecommendSheetProps> = ({ headerHeight }) 
         <View className="mb-4 items-center bg-white px-8">
           <Typo className="mt-4 w-full text-left text-2xl">시장님이 다녀간 맛집 리스트</Typo>
           <View className="my-2 flex h-[180px] w-[350px] items-center justify-center">
-            {isLoadingImageCarousel ? (
+            {isFetching ? (
               <ActivityIndicator
                 className="h-[180px] w-[350px] rounded-[20px] bg-BUSIM-slate-light"
                 size="large"
@@ -325,7 +249,7 @@ export const RecommendSheet: React.FC<RecommendSheetProps> = ({ headerHeight }) 
                 height={180}
                 width={350}
                 rounded={20}
-                images={imageUris}
+                images={placeData?.map(place => place.images).slice(0, 5) as ImageURISource[]}
                 isAuto={true}
               />
             )}
@@ -335,7 +259,12 @@ export const RecommendSheet: React.FC<RecommendSheetProps> = ({ headerHeight }) 
         <View className="items-center border-t-2 border-[#DBDCE5] bg-white px-4 py-2">
           <Typo className="w-full py-2 text-center text-lg font-bold">추천 맛집</Typo>
           <View className="mt-2 w-[350px] flex-row items-center justify-between px-2">
-            <DropBox items={categories} selected={activeCategory} onItemClick={handleItemClick} />
+            <DropBox
+              keys={Object.values(SpecialCategories)}
+              values={Object.keys(SpecialCategories)}
+              selected={activeCategory}
+              onItemClick={handleItemClick}
+            />
             <TouchableOpacity
               className="flex w-16 flex-row items-center justify-start"
               onPress={handleWholeClick}
@@ -345,13 +274,13 @@ export const RecommendSheet: React.FC<RecommendSheetProps> = ({ headerHeight }) 
             </TouchableOpacity>
           </View>
           <View className="relative mx-8 mt-4 flex-1 rounded-2xl">
-            {isLoadingContent ? (
+            {isFetching ? (
               <ActivityIndicator
                 className="h-[180px] w-[335px] rounded-[20px] bg-BUSIM-slate-light"
                 size="large"
               />
             ) : (
-              <ListViewCarousel items={filteredListViewItems} />
+              <ListViewCarousel items={placeData as ListItemProps[]} />
             )}
           </View>
         </View>

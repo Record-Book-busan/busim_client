@@ -1,4 +1,4 @@
-import type { PlaceType } from '@/services/place'
+import type { PlaceType, SpecialCategoryType } from '@/services/place'
 import type { NavigatorScreenParams } from '@react-navigation/native'
 import type { StackScreenProps } from '@react-navigation/stack'
 
@@ -32,7 +32,7 @@ export type MainTabParamList = {
 
 export type MapStackParamList = {
   MapDetail: { id: number; type: PlaceType }
-  MapRecommend: undefined
+  MapRecommend: { category: SpecialCategoryType }
 }
 
 export type CreateRecordStackParamList = {

@@ -101,12 +101,10 @@ export const validateImageUri = async (uri?: string): Promise<ImageURISource> =>
         return { uri: uri }
       } else {
         console.error('[ERROR] 유효하지 않은 이미지:', response.status)
-
         return baseUri
       }
     } catch (error) {
       console.error('[ERROR] 이미지 로드 실패:', error)
-
       return baseUri
     }
   }

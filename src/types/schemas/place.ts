@@ -109,3 +109,12 @@ export const ParkingSchema = z.object({
   pkGubun: z.string(),
 })
 export type ParkingSchema = z.infer<typeof ParkingSchema>
+
+export const SpecialRestaurantSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  categories: z.array(z.string()),
+  detailedInformation: z.string(),
+  images: z.string(),
+})
+export type SpecialRestaurant = z.infer<typeof SpecialRestaurantSchema>
