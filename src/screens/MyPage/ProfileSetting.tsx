@@ -5,7 +5,6 @@ import { View, TouchableOpacity, Image, Text, Pressable, ActivityIndicator } fro
 import { SafeScreen } from '@/components/common'
 import { ProfilePickerSheet, useProfileImageUpdate } from '@/components/user'
 import { useGallery } from '@/hooks/useGallery'
-import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { useGetUserInfo } from '@/services/user'
 import { SvgIcon } from '@/shared'
 import { MyPageStackParamList } from '@/types/navigation'
@@ -19,7 +18,6 @@ const DEFAULT_IMG =
 
 export default function ProfileSettingScreen() {
   const navigation = useNavigation<StackNavigationProp<MyPageStackParamList, 'MyPageSettings'>>()
-  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
   const { getPhoto } = useGallery()
   const [isOpenProfilePicker, setIsOpenProfilePicker] = useState(false)
   const { mutate: updateProfileImage, isPending } = useProfileImageUpdate()
@@ -50,10 +48,7 @@ export default function ProfileSettingScreen() {
   }
 
   const handleNavigateToNickNameChange = () => {
-    navigateWithPermissionCheck({
-      navigation,
-      routeName: 'MyPageNickName',
-    })
+    navigation.navigate('MyPageNickName')
   }
 
   console.log(data.profileImage)

@@ -3,7 +3,6 @@ import { View, ActivityIndicator } from 'react-native'
 
 import { SafeScreen, SearchHeader } from '@/components/common'
 import { Feed } from '@/components/record'
-import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { useFeedInfiniteSearch } from '@/services/record'
 import { RecordStackParamList } from '@/types/navigation'
 
@@ -18,7 +17,6 @@ export default function RecordResultScreen({ route }: RecordResultScreenProps) {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useFeedInfiniteSearch(query)
 
   const navigation = useNavigation<StackNavigationProp<RecordStackParamList, 'RecordResult'>>()
-  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   const handleLoadMore = () => {
     if (hasNextPage && !isFetchingNextPage) {
@@ -29,11 +27,7 @@ export default function RecordResultScreen({ route }: RecordResultScreenProps) {
   const allFeeds = data?.pages.flatMap(page => page) ?? []
 
   const handleSearchBarPress = () => navigation.replace('RecordSearch')
-  const handleBackPress = () =>
-    navigateWithPermissionCheck({
-      navigation,
-      routeName: 'RecordMain',
-    })
+  const handleBackPress = () => navigation.navigate('RecordMain', { tab: 1 })
 
   return (
     <SafeScreen>

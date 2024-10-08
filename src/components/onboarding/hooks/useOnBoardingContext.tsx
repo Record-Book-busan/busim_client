@@ -3,7 +3,6 @@ import React, { createContext, useContext, useState } from 'react'
 import { useSharedValue, withTiming, runOnJS, type SharedValue } from 'react-native-reanimated'
 
 import { CATEGORY, CategoryType } from '@/constants'
-import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { usePostInterest } from '@/services/service'
 import { INTEREST_KEY, storage } from '@/utils/storage'
 
@@ -36,7 +35,6 @@ export const OnBoardingProvider = ({ children }: { children: React.ReactNode }) 
   const [isAnimating, setIsAnimating] = useState(false)
   const animationProgress = useSharedValue(0)
   const navigation = useNavigation<StackNavigationProp<AuthStackParamList, 'MainTab'>>()
-  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
   const { mutateInterest } = usePostInterest()
 
   const [tourSelections, setTourSelections] = useState<Selection[]>([
@@ -87,13 +85,8 @@ export const OnBoardingProvider = ({ children }: { children: React.ReactNode }) 
 
     mutateInterest(params, {
       onSuccess: () =>
-        navigateWithPermissionCheck({
-          navigation,
-          routeName: 'MainTab',
-          params: {
-            screen: 'Map',
-            params: { categories: [] },
-          },
+        navigation.navigate('MainTab', {
+          screen: 'Map',
         }),
     })
   }

@@ -5,7 +5,6 @@ import { View } from 'react-native'
 import Geolocation from 'react-native-geolocation-service'
 
 import { useLocation } from '@/hooks/useLocation'
-import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import map from '@/services/map'
 import { type PlaceType, useMapPlace, useParking, useToilet } from '@/services/place'
 
@@ -47,7 +46,6 @@ export const PlaceMapView = ({
   const [isMyLocationActive, setIsMyLocationActive] = useState(false)
 
   const navigation = useNavigation<BottomTabNavigationProp<AuthStackParamList, 'MainTab'>>()
-  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
   const bottomTabBarHeight = useBottomTabBarHeight()
 
   const { restaurantCategories, touristCategories } = useMemo(() => {
@@ -100,15 +98,11 @@ export const PlaceMapView = ({
 
     bridge?.onEvent('OVERLAY_CLICK', data => {
       if (data.id && data.type) {
-        navigateWithPermissionCheck({
-          navigation,
-          routeName: 'MapStack',
+        navigation.navigate('MapStack', {
+          screen: 'MapDetail',
           params: {
-            screen: 'MapDetail',
-            params: {
-              id: data.id,
-              type: data.type as PlaceType,
-            },
+            id: Number(data.id),
+            type: data.type as PlaceType,
           },
         })
       }
@@ -238,10 +232,8 @@ export const PlaceMapView = ({
   }
 
   const handleFindWayPress = () => {
-    navigateWithPermissionCheck({
-      navigation,
-      routeName: 'SearchStack',
-      params: { screen: 'FindWay' },
+    navigation.navigate('SearchStack', {
+      screen: 'FindWay',
     })
   }
 

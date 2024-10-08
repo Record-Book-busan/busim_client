@@ -6,20 +6,18 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { Categories, FlatList } from '@/components/common'
 import { CATEGORY, getCategoryText, type CategoryType } from '@/constants'
-import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
+import { PlaceType } from '@/services/place'
 import { SegmentedControl, SvgIcon } from '@/shared'
 import { ButtonPrimitive } from '@/shared/Button'
 
 import type { MyPageStackParamList, AuthStackParamList } from '@/types/navigation'
 import type { StackNavigationProp } from '@react-navigation/stack'
 
-type BookmarkType = 'PLACE' | 'RECORD'
-
 interface Bookmark {
   id: number
   title: string
   address: string
-  cat1: BookmarkType
+  cat1: PlaceType
   cat2: CategoryType
   isBookmarked: boolean
 }
@@ -38,7 +36,7 @@ type BookMarkListNavigationProps = CompositeNavigationProp<
   StackNavigationProp<AuthStackParamList>
 >
 
-const generateMockData = (type: BookmarkType, page: number): BookmarkResponse => {
+const generateMockData = (type: PlaceType, page: number): BookmarkResponse => {
   const categoryValues = Object.values(CATEGORY)
   const content = Array.from({ length: 10 }, (_, i) => ({
     id: page * 10 + i + 1,
@@ -60,13 +58,12 @@ export default function BookmarkListScreen() {
   const [index, setIndex] = useState(0)
   const { bottom } = useSafeAreaInsets()
   const navigation = useNavigation<BookMarkListNavigationProps>()
-  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   const { data, fetchNextPage, hasNextPage, isLoading, isFetchingNextPage } = useInfiniteQuery({
-    queryKey: ['bookmarks', index === 0 ? 'PLACE' : 'RECORD'] as const,
+    queryKey: ['bookmarks', index === 0 ? 'place' : 'record'] as const,
     queryFn: ({ pageParam = 0, queryKey }) =>
       new Promise<BookmarkResponse>(resolve =>
-        setTimeout(() => resolve(generateMockData(queryKey[1], pageParam)), 500),
+        setTimeout(() => resolve(generateMockData(queryKey[1] as PlaceType, pageParam)), 500),
       ),
     initialPageParam: 0,
     getNextPageParam: lastPage => (lastPage.last ? undefined : lastPage.pageable.pageNumber + 1),
@@ -75,27 +72,21 @@ export default function BookmarkListScreen() {
   const handleItemPress = (item: Bookmark) => {
     if (index === 0) {
       /** 검색 디테일 화면으로 이동 */
-      navigateWithPermissionCheck({
-        navigation,
-        routeName: 'SearchStack',
+      navigation.navigate('MapStack', {
+        screen: 'MapDetail',
         params: {
-          screen: 'Detail',
-          params: {
-            id: item.id,
-            type: item.cat2,
-          },
+          id: item.id,
+          type: item.cat1,
         },
       })
     } else {
       /** 기록 디테일 화면으로 이동 */
-      navigateWithPermissionCheck({
-        navigation,
-        routeName: 'MainTab',
+      navigation.navigate('MainTab', {
+        screen: 'Record',
         params: {
-          screen: 'Record',
+          screen: 'ReadRecord',
           params: {
-            screen: 'ReadRecord',
-            params: { id: item.id },
+            id: item.id,
           },
         },
       })

@@ -5,26 +5,19 @@ import { Text, View, ScrollView, Linking, Pressable } from 'react-native'
 import { SafeScreen } from '@/components/common'
 import { UserInfoItem } from '@/components/user'
 import { useAuth } from '@/hooks/useAuthContext'
-import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { Button, Header, SvgIcon } from '@/shared'
 import { type AuthStackParamList } from '@/types/navigation'
 
 export default function MyPageScreen() {
   const navigation = useNavigation<StackNavigationProp<AuthStackParamList, 'MainTab'>>()
-  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
-
   const { signOut, unRegister } = useAuth()
 
   const menuItems = [
     {
       title: '나의 여행 기록',
       onPress: () =>
-        navigateWithPermissionCheck({
-          navigation,
-          routeName: 'MyPageStack',
-          params: {
-            screen: 'RecordList',
-          },
+        navigation.navigate('MyPageStack', {
+          screen: 'RecordList',
         }),
     },
   ]

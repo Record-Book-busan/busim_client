@@ -219,18 +219,3 @@ export const delete_user_membership = async (): Promise<string> => {
 
   return response
 }
-
-const permissionMap = ['PrivacyPolicy', 'Record', 'MyPage']
-
-/**
- * 화면별 권한을 체크한다.
- */
-export const checkPermission = (routeName: string) => {
-  console.log(routeName)
-  if (storage.getString('role') !== ROLE.GUEST) return true
-
-  const index = permissionMap.findIndex(map => map === routeName)
-
-  if (index === -1) return true
-  else return false
-}

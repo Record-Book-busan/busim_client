@@ -7,7 +7,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { SafeScreen, SearchBarView, Categories } from '@/components/common'
 import { PlaceMapView, EyeButton, MapFAB } from '@/components/map'
 import { CategoryType } from '@/constants/data'
-import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { AuthStackParamList } from '@/types/navigation'
 
 import { RecommendSheet } from './RecommendSheet'
@@ -24,17 +23,14 @@ export default function MapScreen({ route }: MapScreenProps) {
   const [searchBarHeight, setSearchBarHeight] = useState(0)
   const insets = useSafeAreaInsets()
   const navigation = useNavigation<BottomTabNavigationProp<AuthStackParamList, 'MainTab'>>()
-  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   const handleCategoryChange = useCallback((cat: string[]) => {
     setActiveCategory(cat)
   }, [])
 
   const handleSearchBarPress = () => {
-    navigateWithPermissionCheck({
-      navigation,
-      routeName: 'SearchStack',
-      params: { screen: 'Search' },
+    navigation.navigate('SearchStack', {
+      screen: 'Search',
     })
   }
 

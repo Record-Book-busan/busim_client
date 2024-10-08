@@ -17,8 +17,7 @@ import Carousel from 'react-native-reanimated-carousel'
 import { ImageCarousel } from '@/components/common'
 import Indicator from '@/components/common/CarouselIndicator'
 import DropBox from '@/components/common/DropBox'
-import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
-import { PlaceType, SpecialCategories, useSpecialPlace } from '@/services/place'
+import { SpecialCategories, SpecialCategoryType, useSpecialPlace } from '@/services/place'
 import { SvgIcon, Typo } from '@/shared'
 import { AuthStackParamList } from '@/types/navigation'
 
@@ -52,18 +51,13 @@ type ListItemProps = {
 
 const ListItem = ({ title, categories, id, images }: ListItemProps) => {
   const navigation = useNavigation<StackNavigationProp<AuthStackParamList, 'SearchStack'>>()
-  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   const handleButtonClick = useCallback((placeId: number) => {
-    navigateWithPermissionCheck({
-      navigation,
-      routeName: 'MapStack',
+    navigation.navigate('MapStack', {
+      screen: 'MapDetail',
       params: {
-        screen: 'MapDetail',
-        params: {
-          id: placeId,
-          type: 'restaurant' as PlaceType,
-        },
+        id: placeId,
+        type: 'restaurant',
       },
     })
   }, [])
@@ -159,7 +153,6 @@ interface RecommendSheetProps {
 
 export const RecommendSheet: React.FC<RecommendSheetProps> = ({ headerHeight }) => {
   const navigation = useNavigation<StackNavigationProp<AuthStackParamList, 'SearchStack'>>()
-  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
   const bottomSheetRef = useRef<BottomSheet>(null)
   const { height: screenHeight } = Dimensions.get('window')
   const tabBarHeight = useBottomTabBarHeight()
@@ -194,14 +187,10 @@ export const RecommendSheet: React.FC<RecommendSheetProps> = ({ headerHeight }) 
   }
 
   const handleWholeClick = useCallback(() => {
-    navigateWithPermissionCheck({
-      navigation,
-      routeName: 'MapStack',
+    navigation.navigate('MapStack', {
+      screen: 'MapRecommend',
       params: {
-        screen: 'MapRecommend',
-        params: {
-          category: activeCategory,
-        },
+        category: activeCategory as SpecialCategoryType,
       },
     })
   }, [activeCategory])

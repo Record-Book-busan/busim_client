@@ -2,7 +2,6 @@ import { useNavigation } from '@react-navigation/native'
 import { useCallback } from 'react'
 import { View, ScrollView, TextInput, findNodeHandle, Alert } from 'react-native'
 
-import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { AuthStackParamList } from '@/types/navigation'
 import { showToast } from '@/utils/toast'
 import { verifyLocation } from '@/utils/validate'
@@ -182,7 +181,6 @@ export const useCreateRecordForm = (
     fieldRefs,
   )
   const navigation = useNavigation<StackNavigationProp<AuthStackParamList, 'MainTab'>>()
-  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   const handleSubmit = useCallback(async () => {
     if (validateAndHandleErrors()) return
@@ -217,15 +215,11 @@ export const useCreateRecordForm = (
         onSuccess: () => {
           showToast({ text: '기록을 업로드했어요', type: 'info' })
           dispatch({ type: 'RESET_FORM' })
-          navigateWithPermissionCheck({
-            navigation,
-            routeName: 'MainTab',
+          navigation.navigate('MainTab', {
+            screen: 'Record',
             params: {
-              screen: 'Record',
-              params: {
-                screen: 'RecordMain',
-                params: { tab: 1 }, // 피드로 이동
-              },
+              screen: 'RecordMain',
+              params: { tab: 1 },
             },
           })
         },
@@ -272,7 +266,6 @@ export const useEditRecordForm = (
     fieldRefs,
   )
   const navigation = useNavigation<StackNavigationProp<AuthStackParamList, 'MainTab'>>()
-  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   const handleSubmit = useCallback(async () => {
     if (validateAndHandleErrors()) return
@@ -307,15 +300,11 @@ export const useEditRecordForm = (
       mutateUpdate(updateRecord, {
         onSuccess: () => {
           showToast({ text: '기록을 변경했어요.', type: 'info' })
-          navigateWithPermissionCheck({
-            navigation,
-            routeName: 'MainTab',
+          navigation.navigate('MainTab', {
+            screen: 'Record',
             params: {
-              screen: 'Record',
-              params: {
-                screen: 'ReadRecord',
-                params: { id: recordId },
-              },
+              screen: 'ReadRecord',
+              params: { id: recordId },
             },
           })
         },

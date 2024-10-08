@@ -7,7 +7,6 @@ import { useNavigation } from '@react-navigation/native'
 import { Platform, TouchableOpacity, View, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { MapScreen, MyPageScreen } from '@/screens'
 import { SvgIcon } from '@/shared'
 import { theme } from '@/theme'
@@ -30,7 +29,6 @@ const Tab = createBottomTabNavigator<MainTabParamList>()
 function MainTabNavigator() {
   const insets = useSafeAreaInsets()
   const navigation = useNavigation<BottomTabNavigationProp<AuthStackParamList, 'MainTab'>>()
-  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   return (
     <Tab.Navigator
@@ -76,9 +74,8 @@ function MainTabNavigator() {
             <TouchableOpacity
               {...props}
               onPress={() => {
-                navigateWithPermissionCheck({
-                  navigation,
-                  routeName: 'Map',
+                navigation.navigate('MainTab', {
+                  screen: 'Map',
                 })
               }}
             >
@@ -97,11 +94,13 @@ function MainTabNavigator() {
             <TouchableOpacity
               {...props}
               onPress={() => {
-                navigateWithPermissionCheck({
-                  navigation,
-                  routeName: 'Record',
+                navigation.navigate('MainTab', {
+                  screen: 'Record',
                   params: {
                     screen: 'RecordMain',
+                    params: {
+                      tab: 1,
+                    },
                   },
                 })
               }}
@@ -122,9 +121,8 @@ function MainTabNavigator() {
             <TouchableOpacity
               {...props}
               onPress={() => {
-                navigateWithPermissionCheck({
-                  navigation,
-                  routeName: 'MyPage',
+                navigation.navigate('MainTab', {
+                  screen: 'MyPage',
                 })
               }}
             >

@@ -4,7 +4,6 @@ import React, { useState } from 'react'
 import { Text, TouchableOpacity, View, Linking } from 'react-native'
 
 import { SafeScreen } from '@/components/common'
-import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { usePostConsent } from '@/services/auth'
 import { SvgIcon, Typo } from '@/shared'
 import { AuthStackParamList } from '@/types/navigation'
@@ -42,7 +41,6 @@ const handlerClickWhole = (type: string) => {
 
 function PrivacyPolicyScreen() {
   const navigation = useNavigation<StackNavigationProp<AuthStackParamList, 'OnBoardingStack'>>()
-  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
   const postConsent = usePostConsent()
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({})
   const [notice, setNotice] = useState('')
@@ -79,12 +77,8 @@ function PrivacyPolicyScreen() {
         try {
           const response = await postConsent()
           console.log(response)
-          navigateWithPermissionCheck({
-            navigation,
-            routeName: 'OnBoardingStack',
-            params: {
-              screen: 'OnBoarding',
-            },
+          navigation.navigate('OnBoardingStack', {
+            screen: 'OnBoarding',
           })
         } catch {
           throw new Error('이용 약관 동의 실패')

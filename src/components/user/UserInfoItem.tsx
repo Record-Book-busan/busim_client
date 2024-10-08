@@ -2,7 +2,6 @@ import { useNavigation } from '@react-navigation/native'
 import { Image, Pressable, View } from 'react-native'
 
 import { user } from '@/assets/images'
-import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { useGetUserInfo } from '@/services/user'
 import { Button, SvgIcon, Typo } from '@/shared'
 import { AuthStackParamList } from '@/types/navigation'
@@ -12,15 +11,10 @@ import type { StackNavigationProp } from '@react-navigation/stack'
 export function UserInfoItem() {
   const { data } = useGetUserInfo()
   const navigation = useNavigation<StackNavigationProp<AuthStackParamList, 'MainTab'>>()
-  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   const handlePressButton = () =>
-    navigateWithPermissionCheck({
-      navigation,
-      routeName: 'MyPageStack',
-      params: {
-        screen: 'MyPageSettings',
-      },
+    navigation.navigate('MyPageStack', {
+      screen: 'MyPageSettings',
     })
 
   const renderImg = data?.profileImage || user

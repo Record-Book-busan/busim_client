@@ -5,7 +5,6 @@ import { View } from 'react-native'
 import { SafeScreen, SearchHeader } from '@/components/common'
 import { Place } from '@/components/record'
 import { FeedMain } from '@/components/record/FeedMain'
-import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { Tab, TabView, Typo } from '@/shared'
 
 import type { RecordStackParamList } from '@/types/navigation'
@@ -15,7 +14,6 @@ export default function RecordMainScreen() {
   const [index, setIndex] = useState(0)
   const navigation = useNavigation<StackNavigationProp<RecordStackParamList, 'RecordMain'>>()
   const route = useRoute<RouteProp<RecordStackParamList, 'RecordMain'>>()
-  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   useEffect(() => {
     if (route.params?.tab) {
@@ -23,11 +21,7 @@ export default function RecordMainScreen() {
     }
   }, [route.params?.tab])
 
-  const handleSearchBarPress = () =>
-    navigateWithPermissionCheck({
-      navigation,
-      routeName: 'RecordSearch',
-    })
+  const handleSearchBarPress = () => navigation.navigate('RecordSearch')
 
   return (
     <SafeScreen excludeEdges={['bottom']}>

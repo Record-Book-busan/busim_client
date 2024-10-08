@@ -6,7 +6,6 @@ import { useSharedValue } from 'react-native-reanimated'
 import { useDebounce } from 'use-debounce'
 
 import { useLocation } from '@/hooks/useLocation'
-import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import map from '@/services/map'
 import { useMapRecord } from '@/services/record'
 
@@ -36,7 +35,6 @@ export const RecordMapView = () => {
   const bottomTabBarHeight = useBottomTabBarHeight()
 
   const navigation = useNavigation<StackNavigationProp<AuthStackParamList>>()
-  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
   const { data: recordData } = useMapRecord(geolocation)
 
   useEffect(() => {
@@ -54,14 +52,12 @@ export const RecordMapView = () => {
 
     bridge?.onEvent('OVERLAY_CLICK', data => {
       if (data.id) {
-        navigateWithPermissionCheck({
-          navigation,
-          routeName: 'MainTab',
+        navigation.navigate('MainTab', {
+          screen: 'Record',
           params: {
-            screen: 'Record',
+            screen: 'ReadRecord',
             params: {
-              screen: 'ReadRecord',
-              params: { id: data.id },
+              id: Number(data.id),
             },
           },
         })
@@ -136,12 +132,8 @@ export const RecordMapView = () => {
   }
 
   const handleFABPress = () => {
-    navigateWithPermissionCheck({
-      navigation,
-      routeName: 'CreateRecordStack',
-      params: {
-        screen: 'CreateRecord',
-      },
+    navigation.navigate('CreateRecordStack', {
+      screen: 'CreateRecord',
     })
   }
 

@@ -5,7 +5,6 @@ import { View } from 'react-native'
 import { SafeScreen, SearchHeader } from '@/components/common'
 import { type RecordRecentSearch, useRecentSearch } from '@/components/record'
 import { RecentSearches } from '@/components/search'
-import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 
 import type { RecordStackParamList } from '@/types/navigation'
 import type { StackNavigationProp } from '@react-navigation/stack'
@@ -15,7 +14,6 @@ type RecordSearchScreenRouteProp = RouteProp<RecordStackParamList, 'RecordSearch
 
 export default function RecordSearchScreen() {
   const navigation = useNavigation<RecordSearchScreenNavigationProp>()
-  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
   const route = useRoute<RecordSearchScreenRouteProp>()
   const [query, setQuery] = useState('')
   const { recentSearches, addRecentSearch, removeRecentSearch } = useRecentSearch()
@@ -29,11 +27,7 @@ export default function RecordSearchScreen() {
   const handleSearch = () => {
     if (query.trim()) {
       addRecentSearch(query)
-      navigateWithPermissionCheck({
-        navigation,
-        routeName: 'RecordResult',
-        params: { query },
-      })
+      navigation.navigate('RecordResult', { query })
     }
   }
 
@@ -42,11 +36,7 @@ export default function RecordSearchScreen() {
   }
 
   const navigateToResult = (item: RecordRecentSearch) => {
-    navigateWithPermissionCheck({
-      navigation,
-      routeName: 'RecordResult',
-      params: { query: item.query },
-    })
+    navigation.navigate('RecordResult', { query: item.query })
   }
 
   return (

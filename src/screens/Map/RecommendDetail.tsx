@@ -4,8 +4,7 @@ import { ActivityIndicator, FlatList, ImageURISource, View } from 'react-native'
 
 import { SafeScreen } from '@/components/common'
 import { ImagePlaceItem } from '@/components/search'
-import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
-import { PlaceType, useInfiniteSpecialPlaceList } from '@/services/place'
+import { useInfiniteSpecialPlaceList } from '@/services/place'
 import { Typo } from '@/shared'
 
 import type { AuthStackParamList, MapStackParamList } from '@/types/navigation'
@@ -29,18 +28,13 @@ export default function RecommendDetail({ route }: MapRecommendScreenProps) {
   )
 
   const navigation = useNavigation<StackNavigationProp<AuthStackParamList, 'MapStack'>>()
-  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   const handleItemPress = useCallback((id: number) => {
-    navigateWithPermissionCheck({
-      navigation,
-      routeName: 'MapStack',
+    navigation.navigate('MapStack', {
+      screen: 'MapDetail',
       params: {
-        screen: 'MapDetail',
-        params: {
-          id: id,
-          type: 'restaurant' as PlaceType,
-        },
+        id: id,
+        type: 'restaurant',
       },
     })
   }, [])

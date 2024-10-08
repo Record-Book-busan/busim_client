@@ -2,7 +2,6 @@ import { type CompositeNavigationProp, useNavigation } from '@react-navigation/n
 import { ActivityIndicator, FlatList, View } from 'react-native'
 
 import { ImagePlaceItem } from '@/components/search'
-import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { useInfiniteRecordList } from '@/services/record'
 import { Typo } from '@/shared'
 import { type RecordList } from '@/types/schemas/record'
@@ -23,19 +22,13 @@ export default function RecordListScreen() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteRecordList()
 
   const navigation = useNavigation<NavigationProps>()
-  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   const handleItemPress = (id: number) => {
-    navigateWithPermissionCheck({
-      navigation,
-      routeName: 'MainTab',
+    navigation.navigate('MainTab', {
+      screen: 'Record',
       params: {
-        screen: 'Record',
-        params: {
-          screen: 'ReadRecord',
-          params: { id },
-        },
-        initial: false,
+        screen: 'ReadRecord',
+        params: { id },
       },
     })
   }

@@ -11,7 +11,6 @@ import {
   ImageURISource,
 } from 'react-native'
 
-import { useNavigateWithPermissionCheck } from '@/hooks/useNavigationPermissionCheck'
 import { validateImageUri } from '@/services/image'
 import { Typo } from '@/shared'
 
@@ -30,18 +29,13 @@ type FeedProps = Omit<FlatListProps<FeedType>, 'renderItem'>
 
 export function Feed(props: FeedProps) {
   const navigation = useNavigation<FeedNavigationProp>()
-  const { navigateWithPermissionCheck } = useNavigateWithPermissionCheck()
 
   const handleNavigation = (id: number) => {
     console.log(`id: ${id}`)
 
     if (id === 0) return
 
-    navigateWithPermissionCheck({
-      navigation,
-      routeName: 'ReadRecord',
-      params: { id },
-    })
+    navigation.navigate('ReadRecord', { id })
   }
 
   if (!props.data || props.data.length === 0) {
