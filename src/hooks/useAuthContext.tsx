@@ -24,7 +24,7 @@ type AuthAction =
 
 type AuthContextType = {
   state: AuthState
-  signIn: (provider: 'kakao' | 'apple' | 'guest') => Promise<Role | undefined>
+  signIn: (provider: 'kakao' | 'apple' | 'guest' | 'share') => Promise<Role | undefined>
   signOut: () => Promise<void>
   unRegister: () => Promise<void>
 }
@@ -88,7 +88,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const authContext = React.useMemo(
     () => ({
-      signIn: async (provider: 'kakao' | 'apple' | 'guest') => {
+      signIn: async (provider: 'kakao' | 'apple' | 'guest' | 'share') => {
         try {
           const { role, token } = await handleSignIn(provider)
           storage.set('role', role)

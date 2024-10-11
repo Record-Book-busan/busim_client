@@ -27,7 +27,7 @@ export default function RecordResultScreen({ route }: RecordResultScreenProps) {
   const allFeeds = data?.pages.flatMap(page => page) ?? []
 
   const handleSearchBarPress = () => navigation.replace('RecordSearch')
-  const handleBackPress = () => navigation.navigate('RecordMain', { tab: 1 })
+  const handleBackPress = () => navigation.navigate('RecordMain', { tab: 0 })
 
   return (
     <SafeScreen>

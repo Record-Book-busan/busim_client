@@ -99,7 +99,7 @@ function MainTabNavigator() {
                   params: {
                     screen: 'RecordMain',
                     params: {
-                      tab: 1,
+                      tab: 0,
                     },
                   },
                 })

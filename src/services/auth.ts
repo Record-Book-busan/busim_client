@@ -16,11 +16,13 @@ export const ROLE = {
   PENDING_MEMBER: 'PENDING_MEMBER',
   /** 게스트 */
   GUEST: 'GUEST',
+  /** 게스트 */
+  SHARE: 'SHARE',
 } as const
 
 export type Role = (typeof ROLE)[keyof typeof ROLE]
 
-export type LoginProvider = 'kakao' | 'apple' | 'guest'
+export type LoginProvider = 'kakao' | 'apple' | 'guest' | 'share'
 
 /**
  * 모든 로그인 세션을 로그아웃합니다.
@@ -115,6 +117,24 @@ const guestSignIn = async (): Promise<{ role: Role; token: string }> => {
 }
 
 /**
+ * 공유 로그인을 수행합니다.
+ */
+const shareSignIn = (): { role: Role; token: string } => {
+  try {
+    const shareAccessToken =
+      'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxd2VlcjEyMyIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzI4NDY1MTQyLCJleHAiOjE3NDQwMTcxNDJ9.49J3aaK4-ZjMpK-I-uUSdEKoaDQi1ZnqOhuDk0QVif4'
+    const role = ROLE.SHARE
+
+    storage.set('loginType', 'share')
+    storage.set('accessToken', shareAccessToken)
+
+    return { role, token: shareAccessToken }
+  } catch {
+    throw new Error('공유 로그인 실패')
+  }
+}
+
+/**
  * 소셜로그인을 수행합니다.
  */
 export const handleSignIn = async (
@@ -129,6 +149,8 @@ export const handleSignIn = async (
       return appleSignIn()
     case 'guest':
       return guestSignIn()
+    case 'share':
+      return shareSignIn()
     default:
       throw new Error('지원되지 않는 로그인 방식')
   }

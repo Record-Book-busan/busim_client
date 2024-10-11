@@ -10,17 +10,23 @@ import { type AuthStackParamList } from '@/types/navigation'
 
 export default function MyPageScreen() {
   const navigation = useNavigation<StackNavigationProp<AuthStackParamList, 'MainTab'>>()
-  const { signOut, unRegister } = useAuth()
+  const { signOut, unRegister, state } = useAuth()
 
-  const menuItems = [
-    {
-      title: '나의 여행 기록',
-      onPress: () =>
-        navigation.navigate('MyPageStack', {
-          screen: 'RecordList',
-        }),
-    },
-  ]
+  const menuItems = () => {
+    const results = []
+
+    if (state.role !== 'GUEST') {
+      results.push({
+        title: '나의 여행 기록',
+        onPress: () =>
+          navigation.navigate('MyPageStack', {
+            screen: 'RecordList',
+          }),
+      })
+    }
+
+    return results
+  }
 
   const settingsItems = [
     {
@@ -73,10 +79,15 @@ export default function MyPageScreen() {
     }
   }
 
-  const footerItems = [
-    { title: '로그아웃', onPress: handleLogoutPress },
-    { title: '회원탈퇴', onPress: handleCancelMembershipPress },
-  ]
+  const footerItems = () => {
+    const results = [{ title: '로그아웃', onPress: handleLogoutPress }]
+
+    if (state.role !== 'GUEST' && state.role !== 'SHARE') {
+      results.push({ title: '회원탈퇴', onPress: handleCancelMembershipPress })
+    }
+
+    return results
+  }
 
   return (
     <SafeScreen>
@@ -86,7 +97,7 @@ export default function MyPageScreen() {
           <UserInfoItem />
         </View>
         <View className="mb-2 bg-white px-3 py-1">
-          {menuItems.map((item, index) => (
+          {menuItems().map((item, index) => (
             <MenuItem key={index} {...item} />
           ))}
           {settingsItems.map((item, index) => (
@@ -94,7 +105,7 @@ export default function MyPageScreen() {
           ))}
         </View>
         <View className="flex-row px-5 g-3">
-          {footerItems.map((item, index) => (
+          {footerItems().map((item, index) => (
             <FooterButton key={index} {...item} />
           ))}
         </View>

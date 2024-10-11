@@ -29,7 +29,7 @@ export default function AuthenticatedNavigator() {
       <AuthStack.Screen name="MapStack" component={MapStackNavigator} />
       <AuthStack.Screen name="SearchStack" component={SearchStackNavigator} />
       <AuthStack.Screen name="Login" component={LoginScreen} />
-      {state.role === 'MEMBER' && (
+      {(state.role === 'MEMBER' || state.role === 'SHARE') && (
         <>
           <AuthStack.Screen name="CreateRecordStack" component={CreateRecordStackNavigator} />
           <AuthStack.Screen name="MyPageStack" component={MyPageStackNavigator} />

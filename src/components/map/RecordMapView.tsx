@@ -5,6 +5,7 @@ import { View } from 'react-native'
 import { useSharedValue } from 'react-native-reanimated'
 import { useDebounce } from 'use-debounce'
 
+import { useAuth } from '@/hooks/useAuthContext'
 import { useLocation } from '@/hooks/useLocation'
 import map from '@/services/map'
 import { useMapRecord } from '@/services/record'
@@ -15,7 +16,6 @@ import { RecordFAB } from '../record/RecordFAB'
 
 import type { AuthStackParamList } from '@/types/navigation'
 import type { StackNavigationProp } from '@react-navigation/stack'
-
 export const RecordMapView = () => {
   const webViewRef = useRef<WebViewHandles>(null)
 
@@ -36,6 +36,8 @@ export const RecordMapView = () => {
 
   const navigation = useNavigation<StackNavigationProp<AuthStackParamList>>()
   const { data: recordData } = useMapRecord(geolocation)
+
+  const { state } = useAuth()
 
   useEffect(() => {
     const bridge = webViewRef.current?.bridge
@@ -140,14 +142,16 @@ export const RecordMapView = () => {
   return (
     <>
       {/* 기록 작성 버튼 */}
-      <View
-        className="absolute bottom-4 left-4 z-[2]"
-        style={{
-          paddingBottom: bottomTabBarHeight,
-        }}
-      >
-        <RecordFAB isExpanded={isFABExpanded} onPress={handleFABPress} />
-      </View>
+      {(state.role === 'MEMBER' || state.role === 'SHARE') && (
+        <View
+          className="absolute bottom-4 left-4 z-[2]"
+          style={{
+            paddingBottom: bottomTabBarHeight,
+          }}
+        >
+          <RecordFAB isExpanded={isFABExpanded} onPress={handleFABPress} />
+        </View>
+      )}
       {/* 내 위치 버튼 */}
       <View
         className="absolute bottom-4 right-4 z-[2]"

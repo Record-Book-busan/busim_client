@@ -1,10 +1,11 @@
 import { useNavigation } from '@react-navigation/native'
 import { type StackNavigationProp } from '@react-navigation/stack'
+import { useState } from 'react'
 import { Platform, Text, View } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 
 import { logoWelcome } from '@/assets/images'
-import { LoginButton } from '@/components/auth'
+import { GuestPopup, LoginButton } from '@/components/auth'
 import { SafeScreen } from '@/components/common'
 import { useAuth } from '@/hooks/useAuthContext'
 import { type LoginProvider, ROLE } from '@/services/auth'
@@ -20,13 +21,19 @@ type LoginScreenNavigationProp = StackNavigationProp<
 export default function LoginScreen() {
   const navigation = useNavigation<LoginScreenNavigationProp>()
   const { signIn } = useAuth()
+  const [isOpen, setIsOpen] = useState<boolean>(false)
 
   const handleSignInProcess = async (provider: LoginProvider) => {
+    if (provider === 'guest') {
+      setIsOpen(true)
+      return
+    }
+
     try {
       const role = await signIn(provider)
+
       switch (role) {
         case ROLE.MEMBER:
-        case ROLE.GUEST:
           navigation.reset({
             index: 0,
             routes: [
@@ -55,6 +62,39 @@ export default function LoginScreen() {
     }
   }
 
+  const handleConfirmPress = (isSharedGuest: boolean) => {
+    const handleGuestSignIn = async () => {
+      try {
+        await signIn(isSharedGuest ? 'share' : 'guest')
+
+        navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'Authenticated',
+              state: {
+                routes: [
+                  {
+                    name: 'MainTab',
+                    state: {
+                      routes: [{ name: 'Map' }],
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        })
+
+        setIsOpen(false)
+      } catch (error) {
+        console.error(`[ERROR] guest 로그인 중 오류 발생:`, error)
+      }
+    }
+
+    handleGuestSignIn()
+  }
+
   return (
     <SafeScreen
       excludeEdges={['bottom']}
@@ -62,6 +102,7 @@ export default function LoginScreen() {
       textColor={'light-content'}
       isTranslucent={true}
     >
+      {isOpen && <GuestPopup onPress={handleConfirmPress} />}
       <LinearGradient
         className="flex w-full flex-1 items-center justify-start"
         colors={['#5e7dc0', '#bac8e4', '#FFFFFF']}

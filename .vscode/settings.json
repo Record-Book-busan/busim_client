@@ -9,5 +9,8 @@
   },
   "prettier.requireConfig": true,
   "java.compile.nullAnalysis.mode": "automatic",
-  "cSpell.words": ["BUSIM"]
+  "cSpell.words": [
+    "BUSIM"
+  ],
+  "java.configuration.updateBuildConfiguration": "disabled"
 }
