@@ -1,33 +1,44 @@
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
+import { useAuth } from '@/hooks/useAuthContext'
 import { UserInfoSchema } from '@/types/schemas/user'
 
-import { Role } from './auth'
 import { instance } from './instance'
 
 /** 회원 정보를 조회하는 훅입니다. */
-export const useGetUserInfo = (role: Role | null) => {
-  return useSuspenseQuery({
-    queryKey: ['userInfo', role],
-    queryFn: () => get_userInfo(role),
+export const useGetUserInfo = () => {
+  const queryClient = useQueryClient()
+  const { state } = useAuth()
+  const isGuest = state.role === 'GUEST' || state.role === 'SHARE'
+  const initData = {
+    nickname: 'Guest',
+    profileImage: '',
+    email: '',
+  }
+
+  const { data } = useQuery({
+    queryKey: ['userInfo'],
+    queryFn: get_userInfo,
+    enabled: !!state?.role && !isGuest,
+    initialData: initData,
   })
+
+  const resetUserInfo = () => {
+    queryClient.setQueryData(['userInfo'], initData)
+  }
+
+  return {
+    data,
+    resetUserInfo,
+  }
 }
 
 /**
  * 회원 정보를 조회합니다.
  */
-export const get_userInfo = async (role: Role | null) => {
-  const isGuest = role === 'GUEST' || role === 'SHARE'
-
+export const get_userInfo = async () => {
   const response = await instance('kkilogbu/').get('users').json()
-
-  return UserInfoSchema.parse(
-    isGuest
-      ? {
-          nickname: '',
-        }
-      : response,
-  )
+  return UserInfoSchema.parse(response)
 }
 
 /**

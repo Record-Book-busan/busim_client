@@ -5,12 +5,14 @@ import { Text, View, ScrollView, Linking, Pressable } from 'react-native'
 import { SafeScreen } from '@/components/common'
 import { UserInfoItem } from '@/components/user'
 import { useAuth } from '@/hooks/useAuthContext'
+import { useGetUserInfo } from '@/services/user'
 import { Button, Header, SvgIcon } from '@/shared'
 import { type AuthStackParamList } from '@/types/navigation'
 
 export default function MyPageScreen() {
   const navigation = useNavigation<StackNavigationProp<AuthStackParamList, 'MainTab'>>()
   const { signOut, unRegister, state } = useAuth()
+  const { resetUserInfo } = useGetUserInfo()
 
   const menuItems = () => {
     const results = []
@@ -51,32 +53,41 @@ export default function MyPageScreen() {
     },
   ]
 
-  const handleLogoutPress = async () => {
-    try {
-      await signOut()
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Login' }],
-      })
-    } catch (err) {
-      if (err instanceof Error) {
-        console.log(`로그아웃 오류가 발생했습니다.: ${err.message}`)
+  const handleLogoutPress = () => {
+    const handleLogout = async () => {
+      try {
+        await signOut()
+        resetUserInfo()
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Login' }],
+        })
+      } catch (err) {
+        if (err instanceof Error) {
+          console.log(`로그아웃 오류가 발생했습니다.: ${err.message}`)
+        }
       }
     }
+
+    handleLogout()
   }
 
-  const handleCancelMembershipPress = async () => {
-    try {
-      await unRegister()
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Login' }],
-      })
-    } catch (err) {
-      if (err instanceof Error) {
-        console.log(`회원탈퇴 중 오류가 발생했습니다.: ${err.message}`)
+  const handleCancelMembershipPress = () => {
+    const handleCancelMembership = async () => {
+      try {
+        await unRegister()
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Login' }],
+        })
+      } catch (err) {
+        if (err instanceof Error) {
+          console.log(`회원탈퇴 중 오류가 발생했습니다.: ${err.message}`)
+        }
       }
     }
+
+    handleCancelMembership()
   }
 
   const footerItems = () => {

@@ -11,7 +11,7 @@ import type { StackNavigationProp } from '@react-navigation/stack'
 
 export function UserInfoItem() {
   const { state } = useAuth()
-  const { data } = useGetUserInfo(state.role)
+  const { data } = useGetUserInfo()
   const navigation = useNavigation<StackNavigationProp<AuthStackParamList, 'MainTab'>>()
 
   const handlePressButton = () =>
@@ -31,7 +31,7 @@ export function UserInfoItem() {
             resizeMode="cover"
           />
           <View className="flex-col gap-0.5">
-            <Typo className="font-SemiBold text-lg text-gray-900">{data.nickname}</Typo>
+            <Typo className="font-SemiBold text-lg text-gray-900">{data?.nickname}</Typo>
             {state.role !== 'GUEST' && state.role !== 'SHARE' && (
               <Typo className="text-[13px] text-gray-500">내 정보 수정하기</Typo>
             )}

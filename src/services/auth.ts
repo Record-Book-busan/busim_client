@@ -28,6 +28,7 @@ export type LoginProvider = 'kakao' | 'apple' | 'guest' | 'share'
  * 모든 로그인 세션을 로그아웃합니다.
  */
 export const logoutAll = async (): Promise<void> => {
+  storage.delete('loginType')
   storage.delete('accessToken')
   storage.delete('refreshToken')
   storage.delete('userId')
